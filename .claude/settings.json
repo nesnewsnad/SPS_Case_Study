@@ -1,0 +1,37 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/danswensen/Desktop/SPS_Case_Study/.claude/hooks/block-destructive.sh"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/danswensen/Desktop/SPS_Case_Study/.claude/hooks/check-syntax.sh"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/danswensen/Desktop/SPS_Case_Study/.claude/hooks/verify-before-stop.sh",
+            "timeout": 120000
+          }
+        ]
+      }
+    ]
+  }
+}
