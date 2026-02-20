@@ -143,16 +143,8 @@ export async function GET(request: NextRequest) {
           SUM(c.net_claim_count)::int AS count
         FROM ${fromForGeneral}
         WHERE ${where}
-        GROUP BY bin
-        ORDER BY
-          CASE bin
-            WHEN '7' THEN 1
-            WHEN '14' THEN 2
-            WHEN '30' THEN 3
-            WHEN '60' THEN 4
-            WHEN '90' THEN 5
-            ELSE 6
-          END
+        GROUP BY 1
+        ORDER BY MIN(c.days_supply)
       `),
 
       db.execute(sql`
