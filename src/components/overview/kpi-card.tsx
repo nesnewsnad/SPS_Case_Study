@@ -30,8 +30,8 @@ export const KpiCard = memo(function KpiCard({ label, value, delta }: KpiCardPro
               delta.value > 0 ? 'text-emerald-600' : 'text-amber-600'
             }`}
           >
-            {delta.value > 0 ? '+' : ''}
-            {delta.value.toFixed(1)}% {delta.label}
+            {delta.value > 0 ? '↑ ' : '↓ '}
+            {Math.abs(delta.value).toFixed(1)}% {delta.label}
           </p>
         )}
       </CardContent>

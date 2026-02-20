@@ -256,7 +256,7 @@ export default function OverviewPage() {
         <FilterBar view="overview" />
         <div className="space-y-6 p-6">
           <div>
-            <h1 className="text-2xl font-bold tracking-tight">Executive Overview</h1>
+            <h1 className="text-2xl font-semibold">Executive Overview</h1>
             <p className="text-muted-foreground">Pharmacy A — 2021 Claims Utilization Summary</p>
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -300,7 +300,7 @@ export default function OverviewPage() {
       <div className="space-y-6 p-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Executive Overview</h1>
+          <h1 className="text-2xl font-semibold">Executive Overview</h1>
           <p className="text-muted-foreground">Pharmacy A — 2021 Claims Utilization Summary</p>
         </div>
 
@@ -332,7 +332,8 @@ export default function OverviewPage() {
         <div className="grid gap-4 lg:grid-cols-7">
           <Card className="lg:col-span-4">
             <CardHeader>
-              <CardTitle>Monthly Claims Trend</CardTitle>
+              <CardTitle>Monthly Claims Volume</CardTitle>
+              <p className="text-sm text-muted-foreground">Incurred vs. Reversed</p>
             </CardHeader>
             <CardContent className="h-80">
               <MonthlyAreaChart
@@ -343,7 +344,7 @@ export default function OverviewPage() {
           </Card>
           <Card className="lg:col-span-3">
             <CardHeader>
-              <CardTitle>Claims by Formulary</CardTitle>
+              <CardTitle>Formulary Mix</CardTitle>
             </CardHeader>
             <CardContent className="h-80">
               <FormularyDonut

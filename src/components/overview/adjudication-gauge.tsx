@@ -55,8 +55,8 @@ export const AdjudicationGauge = memo(function AdjudicationGauge({
       </ResponsiveContainer>
       <p className="text-xs text-muted-foreground text-center max-w-[280px] -mt-2">
         {isFiltered
-          ? `${formatPercent(data.rate)} of claims in this view were adjudicated at point of sale.`
-          : '~25% adjudicated at point of sale — typical for LTC where claims are often adjudicated in batch after dispensing.'}
+          ? `In the current selection, ${formatPercent(100 - data.rate)} of claims were not adjudicated at point of sale.`
+          : '75% of claims were not adjudicated at point of sale — typical for long-term care pharmacies where claims are often processed retrospectively.'}
       </p>
     </div>
   );

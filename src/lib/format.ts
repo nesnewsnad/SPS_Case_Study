@@ -13,9 +13,9 @@ export function formatNumber(n: number): string {
   return n.toLocaleString('en-US');
 }
 
-/** 0.1081 → "10.8%" */
+/** 10.81 → "10.8%" (API returns rates as 0-100) */
 export function formatPercent(n: number): string {
-  return `${(n * 100).toFixed(1)}%`;
+  return `${n.toFixed(1)}%`;
 }
 
 /** 531988 → "532K", 1234567 → "1.2M" */

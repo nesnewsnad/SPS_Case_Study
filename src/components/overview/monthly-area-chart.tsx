@@ -12,7 +12,7 @@ import {
   ReferenceLine,
 } from 'recharts';
 import type { MonthlyDataPoint } from '@/lib/api-types';
-import { formatMonthLabel, formatNumber } from '@/lib/format';
+import { formatMonthLabel, formatMonthFull, formatNumber } from '@/lib/format';
 
 const COLORS = {
   incurred: '#0d9488',
@@ -37,7 +37,7 @@ function CustomTooltip({ active, payload, label }: { active?: boolean; payload?:
 
   return (
     <div className="rounded-md border bg-background px-3 py-2 shadow-md text-sm">
-      <p className="font-semibold mb-1">{formatMonthLabel(label)} {label.split('-')[0]}</p>
+      <p className="font-semibold mb-1">{formatMonthFull(label)}</p>
       <p className="font-mono" style={{ color: COLORS.incurred }}>
         Incurred: {formatNumber(incurred)}
       </p>
