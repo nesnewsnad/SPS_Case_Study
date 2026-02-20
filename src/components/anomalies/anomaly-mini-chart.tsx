@@ -88,11 +88,12 @@ export const AnomalyMiniChart = memo(function AnomalyMiniChart({ chart }: Props)
   return (
     <div className="space-y-2">
       <p className="text-muted-foreground text-sm font-medium">{chart.title}</p>
-      <div className={needsRotation ? 'h-64' : 'h-48'}>
+      <div className={needsRotation ? 'h-64' : 'h-48'} style={{ overflow: 'visible' }}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart
             data={formattedData}
             margin={{ top: 5, right: 5, left: 0, bottom: needsRotation ? 20 : 5 }}
+            style={{ overflow: 'visible' }}
           >
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" vertical={false} />
             <XAxis

@@ -167,5 +167,5 @@ function SectionLabel({ children }: { children: React.ReactNode }) {
 }
 
 function ChartContainer({ children }: { children: React.ReactNode }) {
-  return <div className="bg-muted/30 rounded-lg border p-3">{children}</div>;
+  return <div className="bg-muted/30 overflow-visible rounded-lg border p-3 pb-5">{children}</div>;
 }
