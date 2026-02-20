@@ -36,7 +36,9 @@ export default function RootLayout({
             <Sidebar />
             <Suspense>
               <FilterProvider>
-                <main className="dashboard-bg flex-1 overflow-y-auto">{children}</main>
+                <main className="dashboard-bg flex-1 overflow-y-auto pt-14 md:pt-0">
+                  {children}
+                </main>
                 <ChatSidebar />
               </FilterProvider>
             </Suspense>

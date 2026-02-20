@@ -55,11 +55,11 @@ const stages = [
 
 export function PipelineFlow() {
   return (
-    <div className="flex items-stretch gap-0">
+    <div className="flex snap-x snap-mandatory items-stretch gap-0 overflow-x-auto pb-2 md:snap-none md:overflow-x-visible md:pb-0">
       {stages.map((stage, i) => (
-        <div key={stage.number} className="flex items-stretch">
+        <div key={stage.number} className="flex shrink-0 snap-start items-stretch md:shrink">
           <div
-            className={`${stage.bg} ${stage.border} flex min-w-[180px] flex-1 flex-col rounded-lg border p-4 shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] transition-shadow duration-200 hover:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]`}
+            className={`${stage.bg} ${stage.border} flex min-w-[200px] flex-1 flex-col rounded-lg border p-4 shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] transition-shadow duration-200 hover:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)] md:min-w-[180px]`}
           >
             <div className="mb-2 flex items-center gap-2.5">
               <span

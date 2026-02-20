@@ -11,9 +11,11 @@ import {
   Building2,
   PanelLeftClose,
   PanelLeftOpen,
+  Menu,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
 const navigation = [
   {
@@ -42,18 +44,19 @@ const navigation = [
   },
 ];
 
-export function Sidebar() {
-  const pathname = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
-
+function SidebarContent({
+  collapsed,
+  setCollapsed,
+  pathname,
+  onNavigate,
+}: {
+  collapsed: boolean;
+  setCollapsed: (v: boolean) => void;
+  pathname: string;
+  onNavigate?: () => void;
+}) {
   return (
-    <aside
-      className={cn(
-        'flex flex-col border-r transition-all duration-300',
-        'bg-gradient-to-b from-white via-white to-slate-50/80',
-        collapsed ? 'w-16' : 'w-64',
-      )}
-    >
+    <>
       {/* Logo / Header */}
       <div className="border-b px-3 py-4">
         <div className={cn('flex items-center', collapsed ? 'justify-center' : 'gap-3 px-3')}>
@@ -70,7 +73,7 @@ export function Sidebar() {
             <TooltipTrigger asChild>
               <button
                 onClick={() => setCollapsed(!collapsed)}
-                className="text-muted-foreground hover:bg-muted hover:text-foreground shrink-0 rounded-md p-1.5 transition-colors"
+                className="text-muted-foreground hover:bg-muted hover:text-foreground hidden shrink-0 rounded-md p-1.5 transition-colors md:inline-flex"
                 aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
               >
                 {collapsed ? (
@@ -110,6 +113,7 @@ export function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onNavigate}
               className={cn(
                 'group flex items-center text-sm transition-all duration-200',
                 collapsed
@@ -165,6 +169,51 @@ export function Sidebar() {
           <p className="text-muted-foreground text-xs">AI Implementation Case Study</p>
         </div>
       )}
-    </aside>
+    </>
+  );
+}
+
+export function Sidebar() {
+  const pathname = usePathname();
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  return (
+    <>
+      {/* Mobile hamburger */}
+      <div className="fixed top-3 left-3 z-50 md:hidden">
+        <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
+          <SheetTrigger asChild>
+            <button
+              className="flex h-10 w-10 items-center justify-center rounded-lg border bg-white/90 shadow-sm backdrop-blur"
+              aria-label="Open navigation"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+          </SheetTrigger>
+          <SheetContent side="left" className="w-64 p-0">
+            <div className="flex h-full flex-col bg-gradient-to-b from-white via-white to-slate-50/80">
+              <SidebarContent
+                collapsed={false}
+                setCollapsed={() => {}}
+                pathname={pathname}
+                onNavigate={() => setMobileOpen(false)}
+              />
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Desktop sidebar */}
+      <aside
+        className={cn(
+          'hidden flex-col border-r transition-all duration-300 md:flex',
+          'bg-gradient-to-b from-white via-white to-slate-50/80',
+          collapsed ? 'w-16' : 'w-64',
+        )}
+      >
+        <SidebarContent collapsed={collapsed} setCollapsed={setCollapsed} pathname={pathname} />
+      </aside>
+    </>
   );
 }

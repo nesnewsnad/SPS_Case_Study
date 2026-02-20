@@ -84,7 +84,7 @@ function SearchableCombobox({
           aria-expanded={open}
           size="sm"
           className={cn(
-            'w-[180px] justify-between font-normal hover:border-teal-300',
+            'w-full justify-between font-normal hover:border-teal-300 md:w-[180px]',
             value
               ? 'border-teal-300 bg-teal-50/50 text-teal-900'
               : 'focus-visible:border-teal-400 focus-visible:ring-teal-400/20',
@@ -212,7 +212,7 @@ function FilterChips() {
   }
 
   return (
-    <div className="border-border/50 flex flex-wrap items-center gap-1.5 border-t px-6 py-2">
+    <div className="border-border/50 flex flex-wrap items-center gap-1.5 border-t px-4 py-2 md:px-6">
       {chips.map(({ key, label, display }) => (
         <Badge
           key={key}
@@ -252,7 +252,7 @@ export function FilterBar({ view }: FilterBarProps) {
   return (
     <div className="glass-header border-border/40 sticky top-0 z-10 border-b">
       {/* Dropdowns Row */}
-      <div className="flex flex-wrap items-center gap-2 px-6 py-3">
+      <div className="flex flex-wrap items-center gap-2 px-4 py-3 md:px-6">
         {/* Formulary */}
         <Select
           value={filters.formulary ?? '__all__'}
@@ -261,7 +261,10 @@ export function FilterBar({ view }: FilterBarProps) {
           }
         >
           <SelectTrigger
-            className={cn('w-[150px]', filters.formulary && 'border-teal-300 bg-teal-50/50')}
+            className={cn(
+              'w-[calc(50%-0.25rem)] md:w-[150px]',
+              filters.formulary && 'border-teal-300 bg-teal-50/50',
+            )}
             size="sm"
           >
             <SelectValue />
@@ -282,7 +285,10 @@ export function FilterBar({ view }: FilterBarProps) {
           }
         >
           <SelectTrigger
-            className={cn('w-[130px]', filters.state && 'border-teal-300 bg-teal-50/50')}
+            className={cn(
+              'w-[calc(50%-0.25rem)] md:w-[130px]',
+              filters.state && 'border-teal-300 bg-teal-50/50',
+            )}
             size="sm"
           >
             <SelectValue />
@@ -305,7 +311,7 @@ export function FilterBar({ view }: FilterBarProps) {
           }
         >
           <SelectTrigger
-            className={cn('w-[200px]', filters.mony && 'border-teal-300 bg-teal-50/50')}
+            className={cn('w-full md:w-[200px]', filters.mony && 'border-teal-300 bg-teal-50/50')}
             size="sm"
           >
             <SelectValue />
@@ -323,7 +329,7 @@ export function FilterBar({ view }: FilterBarProps) {
         {/* Explorer-only: Drug, Manufacturer, Group comboboxes */}
         {view === 'explorer' ? (
           <>
-            <div className="bg-border mx-1 h-6 w-px" />
+            <div className="bg-border mx-1 hidden h-6 w-px md:block" />
             <SearchableCombobox
               label="Drug"
               options={filterOptions.drugs}
@@ -354,7 +360,7 @@ export function FilterBar({ view }: FilterBarProps) {
         ) : null}
 
         {/* Flagged NDC Toggle — right-aligned */}
-        <div className="ml-auto flex items-center gap-2">
+        <div className="flex w-full items-center gap-2 md:ml-auto md:w-auto">
           <Switch
             checked={filters.includeFlaggedNdcs}
             onCheckedChange={toggleFlaggedNdcs}
