@@ -2,8 +2,6 @@
 
 ## Up Next
 
-- [ ] Verify SPEC-005 (14 ACs)
-- [ ] Verify SPEC-006 (14 ACs)
 - [ ] "Ask the Data" chat sidebar
 - [ ] Enterprise polish pass
 - [ ] Final QA + submit
@@ -54,3 +52,5 @@
 - [x] Write SPEC-006: AI Process page
 - [x] Discuss SPEC-006: lock 5 design decisions (pipeline viz, teal gradient, artifact styling, full scroll, amber limitations)
 - [x] Implement SPEC-006: AI Process page (pipeline flow, artifact evidence, toolkit, honest limitations — 7 files, 511 lines)
+- [x] Verify SPEC-005: PASS (14/14 ACs) + fix rotated chart label clipping
+- [x] Verify SPEC-006: PASS (14/14 ACs) — fully static server component, zero stubs
