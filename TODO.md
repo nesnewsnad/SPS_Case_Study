@@ -2,23 +2,19 @@
 
 ## Up Next
 
-- [ ] `/discuss` — lock specs for Executive Overview + Claims Explorer (first build scope)
+- [ ] Write SPEC-002: FilterContext + FilterBar + URL sync
+- [ ] Write SPEC-003: Executive Overview page
+- [ ] Write SPEC-004: Claims Explorer page
 - [ ] Vercel setup: link repo, create Postgres DB, pull env vars, push schema, seed data
-- [ ] Write SPEC-001: FilterContext + API filter contract
-- [ ] Write SPEC-002: Executive Overview (KPIs, hero chart, secondary charts, insight cards)
-- [ ] Write SPEC-003: Claims Explorer (table, distributions, mini trend)
 
 ## Friday (Core Dashboard)
 
-- [ ] FilterContext + URL-synced filter state
-- [ ] API route: /api/overview (KPIs, monthly aggregates, adjudication rates)
-- [ ] API route: /api/claims (filtered aggregations, top drugs, groups, manufacturers)
-- [ ] Executive Overview view (KPI cards, stacked area hero, donut, bars, gauge)
-- [ ] Reference lines on hero chart (Sept spike, Nov dip)
-- [ ] Claims Explorer view (filter bar, top drugs table, days supply, MONY donut)
-- [ ] Top 10 Groups + Top 10 Manufacturers charts on Explorer
-- [ ] Dynamic insight cards (filter-responsive, consultant-analyst tone)
+- [ ] Implement SPEC-001: API routes + shared types (parse-filters, build-where, 6 endpoints)
+- [ ] Implement SPEC-002: FilterContext + FilterBar + URL sync + chip pills
+- [ ] Implement SPEC-003: Executive Overview (KPIs, hero chart, donut, bars, gauge, insight cards)
+- [ ] Implement SPEC-004: Claims Explorer (mini trend, drugs table, days supply, MONY, groups, manufacturers)
 - [ ] Cross-filtering: click any chart element → updates all charts + KPIs
+- [ ] Reference lines on hero chart (Sept spike, Nov dip)
 
 ## Saturday (Deep Dive & Narrative)
 
@@ -58,3 +54,5 @@
 - [x] Create basic app shell (sidebar nav, 4 view placeholders)
 - [x] Push to remote (github.com/nesnewsnad/SPS_Case_Study)
 - [x] Brainstorm design — 12 decisions locked, SOTA validated, design doc written
+- [x] `/discuss` — 6 gray areas locked, horizontal slice architecture (DISCUSS-001)
+- [x] Write SPEC-001: API routes + shared TypeScript types (6 endpoints, unified filters)
