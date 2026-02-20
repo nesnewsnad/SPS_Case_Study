@@ -1,43 +1,49 @@
 # TODO — SPS Health Case Study
 
-## Thursday Night (Scaffold & Foundation)
+## Up Next
 
-- [ ] Scaffold Next.js 14 + Tailwind + TypeScript
-- [ ] Set up Drizzle ORM + database schema (entities, claims, drug_info)
-- [ ] Install and configure shadcn/ui
-- [ ] Write seed script (CSV → Postgres)
-- [ ] Deploy skeleton to Vercel with Postgres
-- [ ] Create basic app shell (sidebar nav, 4 view placeholders)
-- [ ] Push — Framework can pull and start building
+- [ ] `/discuss` — lock specs for Executive Overview + Claims Explorer (first build scope)
+- [ ] Vercel setup: link repo, create Postgres DB, pull env vars, push schema, seed data
+- [ ] Write SPEC-001: FilterContext + API filter contract
+- [ ] Write SPEC-002: Executive Overview (KPIs, hero chart, secondary charts, insight cards)
+- [ ] Write SPEC-003: Claims Explorer (table, distributions, mini trend)
 
 ## Friday (Core Dashboard)
 
+- [ ] FilterContext + URL-synced filter state
 - [ ] API route: /api/overview (KPIs, monthly aggregates, adjudication rates)
-- [ ] API route: /api/claims (filtered aggregations)
-- [ ] API route: /api/drugs (top drugs, reversal rates)
-- [ ] Executive Overview view (KPI cards, monthly trend chart, breakdowns)
-- [ ] Claims Explorer view (filter bar + cross-filtering charts)
-- [ ] Anomaly annotations on monthly trend chart (Sept spike, Nov dip)
+- [ ] API route: /api/claims (filtered aggregations, top drugs, groups, manufacturers)
+- [ ] Executive Overview view (KPI cards, stacked area hero, donut, bars, gauge)
+- [ ] Reference lines on hero chart (Sept spike, Nov dip)
+- [ ] Claims Explorer view (filter bar, top drugs table, days supply, MONY donut)
+- [ ] Top 10 Groups + Top 10 Manufacturers charts on Explorer
+- [ ] Dynamic insight cards (filter-responsive, consultant-analyst tone)
+- [ ] Cross-filtering: click any chart element → updates all charts + KPIs
 
 ## Saturday (Deep Dive & Narrative)
 
-- [ ] API route: /api/anomalies (pre-computed breakdowns)
-- [ ] Anomalies & Recommendations view (deep-dive panels)
-- [ ] Narrative layer — insight callouts on all charts
-- [ ] Follow-up questions section (client, internal, data requests)
-- [ ] Dashboard extension mock-up (placeholder panels + written explanations)
-- [ ] Cross-filter polish (all filters affect all charts)
+- [ ] API route: /api/anomalies (pre-computed breakdowns per anomaly)
+- [ ] Anomalies page: 3 investigation panels (Sept spike, Nov dip, KS reversals)
+- [ ] Mini charts within each investigation panel
+- [ ] Follow-up questions (3 tabs: client, internal, data requests)
+- [ ] Extension mock-up (3 placeholder panels: pricing, demographics, formulary tiers)
+- [ ] Narrative polish — insight cards on all views, 100% retail callout
+- [ ] Loading skeletons + empty/filtered-out states
 
 ## Sunday (AI Process & Polish)
 
-- [ ] AI Process page (tools, prompts, iterations, limitations)
-- [ ] Design polish pass (colors, spacing, typography, consistency)
-- [ ] Edge cases (empty filter states, loading states, error states)
-- [ ] Entity/upload concept page (shows multi-entity pattern)
+- [ ] AI Process: tools & architecture cards
+- [ ] AI Process: workflow methodology section (dual-machine, CLAUDE.md, session mgmt)
+- [ ] AI Process: build journey timeline (expandable phases)
+- [ ] AI Process: honest limitations section
+- [ ] Enterprise polish pass (colors, spacing, typography, hover states, transitions)
+- [ ] Sticky filter bar + chip pills across all views
+- [ ] Entity selector in sidebar (locked to Pharmacy A, shows multi-entity pattern)
 
 ## Monday (Ship)
 
 - [ ] Final QA — all views, all filters, all narratives
+- [ ] Brief compliance audit (every bullet covered)
 - [ ] Browser testing (Chrome, Safari, Firefox)
 - [ ] Final Vercel deploy
 - [ ] Write submission email/message
@@ -45,4 +51,10 @@
 
 ## Done
 
-(none yet)
+- [x] Scaffold Next.js 14 + Tailwind + TypeScript
+- [x] Set up Drizzle ORM + database schema (entities, claims, drug_info)
+- [x] Install and configure shadcn/ui
+- [x] Write seed script (CSV → Postgres)
+- [x] Create basic app shell (sidebar nav, 4 view placeholders)
+- [x] Push to remote (github.com/nesnewsnad/SPS_Case_Study)
+- [x] Brainstorm design — 12 decisions locked, SOTA validated, design doc written
