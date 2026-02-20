@@ -7,7 +7,7 @@ import { Limitations } from '@/components/process/limitations';
 
 export default function ProcessPage() {
   return (
-    <div className="space-y-10 p-6">
+    <div className="stagger-children space-y-8 p-6">
       {/* Page Header */}
       <div>
         <h1 className="text-2xl font-semibold tracking-tight">AI Process</h1>
@@ -38,7 +38,7 @@ export default function ProcessPage() {
         </div>
 
         {/* Pipeline quote */}
-        <p className="text-muted-foreground border-l-2 border-teal-300 pl-4 text-sm italic">
+        <p className="text-muted-foreground border-l-4 border-teal-300 pl-4 text-sm italic">
           Every feature followed this pipeline. No exceptions. The discipline is the point &mdash;
           it&rsquo;s what makes AI output reliable instead of lucky.
         </p>

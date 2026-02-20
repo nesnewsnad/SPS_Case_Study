@@ -21,25 +21,41 @@ import type { OverviewResponse } from '@/lib/api-types';
 
 // Dynamic imports — no SSR for chart components (Recharts uses browser APIs)
 const MonthlyAreaChart = dynamic(
-  () => import('@/components/overview/monthly-area-chart').then(m => ({ default: m.MonthlyAreaChart })),
+  () =>
+    import('@/components/overview/monthly-area-chart').then((m) => ({
+      default: m.MonthlyAreaChart,
+    })),
   { ssr: false, loading: () => <Skeleton className="h-full w-full" /> },
 );
 const FormularyDonut = dynamic(
-  () => import('@/components/overview/formulary-donut').then(m => ({ default: m.FormularyDonut })),
+  () =>
+    import('@/components/overview/formulary-donut').then((m) => ({ default: m.FormularyDonut })),
   { ssr: false, loading: () => <Skeleton className="h-full w-full" /> },
 );
 const StateBars = dynamic(
-  () => import('@/components/overview/state-bars').then(m => ({ default: m.StateBars })),
+  () => import('@/components/overview/state-bars').then((m) => ({ default: m.StateBars })),
   { ssr: false, loading: () => <Skeleton className="h-full w-full" /> },
 );
 const AdjudicationGauge = dynamic(
-  () => import('@/components/overview/adjudication-gauge').then(m => ({ default: m.AdjudicationGauge })),
+  () =>
+    import('@/components/overview/adjudication-gauge').then((m) => ({
+      default: m.AdjudicationGauge,
+    })),
   { ssr: false, loading: () => <Skeleton className="h-full w-full" /> },
 );
 
 // --- Share-of-total computation ---
 
-type FilterKey = 'state' | 'formulary' | 'mony' | 'dateStart' | 'groupId' | 'manufacturer' | 'drug' | 'ndc' | 'dateEnd';
+type FilterKey =
+  | 'state'
+  | 'formulary'
+  | 'mony'
+  | 'dateStart'
+  | 'groupId'
+  | 'manufacturer'
+  | 'drug'
+  | 'ndc'
+  | 'dateEnd';
 
 function shareLabel(filtered: number, unfiltered: number, suffix: string): string | undefined {
   if (unfiltered === 0) return undefined;
@@ -124,7 +140,9 @@ export default function OverviewPage() {
         }
       });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [queryString]);
 
   // Determine which filter keys are active (for delta computation)
@@ -203,9 +221,9 @@ export default function OverviewPage() {
     return (
       <>
         <FilterBar view="overview" />
-        <div className="flex flex-col items-center justify-center p-12 space-y-4">
+        <div className="flex flex-col items-center justify-center space-y-4 p-12">
           <p className="text-destructive font-medium">Failed to load overview data</p>
-          <p className="text-sm text-muted-foreground">{error}</p>
+          <p className="text-muted-foreground text-sm">{error}</p>
           <Button variant="outline" onClick={() => window.location.reload()}>
             Retry
           </Button>
@@ -225,7 +243,9 @@ export default function OverviewPage() {
             <p className="text-muted-foreground">Pharmacy A — 2021 Claims Utilization Summary</p>
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            {Array.from({ length: 4 }).map((_, i) => <KpiSkeleton key={i} />)}
+            {Array.from({ length: 4 }).map((_, i) => (
+              <KpiSkeleton key={i} />
+            ))}
           </div>
           <div className="grid gap-4 lg:grid-cols-7">
             <ChartSkeleton className="lg:col-span-4" />
@@ -245,9 +265,9 @@ export default function OverviewPage() {
     return (
       <>
         <FilterBar view="overview" />
-        <div className="flex flex-col items-center justify-center p-12 space-y-4">
+        <div className="flex flex-col items-center justify-center space-y-4 p-12">
           <p className="text-lg font-medium">No data matches current filters</p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Try removing some filters or clearing all to see the full dataset.
           </p>
           <Button variant="outline" onClick={clearAll}>
@@ -262,7 +282,7 @@ export default function OverviewPage() {
   return (
     <>
       <FilterBar view="overview" />
-      <div className="space-y-6 p-6">
+      <div className="stagger-children space-y-6 p-6">
         {/* Header */}
         <div>
           <h1 className="text-2xl font-semibold">Executive Overview</h1>
@@ -298,7 +318,7 @@ export default function OverviewPage() {
           <Card className="lg:col-span-4">
             <CardHeader>
               <CardTitle>Monthly Claims Volume</CardTitle>
-              <p className="text-sm text-muted-foreground">Incurred vs. Reversed</p>
+              <p className="text-muted-foreground text-sm">Incurred vs. Reversed</p>
             </CardHeader>
             <CardContent className="h-80">
               <MonthlyAreaChart
@@ -312,10 +332,7 @@ export default function OverviewPage() {
               <CardTitle>Formulary Mix</CardTitle>
             </CardHeader>
             <CardContent className="h-80">
-              <FormularyDonut
-                data={data.formulary}
-                onSliceClick={handleFormularyClick}
-              />
+              <FormularyDonut data={data.formulary} onSliceClick={handleFormularyClick} />
             </CardContent>
           </Card>
         </div>
@@ -339,16 +356,20 @@ export default function OverviewPage() {
               <CardTitle>Adjudication Rate</CardTitle>
             </CardHeader>
             <CardContent className="h-64">
-              <AdjudicationGauge
-                data={data.adjudication}
-                isFiltered={isFiltered}
-              />
+              <AdjudicationGauge data={data.adjudication} isFiltered={isFiltered} />
             </CardContent>
           </Card>
         </div>
 
         {/* Insight cards */}
-        <InsightCards insights={insights} />
+        {insights.length > 0 && (
+          <section className="space-y-3 border-t pt-6">
+            <h2 className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+              Automated Insights
+            </h2>
+            <InsightCards insights={insights} />
+          </section>
+        )}
       </div>
     </>
   );

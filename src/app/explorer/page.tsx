@@ -248,7 +248,7 @@ export default function ExplorerPage() {
   return (
     <>
       <FilterBar view="explorer" />
-      <div className="space-y-6 p-6">
+      <div className="stagger-children space-y-6 p-6">
         {/* Header */}
         <div>
           <h1 className="text-2xl font-semibold">Claims Explorer</h1>
@@ -328,7 +328,14 @@ export default function ExplorerPage() {
         </div>
 
         {/* Insight cards */}
-        <InsightCards insights={insights} />
+        {insights.length > 0 && (
+          <section className="space-y-3 border-t pt-6">
+            <h2 className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+              Automated Insights
+            </h2>
+            <InsightCards insights={insights} />
+          </section>
+        )}
       </div>
     </>
   );

@@ -147,7 +147,7 @@ export default function AnomaliesPage() {
 
   // --- Loaded state ---
   return (
-    <div className="space-y-8 p-6">
+    <div className="stagger-children space-y-6 p-6">
       {/* Header */}
       <div>
         <h1 className="text-2xl font-semibold">Anomalies &amp; Recommendations</h1>
@@ -164,10 +164,14 @@ export default function AnomaliesPage() {
       </div>
 
       {/* Section 2: Follow-Up Questions */}
-      <FollowUpQuestions />
+      <section className="border-t pt-6">
+        <FollowUpQuestions />
+      </section>
 
       {/* Section 3: Dashboard Extension Mock-Ups */}
-      <ExtensionMockups />
+      <section className="border-t pt-6">
+        <ExtensionMockups />
+      </section>
     </div>
   );
 }

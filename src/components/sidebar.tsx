@@ -40,8 +40,8 @@ export function Sidebar() {
       {/* Logo / Header */}
       <div className="border-b px-6 py-5">
         <div className="flex items-center gap-3">
-          <div className="bg-primary flex h-9 w-9 items-center justify-center rounded-lg">
-            <Building2 className="text-primary-foreground h-5 w-5" />
+          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-teal-600">
+            <Building2 className="h-5 w-5 text-white" />
           </div>
           <div>
             <h1 className="text-sm font-semibold tracking-tight">SPS Health</h1>
@@ -70,18 +70,16 @@ export function Sidebar() {
               key={item.href}
               href={item.href}
               className={cn(
-                'group flex items-start gap-3 rounded-lg px-3 py-2.5 text-sm transition-colors',
+                'group flex items-start gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200',
                 isActive
-                  ? 'bg-primary text-primary-foreground'
+                  ? 'bg-teal-50 text-teal-900 shadow-sm'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground',
               )}
             >
               <item.icon
                 className={cn(
                   'mt-0.5 h-4 w-4 shrink-0',
-                  isActive
-                    ? 'text-primary-foreground'
-                    : 'text-muted-foreground group-hover:text-foreground',
+                  isActive ? 'text-teal-600' : 'text-muted-foreground group-hover:text-foreground',
                 )}
               />
               <div>
@@ -89,7 +87,7 @@ export function Sidebar() {
                 <p
                   className={cn(
                     'mt-0.5 text-xs leading-tight',
-                    isActive ? 'text-primary-foreground/70' : 'text-muted-foreground',
+                    isActive ? 'text-teal-600/70' : 'text-muted-foreground',
                   )}
                 >
                   {item.description}

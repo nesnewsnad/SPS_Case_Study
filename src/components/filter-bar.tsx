@@ -207,7 +207,7 @@ function FilterChips() {
   }
 
   return (
-    <div className="flex flex-wrap items-center gap-1.5 border-t border-slate-100 px-6 py-2">
+    <div className="border-border/50 flex flex-wrap items-center gap-1.5 border-t px-6 py-2">
       {chips.map(({ key, label, display }) => (
         <Badge key={key} variant="secondary" className="gap-1 pr-1 transition-all duration-150">
           <span className="text-muted-foreground text-xs">{label}:</span>
@@ -241,7 +241,7 @@ export function FilterBar({ view }: FilterBarProps) {
   const filterOptions = useFilterOptions();
 
   return (
-    <div className="sticky top-0 z-10 border-b border-slate-200 bg-white">
+    <div className="border-border bg-background sticky top-0 z-10 border-b">
       {/* Dropdowns Row */}
       <div className="flex flex-wrap items-center gap-2 px-6 py-3">
         {/* Formulary */}
