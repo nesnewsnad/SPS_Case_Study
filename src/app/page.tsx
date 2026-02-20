@@ -37,50 +37,14 @@ const AdjudicationGauge = dynamic(
   { ssr: false, loading: () => <Skeleton className="h-full w-full" /> },
 );
 
-// --- Delta computation ---
-
-const DIMENSION_COUNTS: Record<string, number> = {
-  state: 5,
-  formulary: 3,
-  mony: 4,
-  month: 12,
-};
+// --- Share-of-total computation ---
 
 type FilterKey = 'state' | 'formulary' | 'mony' | 'dateStart' | 'groupId' | 'manufacturer' | 'drug' | 'ndc' | 'dateEnd';
 
-function computeDelta(
-  filtered: number,
-  unfiltered: number,
-  opts: { isRate?: boolean; isAdditive?: boolean },
-  activeKeys: FilterKey[],
-): { value: number; label: string } | undefined {
-  // No delta when unfiltered
-  if (activeKeys.length === 0) return undefined;
+function shareLabel(filtered: number, unfiltered: number, suffix: string): string | undefined {
   if (unfiltered === 0) return undefined;
-
-  if (opts.isRate) {
-    // Rate metrics: compare directly (percentage point diff expressed as %)
-    const diff = ((filtered - unfiltered) / unfiltered) * 100;
-    return { value: diff, label: 'vs overall' };
-  }
-
-  // Additive count metrics (claims): compare against unfiltered / dimensionCount
-  if (opts.isAdditive !== false) {
-    const singleDim = activeKeys.length === 1 ? activeKeys[0] : null;
-    const dimCount = singleDim && singleDim in DIMENSION_COUNTS
-      ? DIMENSION_COUNTS[singleDim]
-      : null;
-
-    if (dimCount) {
-      const expected = unfiltered / dimCount;
-      const diff = ((filtered - expected) / expected) * 100;
-      return { value: diff, label: 'vs avg' };
-    }
-  }
-
-  // Non-additive metrics (unique drugs) or multi-dimension → compare against total
-  const diff = ((filtered - unfiltered) / unfiltered) * 100;
-  return { value: diff, label: 'vs total' };
+  const pct = (filtered / unfiltered) * 100;
+  return `${pct.toFixed(1)}% of ${suffix}`;
 }
 
 // --- Skeleton sections ---
@@ -177,17 +141,18 @@ export default function OverviewPage() {
     return keys;
   }, [filters]);
 
-  // Compute KPI deltas
-  const kpiDeltas = useMemo(() => {
-    if (!data) return { totalClaims: undefined, netClaims: undefined, reversalRate: undefined, uniqueDrugs: undefined };
+  // Compute KPI subtitles (share of total when filtered)
+  const isFiltered = activeFilterKeys.length > 0;
+  const kpiSubtitles = useMemo(() => {
+    if (!data || !isFiltered) return {};
     const { kpis, unfilteredKpis } = data;
     return {
-      totalClaims: computeDelta(kpis.totalClaims, unfilteredKpis.totalClaims, {}, activeFilterKeys),
-      netClaims: computeDelta(kpis.netClaims, unfilteredKpis.netClaims, {}, activeFilterKeys),
-      reversalRate: computeDelta(kpis.reversalRate, unfilteredKpis.reversalRate, { isRate: true }, activeFilterKeys),
-      uniqueDrugs: computeDelta(kpis.uniqueDrugs, unfilteredKpis.uniqueDrugs, { isAdditive: false }, activeFilterKeys),
+      totalClaims: shareLabel(kpis.totalClaims, unfilteredKpis.totalClaims, 'total'),
+      netClaims: shareLabel(kpis.netClaims, unfilteredKpis.netClaims, 'total'),
+      reversalRate: `overall: ${formatPercent(unfilteredKpis.reversalRate)}`,
+      uniqueDrugs: shareLabel(kpis.uniqueDrugs, unfilteredKpis.uniqueDrugs, 'formulary'),
     };
-  }, [data, activeFilterKeys]);
+  }, [data, isFiltered]);
 
   // Insight cards
   const insights = useMemo(() => {
@@ -232,8 +197,6 @@ export default function OverviewPage() {
     },
     [filters.state, setFilter, removeFilter],
   );
-
-  const isFiltered = activeFilterKeys.length > 0;
 
   // --- Error state ---
   if (error) {
@@ -311,22 +274,22 @@ export default function OverviewPage() {
           <KpiCard
             label="Total Claims"
             value={formatNumber(data.kpis.totalClaims)}
-            delta={kpiDeltas.totalClaims}
+            subtitle={kpiSubtitles.totalClaims}
           />
           <KpiCard
             label="Net Claims"
             value={abbreviateNumber(data.kpis.netClaims)}
-            delta={kpiDeltas.netClaims}
+            subtitle={kpiSubtitles.netClaims}
           />
           <KpiCard
             label="Reversal Rate"
             value={formatPercent(data.kpis.reversalRate)}
-            delta={kpiDeltas.reversalRate}
+            subtitle={kpiSubtitles.reversalRate}
           />
           <KpiCard
             label="Unique Drugs"
             value={formatNumber(data.kpis.uniqueDrugs)}
-            delta={kpiDeltas.uniqueDrugs}
+            subtitle={kpiSubtitles.uniqueDrugs}
           />
         </div>
 
