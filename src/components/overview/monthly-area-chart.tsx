@@ -12,7 +12,7 @@ import {
   ReferenceLine,
 } from 'recharts';
 import type { MonthlyDataPoint } from '@/lib/api-types';
-import { formatMonthLabel, formatMonthFull, formatNumber } from '@/lib/format';
+import { formatMonthLabel, formatMonthFull, formatNumber, formatAxisTick } from '@/lib/format';
 
 const COLORS = {
   incurred: '#0d9488',
@@ -203,7 +203,7 @@ export const MonthlyAreaChart = memo(function MonthlyAreaChart({
           className="text-muted-foreground"
         />
         <YAxis
-          tickFormatter={(v: number) => `${Math.round(v / 1000)}K`}
+          tickFormatter={formatAxisTick}
           tick={{ fontSize: 12 }}
           className="text-muted-foreground"
           width={45}

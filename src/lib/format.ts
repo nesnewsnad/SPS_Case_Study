@@ -1,11 +1,31 @@
 const MONTH_LABELS = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
 ] as const;
 
 const MONTH_FULL = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December',
 ] as const;
 
 /** 531988 → "531,988" */
@@ -49,6 +69,14 @@ export function fillAllMonths(
     const month = `${year}-${String(i + 1).padStart(2, '0')}`;
     return byMonth.get(month) ?? { month, incurred: 0, reversed: 0 };
   });
+}
+
+/** Smart axis tick: 53000→"53K", 800→"800", 1200000→"1.2M" */
+export function formatAxisTick(v: number): string {
+  const abs = Math.abs(v);
+  if (abs >= 1_000_000) return `${(v / 1_000_000).toFixed(1)}M`;
+  if (abs >= 1_000) return `${Math.round(v / 1_000)}K`;
+  return v.toString();
 }
 
 /** "2021-09" → "2021-09-30" */

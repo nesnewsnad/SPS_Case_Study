@@ -3,7 +3,7 @@
 import { memo, useCallback } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import type { ManufacturerVolume } from '@/lib/api-types';
-import { formatNumber } from '@/lib/format';
+import { formatNumber, formatAxisTick } from '@/lib/format';
 
 const BAR_COLOR = '#8b5cf6'; // violet
 
@@ -89,7 +89,7 @@ export const TopManufacturersChart = memo(function TopManufacturersChart({
         <CartesianGrid strokeDasharray="3 3" className="stroke-muted" horizontal={false} />
         <XAxis
           type="number"
-          tickFormatter={(v: number) => `${Math.round(v / 1000)}K`}
+          tickFormatter={formatAxisTick}
           tick={{ fontSize: 11 }}
           className="text-muted-foreground"
         />

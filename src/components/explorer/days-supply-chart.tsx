@@ -12,7 +12,7 @@ import {
   Cell,
 } from 'recharts';
 import type { DaysSupplyBin } from '@/lib/api-types';
-import { formatNumber } from '@/lib/format';
+import { formatNumber, formatAxisTick } from '@/lib/format';
 
 const BAR_COLOR = '#0d9488';
 const ACTIVE_COLOR = '#99f6e4'; // teal-200
@@ -61,7 +61,7 @@ export const DaysSupplyChart = memo(function DaysSupplyChart({ data }: DaysSuppl
           tickFormatter={(v: string) => `${v}d`}
         />
         <YAxis
-          tickFormatter={(v: number) => `${Math.round(v / 1000)}K`}
+          tickFormatter={formatAxisTick}
           tick={{ fontSize: 11 }}
           className="text-muted-foreground"
           width={40}

@@ -12,7 +12,7 @@ import {
   Cell,
 } from 'recharts';
 import type { StateBreakdown } from '@/lib/api-types';
-import { formatNumber, formatPercent } from '@/lib/format';
+import { formatNumber, formatPercent, formatAxisTick } from '@/lib/format';
 
 interface StateBarsProps {
   data: StateBreakdown[];
@@ -77,7 +77,7 @@ export const StateBars = memo(function StateBars({
         <CartesianGrid strokeDasharray="3 3" className="stroke-muted" horizontal={false} />
         <XAxis
           type="number"
-          tickFormatter={(v: number) => `${Math.round(v / 1000)}K`}
+          tickFormatter={formatAxisTick}
           tick={{ fontSize: 12 }}
           className="text-muted-foreground"
         />
