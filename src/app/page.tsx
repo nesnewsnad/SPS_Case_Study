@@ -370,6 +370,7 @@ export default function OverviewPage() {
               <MonthlyAreaChart
                 data={fillAllMonths(data.monthly)}
                 onMonthClick={handleMonthClick}
+                showFlaggedAnnotation={filters.includeFlaggedNdcs}
               />
             </CardContent>
           </Card>
