@@ -16,8 +16,45 @@ import {
   abbreviateNumber,
   getLastDayOfMonth,
   fillAllMonths,
+  formatMonthFull,
 } from '@/lib/format';
 import type { OverviewResponse } from '@/lib/api-types';
+
+/** Build a contextual subtitle fragment from active filters. */
+function filterContext(filters: {
+  state?: string;
+  formulary?: string;
+  mony?: string;
+  drug?: string;
+  manufacturer?: string;
+  groupId?: string;
+  dateStart?: string;
+  dateEnd?: string;
+}): string {
+  const parts: string[] = [];
+  if (filters.state) parts.push(String(filters.state));
+  if (filters.formulary) parts.push(String(filters.formulary));
+  if (filters.mony) {
+    const labels: Record<string, string> = {
+      M: 'Brand Multi',
+      O: 'Generic Multi',
+      N: 'Brand Single',
+      Y: 'Generic Single',
+    };
+    parts.push(labels[String(filters.mony)] ?? String(filters.mony));
+  }
+  if (filters.drug) parts.push(String(filters.drug));
+  if (filters.manufacturer) parts.push(String(filters.manufacturer));
+  if (filters.groupId) parts.push(`Group ${filters.groupId}`);
+  if (filters.dateStart && filters.dateEnd) {
+    parts.push(
+      `${formatMonthFull(String(filters.dateStart).slice(0, 7))} – ${formatMonthFull(String(filters.dateEnd).slice(0, 7))}`,
+    );
+  } else if (filters.dateStart) {
+    parts.push(`From ${formatMonthFull(String(filters.dateStart).slice(0, 7))}`);
+  }
+  return parts.length ? parts.join(' · ') : '';
+}
 
 // Dynamic imports — no SSR for chart components (Recharts uses browser APIs)
 const MonthlyAreaChart = dynamic(
@@ -172,6 +209,9 @@ export default function OverviewPage() {
     };
   }, [data, isFiltered]);
 
+  // Filter context string for dynamic titles
+  const ctx = useMemo(() => filterContext(filters), [filters]);
+
   // Insight cards
   const insights = useMemo(() => {
     if (!data) return [];
@@ -290,7 +330,7 @@ export default function OverviewPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Executive Overview</h1>
           <p className="text-muted-foreground text-sm">
-            Pharmacy A — 2021 Claims Utilization Summary
+            {ctx ? `Pharmacy A — ${ctx}` : 'Pharmacy A — 2021 Claims Utilization Summary'}
           </p>
           <div className="mt-2 h-0.5 w-12 rounded-full bg-gradient-to-r from-teal-400 to-teal-600" />
         </div>
@@ -323,7 +363,7 @@ export default function OverviewPage() {
         <div className="grid gap-4 lg:grid-cols-7">
           <Card className="lg:col-span-4">
             <CardHeader>
-              <CardTitle>Monthly Claims Volume</CardTitle>
+              <CardTitle>{ctx ? `Monthly Volume — ${ctx}` : 'Monthly Claims Volume'}</CardTitle>
               <p className="text-muted-foreground text-sm">Incurred vs. Reversed</p>
             </CardHeader>
             <CardContent className="h-80">
@@ -335,7 +375,7 @@ export default function OverviewPage() {
           </Card>
           <Card className="lg:col-span-3">
             <CardHeader>
-              <CardTitle>Formulary Mix</CardTitle>
+              <CardTitle>{ctx ? `Formulary Mix — ${ctx}` : 'Formulary Mix'}</CardTitle>
             </CardHeader>
             <CardContent className="h-80">
               <FormularyDonut data={data.formulary} onSliceClick={handleFormularyClick} />
@@ -347,7 +387,7 @@ export default function OverviewPage() {
         <div className="grid gap-4 lg:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>Claims by State</CardTitle>
+              <CardTitle>{ctx ? `Claims by State — ${ctx}` : 'Claims by State'}</CardTitle>
             </CardHeader>
             <CardContent className="h-64">
               <StateBars
@@ -359,7 +399,7 @@ export default function OverviewPage() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Adjudication Rate</CardTitle>
+              <CardTitle>{ctx ? `Adjudication Rate — ${ctx}` : 'Adjudication Rate'}</CardTitle>
             </CardHeader>
             <CardContent className="h-64">
               <AdjudicationGauge data={data.adjudication} isFiltered={isFiltered} />

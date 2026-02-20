@@ -21,6 +21,13 @@ export const metadata: Metadata = {
   title: 'SPS Health — Pharmacy A Claims Analysis',
   description:
     'Interactive claims analytics dashboard for SPS Health RFP evaluation — Pharmacy A 2021 utilization data',
+  icons: { icon: '/favicon.svg' },
+  openGraph: {
+    title: 'SPS Health — Pharmacy A Claims Analysis',
+    description:
+      'Interactive claims analytics dashboard analyzing 596K pharmacy claims across 5 states, 189 groups, and 5,640 drugs.',
+    type: 'website',
+  },
 };
 
 export default function RootLayout({

@@ -9,8 +9,44 @@ import { FilterBar } from '@/components/filter-bar';
 import { useFilters } from '@/contexts/filter-context';
 import { InsightCards } from '@/components/overview/insight-cards';
 import { generateInsights } from '@/lib/generate-insights';
-import { fillAllMonths, getLastDayOfMonth } from '@/lib/format';
+import { fillAllMonths, getLastDayOfMonth, formatMonthFull } from '@/lib/format';
 import type { ClaimsResponse } from '@/lib/api-types';
+
+/** Build a contextual subtitle fragment from active filters. */
+function filterContext(filters: {
+  state?: string;
+  formulary?: string;
+  mony?: string;
+  drug?: string;
+  manufacturer?: string;
+  groupId?: string;
+  dateStart?: string;
+  dateEnd?: string;
+}): string {
+  const parts: string[] = [];
+  if (filters.state) parts.push(String(filters.state));
+  if (filters.formulary) parts.push(String(filters.formulary));
+  if (filters.mony) {
+    const labels: Record<string, string> = {
+      M: 'Brand Multi',
+      O: 'Generic Multi',
+      N: 'Brand Single',
+      Y: 'Generic Single',
+    };
+    parts.push(labels[String(filters.mony)] ?? String(filters.mony));
+  }
+  if (filters.drug) parts.push(String(filters.drug));
+  if (filters.manufacturer) parts.push(String(filters.manufacturer));
+  if (filters.groupId) parts.push(`Group ${filters.groupId}`);
+  if (filters.dateStart && filters.dateEnd) {
+    parts.push(
+      `${formatMonthFull(String(filters.dateStart).slice(0, 7))} – ${formatMonthFull(String(filters.dateEnd).slice(0, 7))}`,
+    );
+  } else if (filters.dateStart) {
+    parts.push(`From ${formatMonthFull(String(filters.dateStart).slice(0, 7))}`);
+  }
+  return parts.length ? parts.join(' · ') : '';
+}
 
 // Dynamic imports — no SSR for chart components (Recharts uses browser APIs)
 const MiniTrend = dynamic(
@@ -128,6 +164,9 @@ export default function ExplorerPage() {
       cancelled = true;
     };
   }, [queryString]);
+
+  // Filter context string for dynamic titles
+  const ctx = useMemo(() => filterContext(filters), [filters]);
 
   // Insight cards
   const insights = useMemo(() => {
@@ -254,7 +293,9 @@ export default function ExplorerPage() {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Claims Explorer</h1>
           <p className="text-muted-foreground text-sm">
-            Pharmacy A — Drug-Level Drill-Down &amp; Distribution Analysis
+            {ctx
+              ? `Pharmacy A — ${ctx}`
+              : 'Pharmacy A — Drug-Level Drill-Down & Distribution Analysis'}
           </p>
           <div className="mt-2 h-0.5 w-12 rounded-full bg-gradient-to-r from-teal-400 to-teal-600" />
         </div>
@@ -273,7 +314,7 @@ export default function ExplorerPage() {
         <div className="grid gap-4 lg:grid-cols-5">
           <Card className="lg:col-span-3">
             <CardHeader className="flex flex-row items-center justify-between space-y-0">
-              <CardTitle>Top Drugs by Volume</CardTitle>
+              <CardTitle>{ctx ? `Top Drugs — ${ctx}` : 'Top Drugs by Volume'}</CardTitle>
             </CardHeader>
             <CardContent>
               <DrugsTable
@@ -289,7 +330,7 @@ export default function ExplorerPage() {
           <div className="space-y-4 lg:col-span-2">
             <Card>
               <CardHeader>
-                <CardTitle>Days Supply Distribution</CardTitle>
+                <CardTitle>{ctx ? `Days Supply — ${ctx}` : 'Days Supply Distribution'}</CardTitle>
               </CardHeader>
               <CardContent className="h-64">
                 <DaysSupplyChart data={data.daysSupply} />
@@ -310,7 +351,7 @@ export default function ExplorerPage() {
         <div className="grid gap-4 lg:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>Group Volume</CardTitle>
+              <CardTitle>{ctx ? `Groups — ${ctx}` : 'Group Volume'}</CardTitle>
             </CardHeader>
             <CardContent className="h-72">
               <TopGroupsChart data={data.topGroups} onBarClick={handleGroupClick} />
@@ -318,7 +359,7 @@ export default function ExplorerPage() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Manufacturer Volume</CardTitle>
+              <CardTitle>{ctx ? `Manufacturers — ${ctx}` : 'Manufacturer Volume'}</CardTitle>
             </CardHeader>
             <CardContent className="h-72">
               <TopManufacturersChart

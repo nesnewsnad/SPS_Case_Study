@@ -57,7 +57,7 @@ export function ChatSidebar() {
   // Stable transport — dynamic filter data is sent per-request via sendMessage options
   const transport = useMemo(() => new DefaultChatTransport({ api: '/api/chat' }), []);
 
-  const { messages, sendMessage, status } = useChat({ transport });
+  const { messages, sendMessage, status, error: chatError } = useChat({ transport });
 
   const isBusy = status === 'submitted' || status === 'streaming';
 
@@ -248,6 +248,11 @@ export function ChatSidebar() {
                     <div className="bg-muted rounded-lg px-3 py-2 text-sm">
                       <span className="text-muted-foreground animate-pulse">Thinking...</span>
                     </div>
+                  </div>
+                )}
+                {chatError && (
+                  <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
+                    Something went wrong. Try sending your message again.
                   </div>
                 )}
                 <div ref={messagesEndRef} />
