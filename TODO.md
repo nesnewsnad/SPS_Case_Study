@@ -2,15 +2,9 @@
 
 ## Up Next
 
-- [ ] "Ask the Data" chat sidebar
+- [ ] ANTHROPIC_API_KEY in Vercel env vars (needed for chat to work in production)
 - [ ] Enterprise polish pass
 - [ ] Final QA + submit
-
-## Chat Sidebar
-
-- [ ] `/api/chat` route — system prompt with key data findings, schema, Pharmacy A context
-- [ ] Chat UI — shadcn Sheet + input + message list
-- [ ] ANTHROPIC_API_KEY in Vercel env vars
 
 ## Polish & Ship
 
@@ -54,3 +48,4 @@
 - [x] Implement SPEC-006: AI Process page (pipeline flow, artifact evidence, toolkit, honest limitations — 7 files, 511 lines)
 - [x] Verify SPEC-005: PASS (14/14 ACs) + fix rotated chart label clipping
 - [x] Verify SPEC-006: PASS (14/14 ACs) — fully static server component, zero stubs
+- [x] "Ask the Data" chat sidebar — FAB + Sheet overlay, Haiku streaming, EDA context-stuffed, filter-aware, page-aware suggestions
