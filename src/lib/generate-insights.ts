@@ -248,19 +248,6 @@ const templates: InsightTemplate[] = [
     }),
   },
 
-  // --- Fallback (Overview) ---
-  {
-    id: 'overview-fallback',
-    priority: 100,
-    match: (_f, _d, v) => v === 'overview',
-    generate: (_f, d) => ({
-      id: 'overview-fallback',
-      severity: 'info',
-      title: 'Filtered View',
-      body: `Showing ${formatNumber(d.kpis.netClaims)} net claims (${formatPercent(d.kpis.reversalRate)} reversal rate) for the current filter selection. ${formatNumber(d.kpis.uniqueDrugs)} unique drugs in this view.`,
-    }),
-  },
-
   // ═══════════════════════════════════════════════════════════════════════
   // EXPLORER TEMPLATES
   // ═══════════════════════════════════════════════════════════════════════
