@@ -205,9 +205,10 @@ export default function ExplorerPage() {
         <div className="space-y-6 p-6">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">Claims Explorer</h1>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-sm">
               Pharmacy A — Drug-Level Drill-Down &amp; Distribution Analysis
             </p>
+            <div className="mt-2 h-0.5 w-12 rounded-full bg-gradient-to-r from-teal-400 to-teal-600" />
           </div>
           <ChartSkeleton height="h-36" />
           <div className="grid gap-4 lg:grid-cols-5">
@@ -252,7 +253,7 @@ export default function ExplorerPage() {
         {/* Header */}
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Claims Explorer</h1>
-          <p className="text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Pharmacy A — Drug-Level Drill-Down &amp; Distribution Analysis
           </p>
           <div className="mt-2 h-0.5 w-12 rounded-full bg-gradient-to-r from-teal-400 to-teal-600" />

@@ -1,14 +1,7 @@
 'use client';
 
 import { memo, useCallback } from 'react';
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  ResponsiveContainer,
-  Label,
-} from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Label } from 'recharts';
 import type { FormularyBreakdown } from '@/lib/api-types';
 import { formatNumber, formatPercent, abbreviateNumber } from '@/lib/format';
 
@@ -25,14 +18,32 @@ interface FormularyDonutProps {
   onSliceClick?: (type: string) => void;
 }
 
-function CustomTooltip({ active, payload }: { active?: boolean; payload?: Array<{ payload: FormularyBreakdown }> }) {
+function CustomTooltip({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: Array<{ payload: FormularyBreakdown }>;
+}) {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
+  const color = COLORS[d.type] ?? DEFAULT_COLOR;
   return (
-    <div className="rounded-md border bg-background px-3 py-2 shadow-md text-sm">
-      <p className="font-semibold mb-1">{d.type}</p>
-      <p className="font-mono">Net Claims: {formatNumber(d.netClaims)}</p>
-      <p className="font-mono">Reversal Rate: {formatPercent(d.reversalRate)}</p>
+    <div className="chart-tooltip">
+      <p className="text-muted-foreground flex items-center gap-1.5 text-xs font-semibold tracking-wide uppercase">
+        <span className="inline-block h-2 w-2 rounded-full" style={{ background: color }} />
+        {d.type}
+      </p>
+      <div className="mt-1.5 space-y-1">
+        <div className="flex items-center justify-between gap-6">
+          <span className="text-sm">Net Claims</span>
+          <span className="font-mono text-sm font-semibold">{formatNumber(d.netClaims)}</span>
+        </div>
+        <div className="flex items-center justify-between gap-6">
+          <span className="text-sm">Reversal Rate</span>
+          <span className="font-mono text-sm font-semibold">{formatPercent(d.reversalRate)}</span>
+        </div>
+      </div>
     </div>
   );
 }
@@ -67,10 +78,7 @@ export const FormularyDonut = memo(function FormularyDonut({
           className="cursor-pointer"
         >
           {data.map((entry) => (
-            <Cell
-              key={entry.type}
-              fill={COLORS[entry.type] ?? DEFAULT_COLOR}
-            />
+            <Cell key={entry.type} fill={COLORS[entry.type] ?? DEFAULT_COLOR} />
           ))}
           <Label
             value={abbreviateNumber(total)}

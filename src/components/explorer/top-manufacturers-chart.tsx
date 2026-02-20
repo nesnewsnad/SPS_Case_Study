@@ -22,9 +22,14 @@ function CustomTooltip({
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
   return (
-    <div className="bg-background rounded-md border px-3 py-2 text-sm shadow-md">
-      <p className="mb-1 font-semibold">{d.manufacturer}</p>
-      <p className="font-mono">Net Claims: {formatNumber(d.netClaims)}</p>
+    <div className="chart-tooltip">
+      <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+        {d.manufacturer}
+      </p>
+      <div className="mt-1.5 flex items-center justify-between gap-6">
+        <span className="text-sm">Net Claims</span>
+        <span className="font-mono text-sm font-semibold">{formatNumber(d.netClaims)}</span>
+      </div>
     </div>
   );
 }

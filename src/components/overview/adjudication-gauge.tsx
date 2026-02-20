@@ -16,38 +16,38 @@ export const AdjudicationGauge = memo(function AdjudicationGauge({
   const notAdjRate = 100 - data.rate;
 
   return (
-    <div className="flex h-full flex-col justify-center gap-5 px-2">
+    <div className="flex h-full flex-col justify-center gap-6 px-4">
       {/* Big stat */}
       <div className="text-center">
-        <span className="font-mono text-4xl font-bold text-foreground">
+        <span className="bg-gradient-to-br from-teal-600 to-teal-800 bg-clip-text font-mono text-5xl font-bold tracking-tighter text-transparent">
           {formatPercent(data.rate)}
         </span>
-        <p className="text-sm text-muted-foreground mt-1">adjudicated at point of sale</p>
+        <p className="text-muted-foreground mt-1.5 text-sm">adjudicated at point of sale</p>
       </div>
 
       {/* Progress bar */}
       <div>
-        <div className="h-3 w-full overflow-hidden rounded-full bg-slate-200">
+        <div className="relative h-3 w-full overflow-hidden rounded-full bg-slate-100">
           <div
-            className="h-full rounded-full bg-teal-600 transition-all duration-500"
+            className="h-full rounded-full bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600 transition-all duration-700 ease-out"
             style={{ width: `${data.rate}%` }}
           />
         </div>
         {/* Legend */}
-        <div className="mt-2 flex justify-between text-xs text-muted-foreground">
+        <div className="text-muted-foreground mt-2.5 flex justify-between text-xs">
           <span className="flex items-center gap-1.5">
-            <span className="inline-block h-2.5 w-2.5 rounded-full bg-teal-600" />
+            <span className="inline-block h-2 w-2 rounded-full bg-gradient-to-br from-teal-400 to-teal-600" />
             Adjudicated ({formatNumber(data.adjudicated)})
           </span>
           <span className="flex items-center gap-1.5">
-            <span className="inline-block h-2.5 w-2.5 rounded-full bg-slate-200" />
+            <span className="inline-block h-2 w-2 rounded-full bg-slate-200" />
             Not Adjudicated ({formatNumber(data.notAdjudicated)})
           </span>
         </div>
       </div>
 
       {/* Context note */}
-      <p className="text-xs text-muted-foreground text-center">
+      <p className="text-muted-foreground text-center text-xs leading-relaxed">
         {isFiltered
           ? `${formatPercent(notAdjRate)} not adjudicated at POS in this selection.`
           : 'Typical for LTC pharmacies — claims are often processed retrospectively.'}

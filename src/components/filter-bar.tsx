@@ -250,7 +250,7 @@ export function FilterBar({ view }: FilterBarProps) {
   const filterOptions = useFilterOptions();
 
   return (
-    <div className="border-border bg-background sticky top-0 z-10 border-b">
+    <div className="glass-header border-border/40 sticky top-0 z-10 border-b">
       {/* Dropdowns Row */}
       <div className="flex flex-wrap items-center gap-2 px-6 py-3">
         {/* Formulary */}

@@ -21,14 +21,15 @@ const items = [
 export function ContextLayer() {
   return (
     <div className="space-y-3">
-      <p className="text-muted-foreground text-sm font-medium tracking-wide uppercase">
+      <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
         Context Layer &mdash; how AI remembers across sessions
       </p>
       <div className="grid gap-4 md:grid-cols-3">
         {items.map((item) => (
-          <Card key={item.name} className="py-4">
-            <CardHeader className="px-4 pb-1">
-              <CardTitle className="font-mono text-sm">{item.name}</CardTitle>
+          <Card key={item.name} className="relative overflow-hidden py-4">
+            <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-teal-400 to-teal-600" />
+            <CardHeader className="px-4 pt-4 pb-1">
+              <CardTitle className="font-mono text-sm text-teal-700">{item.name}</CardTitle>
             </CardHeader>
             <CardContent className="px-4">
               <p className="text-muted-foreground text-sm leading-snug">{item.description}</p>

@@ -1,15 +1,7 @@
 'use client';
 
 import { memo, useCallback } from 'react';
-import {
-  PieChart,
-  Pie,
-  Cell,
-  Tooltip,
-  ResponsiveContainer,
-  Legend,
-  Label,
-} from 'recharts';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Legend, Label } from 'recharts';
 import type { MonyBreakdown } from '@/lib/api-types';
 import { formatNumber, abbreviateNumber } from '@/lib/format';
 
@@ -43,20 +35,29 @@ function CustomTooltip({
   const d = payload[0].payload;
   const pct = d.total > 0 ? ((d.netClaims / d.total) * 100).toFixed(1) : '0';
   return (
-    <div className="rounded-md border bg-background px-3 py-2 shadow-md text-sm">
-      <p className="font-semibold mb-1">
-        {MONY_LABELS[d.type] ?? d.type} ({d.type})
+    <div className="chart-tooltip">
+      <p className="text-muted-foreground flex items-center gap-1.5 text-xs font-semibold tracking-wide uppercase">
+        <span
+          className="inline-block h-2 w-2 rounded-full"
+          style={{ background: MONY_COLORS[d.type] ?? '#94a3b8' }}
+        />
+        {d.type} — {MONY_LABELS[d.type] ?? d.type}
       </p>
-      <p className="font-mono">Net Claims: {formatNumber(d.netClaims)}</p>
-      <p className="font-mono">{pct}% of total</p>
+      <div className="mt-1.5 space-y-1">
+        <div className="flex items-center justify-between gap-6">
+          <span className="text-sm">Net Claims</span>
+          <span className="font-mono text-sm font-semibold">{formatNumber(d.netClaims)}</span>
+        </div>
+        <div className="flex items-center justify-between gap-6">
+          <span className="text-sm">Share</span>
+          <span className="font-mono text-sm font-semibold">{pct}%</span>
+        </div>
+      </div>
     </div>
   );
 }
 
-export const MonyDonut = memo(function MonyDonut({
-  data,
-  onSliceClick,
-}: MonyDonutProps) {
+export const MonyDonut = memo(function MonyDonut({ data, onSliceClick }: MonyDonutProps) {
   const total = data.reduce((sum, d) => sum + d.netClaims, 0);
   const enriched = data.map((d) => ({ ...d, total }));
 
@@ -106,10 +107,7 @@ export const MonyDonut = memo(function MonyDonut({
           className="cursor-pointer"
         >
           {enriched.map((entry) => (
-            <Cell
-              key={entry.type}
-              fill={MONY_COLORS[entry.type] ?? '#94a3b8'}
-            />
+            <Cell key={entry.type} fill={MONY_COLORS[entry.type] ?? '#94a3b8'} />
           ))}
           <Label
             value={abbreviateNumber(total)}

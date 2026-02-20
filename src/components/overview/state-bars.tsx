@@ -23,20 +23,45 @@ interface StateBarsProps {
 const ACTIVE_COLOR = '#0d9488';
 const DIMMED_COLOR = '#d1d5db';
 
-function CustomTooltip({ active, payload }: { active?: boolean; payload?: Array<{ payload: StateBreakdown }> }) {
+function CustomTooltip({
+  active,
+  payload,
+}: {
+  active?: boolean;
+  payload?: Array<{ payload: StateBreakdown }>;
+}) {
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
   return (
-    <div className="rounded-md border bg-background px-3 py-2 shadow-md text-sm">
-      <p className="font-semibold mb-1">{d.state}</p>
-      <p className="font-mono">Net Claims: {formatNumber(d.netClaims)}</p>
-      <p className="font-mono">Total Claims: {formatNumber(d.totalClaims)}</p>
-      <p className="font-mono">Reversal Rate: {formatPercent(d.reversalRate)}</p>
+    <div className="chart-tooltip">
+      <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+        {d.state}
+      </p>
+      <div className="mt-1.5 space-y-1">
+        <div className="flex items-center justify-between gap-6">
+          <span className="text-sm">Net Claims</span>
+          <span className="font-mono text-sm font-semibold">{formatNumber(d.netClaims)}</span>
+        </div>
+        <div className="flex items-center justify-between gap-6">
+          <span className="text-sm">Total Claims</span>
+          <span className="text-muted-foreground font-mono text-sm font-medium">
+            {formatNumber(d.totalClaims)}
+          </span>
+        </div>
+        <div className="flex items-center justify-between gap-6">
+          <span className="text-sm">Reversal Rate</span>
+          <span className="font-mono text-sm font-semibold">{formatPercent(d.reversalRate)}</span>
+        </div>
+      </div>
     </div>
   );
 }
 
-export const StateBars = memo(function StateBars({ data, activeState, onBarClick }: StateBarsProps) {
+export const StateBars = memo(function StateBars({
+  data,
+  activeState,
+  onBarClick,
+}: StateBarsProps) {
   const handleClick = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (entry: any) => {
@@ -48,11 +73,7 @@ export const StateBars = memo(function StateBars({ data, activeState, onBarClick
 
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <BarChart
-        data={data}
-        layout="vertical"
-        margin={{ top: 5, right: 10, left: 5, bottom: 5 }}
-      >
+      <BarChart data={data} layout="vertical" margin={{ top: 5, right: 10, left: 5, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" className="stroke-muted" horizontal={false} />
         <XAxis
           type="number"

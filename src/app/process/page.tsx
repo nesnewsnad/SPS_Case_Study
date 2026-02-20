@@ -5,6 +5,15 @@ import { ArtifactEvidence } from '@/components/process/artifact-evidence';
 import { Toolkit } from '@/components/process/toolkit';
 import { Limitations } from '@/components/process/limitations';
 
+function SectionHeader({ children }: { children: React.ReactNode }) {
+  return (
+    <h2 className="flex items-center gap-2 text-lg font-bold tracking-tight">
+      <span className="inline-block h-1.5 w-1.5 rounded-full bg-teal-500" />
+      {children}
+    </h2>
+  );
+}
+
 export default function ProcessPage() {
   return (
     <div className="stagger-children space-y-8 p-6">
@@ -31,7 +40,7 @@ export default function ProcessPage() {
 
       {/* Section 2: The System (centerpiece — most visual weight) */}
       <section className="space-y-8">
-        <h2 className="text-lg font-semibold">The System</h2>
+        <SectionHeader>The System</SectionHeader>
 
         {/* Pipeline */}
         <div className="overflow-x-auto">
@@ -39,31 +48,33 @@ export default function ProcessPage() {
         </div>
 
         {/* Pipeline quote */}
-        <p className="text-muted-foreground border-l-4 border-teal-300 pl-4 text-sm italic">
-          Every feature followed this pipeline. No exceptions. The discipline is the point &mdash;
-          it&rsquo;s what makes AI output reliable instead of lucky.
-        </p>
+        <div className="rounded-r border-l-4 border-teal-300 bg-teal-50/30 px-4 py-3">
+          <p className="text-muted-foreground text-sm leading-relaxed italic">
+            Every feature followed this pipeline. No exceptions. The discipline is the point &mdash;
+            it&rsquo;s what makes AI output reliable instead of lucky.
+          </p>
+        </div>
 
         {/* Context management layer */}
         <ContextLayer />
       </section>
 
       {/* Section 3: Artifact Evidence */}
-      <section className="space-y-4">
-        <h2 className="text-lg font-semibold">Artifact Evidence</h2>
+      <section className="space-y-4 border-t pt-8">
+        <SectionHeader>Artifact Evidence</SectionHeader>
         <ArtifactEvidence />
       </section>
 
       {/* Section 4: The Toolkit */}
-      <section className="space-y-4">
-        <h2 className="text-lg font-semibold">The Toolkit</h2>
+      <section className="space-y-4 border-t pt-8">
+        <SectionHeader>The Toolkit</SectionHeader>
         <Toolkit />
       </section>
 
       {/* Section 5: Honest Limitations */}
-      <section className="space-y-4">
-        <h2 className="text-lg font-semibold">Honest Limitations</h2>
-        <p className="text-muted-foreground text-sm italic">
+      <section className="space-y-4 border-t pt-8">
+        <SectionHeader>Honest Limitations</SectionHeader>
+        <p className="text-muted-foreground text-sm leading-relaxed italic">
           AI is a force multiplier, not a replacement. Here&rsquo;s where it needed guardrails.
         </p>
         <Limitations />

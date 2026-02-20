@@ -51,9 +51,7 @@ export const DrugsTable = memo(function DrugsTable({
   limit,
   onLimitChange,
 }: DrugsTableProps) {
-  const [sorting, setSorting] = useState<SortingState>([
-    { id: 'netClaims', desc: true },
-  ]);
+  const [sorting, setSorting] = useState<SortingState>([{ id: 'netClaims', desc: true }]);
 
   const handleRowClick = useCallback(
     (drugName: string) => {
@@ -88,7 +86,7 @@ export const DrugsTable = memo(function DrugsTable({
           const label = row.original.labelName;
           return (
             <div className="max-w-[200px]" title={label ?? name}>
-              <span className="truncate block">{name}</span>
+              <span className="block truncate">{name}</span>
             </div>
           );
         },
@@ -97,9 +95,7 @@ export const DrugsTable = memo(function DrugsTable({
         accessorKey: 'ndc',
         header: 'NDC',
         enableSorting: false,
-        cell: ({ getValue }) => (
-          <span className="font-mono text-xs">{getValue<string>()}</span>
-        ),
+        cell: ({ getValue }) => <span className="font-mono text-xs">{getValue<string>()}</span>,
       },
       {
         accessorKey: 'netClaims',
@@ -179,9 +175,7 @@ export const DrugsTable = memo(function DrugsTable({
         accessorKey: 'topState',
         header: 'Top State',
         enableSorting: false,
-        cell: ({ getValue }) => (
-          <span className="font-mono text-xs">{getValue<string>()}</span>
-        ),
+        cell: ({ getValue }) => <span className="font-mono text-xs">{getValue<string>()}</span>,
       },
     ],
     [],
@@ -198,19 +192,19 @@ export const DrugsTable = memo(function DrugsTable({
 
   return (
     <div>
-      <div className="rounded-md border">
+      <div className="border-border/60 overflow-hidden rounded-lg border">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
+              <TableRow key={headerGroup.id} className="bg-slate-50/80 hover:bg-slate-50/80">
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id}>
+                  <TableHead
+                    key={header.id}
+                    className="text-muted-foreground text-xs font-semibold tracking-wide"
+                  >
                     {header.isPlaceholder
                       ? null
-                      : flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
+                      : flexRender(header.column.columnDef.header, header.getContext())}
                   </TableHead>
                 ))}
               </TableRow>
@@ -223,15 +217,12 @@ export const DrugsTable = memo(function DrugsTable({
                 return (
                   <TableRow
                     key={row.id}
-                    className={`cursor-pointer transition-colors ${isActive ? 'bg-teal-50' : 'hover:bg-muted/50'}`}
+                    className={`cursor-pointer transition-colors ${isActive ? 'border-l-2 border-l-teal-500 bg-teal-50/80' : 'hover:bg-muted/40'}`}
                     onClick={() => handleRowClick(row.original.drugName)}
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
+                      <TableCell key={cell.id} className="py-2.5">
+                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
                     ))}
                   </TableRow>
@@ -239,7 +230,10 @@ export const DrugsTable = memo(function DrugsTable({
               })
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell
+                  colSpan={columns.length}
+                  className="text-muted-foreground h-24 text-center"
+                >
                   No drugs match current filters
                 </TableCell>
               </TableRow>
@@ -247,19 +241,25 @@ export const DrugsTable = memo(function DrugsTable({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center gap-2 mt-3">
-        <span className="text-sm text-muted-foreground">Show:</span>
+      <div className="mt-3 flex items-center gap-1.5">
+        <span className="text-muted-foreground mr-1 text-xs font-medium">Show:</span>
         <Button
-          variant={limit === 20 ? 'default' : 'outline'}
-          size="sm"
+          variant={limit === 20 ? 'default' : 'ghost'}
+          size="xs"
           onClick={() => onLimitChange(20)}
+          className={
+            limit === 20 ? 'bg-teal-600 text-white hover:bg-teal-700' : 'text-muted-foreground'
+          }
         >
           Top 20
         </Button>
         <Button
-          variant={limit === 50 ? 'default' : 'outline'}
-          size="sm"
+          variant={limit === 50 ? 'default' : 'ghost'}
+          size="xs"
           onClick={() => onLimitChange(50)}
+          className={
+            limit === 50 ? 'bg-teal-600 text-white hover:bg-teal-700' : 'text-muted-foreground'
+          }
         >
           Top 50
         </Button>

@@ -112,7 +112,16 @@ export const AnomalyMiniChart = memo(function AnomalyMiniChart({ chart }: Props)
               width={45}
             />
             <Tooltip
-              contentStyle={{ fontSize: 12, borderRadius: 6 }}
+              wrapperClassName="chart-tooltip-wrap"
+              contentStyle={{
+                fontSize: 12,
+                borderRadius: 12,
+                border: 'none',
+                background: 'transparent',
+                padding: 0,
+                boxShadow: 'none',
+              }}
+              itemStyle={{ padding: '1px 0' }}
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               formatter={(value: any, name: any) => [abbreviateValue(Number(value)), String(name)]}
             />

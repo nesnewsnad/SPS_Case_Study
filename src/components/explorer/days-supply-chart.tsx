@@ -31,31 +31,28 @@ function CustomTooltip({
   if (!active || !payload?.length) return null;
   const d = payload[0].payload;
   return (
-    <div className="rounded-md border bg-background px-3 py-2 shadow-md text-sm">
-      <p className="font-semibold mb-1">{d.bin} days</p>
-      <p className="font-mono">Count: {formatNumber(d.count)}</p>
+    <div className="chart-tooltip">
+      <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+        {d.bin} days
+      </p>
+      <div className="mt-1.5 flex items-center justify-between gap-6">
+        <span className="text-sm">Claims</span>
+        <span className="font-mono text-sm font-semibold">{formatNumber(d.count)}</span>
+      </div>
     </div>
   );
 }
 
-export const DaysSupplyChart = memo(function DaysSupplyChart({
-  data,
-}: DaysSupplyChartProps) {
+export const DaysSupplyChart = memo(function DaysSupplyChart({ data }: DaysSupplyChartProps) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
 
-  const handleClick = useCallback(
-    (_: unknown, index: number) => {
-      setActiveIndex((prev) => (prev === index ? null : index));
-    },
-    [],
-  );
+  const handleClick = useCallback((_: unknown, index: number) => {
+    setActiveIndex((prev) => (prev === index ? null : index));
+  }, []);
 
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <BarChart
-        data={data}
-        margin={{ top: 5, right: 10, left: 0, bottom: 5 }}
-      >
+      <BarChart data={data} margin={{ top: 5, right: 10, left: 0, bottom: 5 }}>
         <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
         <XAxis
           dataKey="bin"
@@ -70,17 +67,9 @@ export const DaysSupplyChart = memo(function DaysSupplyChart({
           width={40}
         />
         <Tooltip content={<CustomTooltip />} />
-        <Bar
-          dataKey="count"
-          radius={[4, 4, 0, 0]}
-          className="cursor-pointer"
-          onClick={handleClick}
-        >
+        <Bar dataKey="count" radius={[4, 4, 0, 0]} className="cursor-pointer" onClick={handleClick}>
           {data.map((_, index) => (
-            <Cell
-              key={index}
-              fill={activeIndex === index ? ACTIVE_COLOR : BAR_COLOR}
-            />
+            <Cell key={index} fill={activeIndex === index ? ACTIVE_COLOR : BAR_COLOR} />
           ))}
         </Bar>
       </BarChart>

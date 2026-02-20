@@ -29,24 +29,51 @@ interface MonthlyAreaChartProps {
   onMonthClick?: (yearMonth: string) => void;
 }
 
-function CustomTooltip({ active, payload, label }: { active?: boolean; payload?: Array<{ value: number; dataKey: string }>; label?: string }) {
+function CustomTooltip({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean;
+  payload?: Array<{ value: number; dataKey: string }>;
+  label?: string;
+}) {
   if (!active || !payload?.length || !label) return null;
-  const incurred = payload.find(p => p.dataKey === 'incurred')?.value ?? 0;
-  const reversed = payload.find(p => p.dataKey === 'reversed')?.value ?? 0;
+  const incurred = payload.find((p) => p.dataKey === 'incurred')?.value ?? 0;
+  const reversed = payload.find((p) => p.dataKey === 'reversed')?.value ?? 0;
   const net = incurred - reversed;
 
   return (
-    <div className="rounded-md border bg-background px-3 py-2 shadow-md text-sm">
-      <p className="font-semibold mb-1">{formatMonthFull(label)}</p>
-      <p className="font-mono" style={{ color: COLORS.incurred }}>
-        Incurred: {formatNumber(incurred)}
+    <div className="chart-tooltip">
+      <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+        {formatMonthFull(label)}
       </p>
-      <p className="font-mono" style={{ color: COLORS.reversed }}>
-        Reversed: {formatNumber(reversed)}
-      </p>
-      <p className="font-mono font-semibold mt-1 border-t pt-1">
-        Net: {formatNumber(net)}
-      </p>
+      <div className="mt-1.5 space-y-1">
+        <div className="flex items-center justify-between gap-6">
+          <span className="flex items-center gap-1.5 text-sm">
+            <span
+              className="inline-block h-2 w-2 rounded-full"
+              style={{ background: COLORS.incurred }}
+            />
+            Incurred
+          </span>
+          <span className="font-mono text-sm font-semibold">{formatNumber(incurred)}</span>
+        </div>
+        <div className="flex items-center justify-between gap-6">
+          <span className="flex items-center gap-1.5 text-sm">
+            <span
+              className="inline-block h-2 w-2 rounded-full"
+              style={{ background: COLORS.reversed }}
+            />
+            Reversed
+          </span>
+          <span className="font-mono text-sm font-semibold">{formatNumber(reversed)}</span>
+        </div>
+        <div className="mt-1.5 flex items-center justify-between gap-6 border-t pt-1.5">
+          <span className="text-sm font-medium">Net</span>
+          <span className="font-mono text-sm font-bold">{formatNumber(net)}</span>
+        </div>
+      </div>
     </div>
   );
 }

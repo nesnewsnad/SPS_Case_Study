@@ -154,23 +154,27 @@ export function ChatSidebar() {
           <div className="flex-1 overflow-y-auto px-4 py-4">
             {!hasMessages ? (
               /* Welcome State */
-              <div className="space-y-4">
-                <div className="bg-muted/50 rounded-lg p-4">
-                  <p className="text-sm font-medium">
+              <div className="space-y-5">
+                <div className="relative overflow-hidden rounded-xl bg-gradient-to-br from-teal-50 to-teal-100/50 p-5">
+                  <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-teal-400 to-teal-600" />
+                  <p className="text-sm font-semibold tracking-tight">
                     Ask me anything about Pharmacy A&apos;s 2021 claims data.
                   </p>
-                  <p className="text-muted-foreground mt-1 text-xs">
+                  <p className="text-muted-foreground mt-1.5 text-xs leading-relaxed">
                     I know the anomalies, drug mix, reversal patterns, and seasonal trends.
+                    Filter-aware — I&apos;ll reference your current view and active filters.
                   </p>
                 </div>
                 <div className="space-y-2">
-                  <p className="text-muted-foreground text-xs font-medium">Try asking:</p>
+                  <p className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+                    Try asking
+                  </p>
                   {suggestions.map((suggestion) => (
                     <button
                       key={suggestion}
                       onClick={() => handleSend(suggestion)}
                       disabled={isBusy}
-                      className="text-muted-foreground hover:bg-muted hover:text-foreground block w-full rounded-md border px-3 py-2 text-left text-sm transition-colors disabled:opacity-50"
+                      className="text-muted-foreground hover:text-foreground border-border/60 block w-full rounded-lg border px-3 py-2.5 text-left text-sm transition-all hover:border-teal-200 hover:bg-teal-50/50 disabled:opacity-50"
                     >
                       {suggestion}
                     </button>

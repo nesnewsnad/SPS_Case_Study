@@ -59,7 +59,7 @@ export function Toolkit() {
         {tools.map((tool) => (
           <Card key={tool.name} className="py-4">
             <CardHeader className="px-4 pb-1">
-              <CardTitle className="text-sm">{tool.name}</CardTitle>
+              <CardTitle className="text-sm font-bold tracking-tight">{tool.name}</CardTitle>
             </CardHeader>
             <CardContent className="px-4">
               <p className="text-muted-foreground text-sm leading-snug">{tool.role}</p>

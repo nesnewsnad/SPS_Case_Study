@@ -151,7 +151,7 @@ export default function AnomaliesPage() {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Anomalies &amp; Recommendations</h1>
-        <p className="text-muted-foreground">
+        <p className="text-muted-foreground text-sm">
           Pharmacy A — Data Quality Findings, Follow-Up Questions, &amp; Forward-Looking Analysis
         </p>
         <div className="mt-2 h-0.5 w-12 rounded-full bg-gradient-to-r from-teal-400 to-teal-600" />
