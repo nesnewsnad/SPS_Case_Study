@@ -51,33 +51,34 @@ type FilterKey = 'state' | 'formulary' | 'mony' | 'dateStart' | 'groupId' | 'man
 function computeDelta(
   filtered: number,
   unfiltered: number,
-  isRate: boolean,
+  opts: { isRate?: boolean; isAdditive?: boolean },
   activeKeys: FilterKey[],
 ): { value: number; label: string } | undefined {
   // No delta when unfiltered
   if (activeKeys.length === 0) return undefined;
   if (unfiltered === 0) return undefined;
 
-  if (isRate) {
+  if (opts.isRate) {
     // Rate metrics: compare directly (percentage point diff expressed as %)
     const diff = ((filtered - unfiltered) / unfiltered) * 100;
     return { value: diff, label: 'vs overall' };
   }
 
-  // Count metrics: compare against unfiltered / dimensionCount
-  // Find the single active dimension for labeling
-  const singleDim = activeKeys.length === 1 ? activeKeys[0] : null;
-  const dimCount = singleDim && singleDim in DIMENSION_COUNTS
-    ? DIMENSION_COUNTS[singleDim]
-    : null;
+  // Additive count metrics (claims): compare against unfiltered / dimensionCount
+  if (opts.isAdditive !== false) {
+    const singleDim = activeKeys.length === 1 ? activeKeys[0] : null;
+    const dimCount = singleDim && singleDim in DIMENSION_COUNTS
+      ? DIMENSION_COUNTS[singleDim]
+      : null;
 
-  if (dimCount) {
-    const expected = unfiltered / dimCount;
-    const diff = ((filtered - expected) / expected) * 100;
-    return { value: diff, label: 'vs avg' };
+    if (dimCount) {
+      const expected = unfiltered / dimCount;
+      const diff = ((filtered - expected) / expected) * 100;
+      return { value: diff, label: 'vs avg' };
+    }
   }
 
-  // Multi-dimension or unrecognized → compare against total
+  // Non-additive metrics (unique drugs) or multi-dimension → compare against total
   const diff = ((filtered - unfiltered) / unfiltered) * 100;
   return { value: diff, label: 'vs total' };
 }
@@ -181,10 +182,10 @@ export default function OverviewPage() {
     if (!data) return { totalClaims: undefined, netClaims: undefined, reversalRate: undefined, uniqueDrugs: undefined };
     const { kpis, unfilteredKpis } = data;
     return {
-      totalClaims: computeDelta(kpis.totalClaims, unfilteredKpis.totalClaims, false, activeFilterKeys),
-      netClaims: computeDelta(kpis.netClaims, unfilteredKpis.netClaims, false, activeFilterKeys),
-      reversalRate: computeDelta(kpis.reversalRate, unfilteredKpis.reversalRate, true, activeFilterKeys),
-      uniqueDrugs: computeDelta(kpis.uniqueDrugs, unfilteredKpis.uniqueDrugs, false, activeFilterKeys),
+      totalClaims: computeDelta(kpis.totalClaims, unfilteredKpis.totalClaims, {}, activeFilterKeys),
+      netClaims: computeDelta(kpis.netClaims, unfilteredKpis.netClaims, {}, activeFilterKeys),
+      reversalRate: computeDelta(kpis.reversalRate, unfilteredKpis.reversalRate, { isRate: true }, activeFilterKeys),
+      uniqueDrugs: computeDelta(kpis.uniqueDrugs, unfilteredKpis.uniqueDrugs, { isAdditive: false }, activeFilterKeys),
     };
   }, [data, activeFilterKeys]);
 
