@@ -2,9 +2,9 @@
 
 ## Up Next
 
-- [ ] Write SPEC-002: FilterContext + FilterBar + URL sync
-- [ ] Write SPEC-003: Executive Overview page
-- [ ] Write SPEC-004: Claims Explorer page
+- [x] Write SPEC-002: FilterContext + FilterBar + URL sync
+- [x] Write SPEC-003: Executive Overview page
+- [x] Write SPEC-004: Claims Explorer page
 - [ ] Vercel setup: link repo, create Postgres DB, pull env vars, push schema, seed data
 
 ## Friday (Core Dashboard)
