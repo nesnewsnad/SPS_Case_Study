@@ -83,7 +83,7 @@ export const AnomalyMiniChart = memo(function AnomalyMiniChart({ chart }: Props)
   });
 
   const isStacked = chart.type === 'stacked-bar';
-  const needsRotation = numericKeys.length > 1 || formattedData.length > 8;
+  const needsRotation = formattedData.length > 6;
 
   return (
     <div className="space-y-2">
