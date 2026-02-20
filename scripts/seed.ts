@@ -12,11 +12,16 @@ const sql = neon(process.env.DATABASE_URL!);
 const db = drizzle(sql, { schema });
 
 const DATA_DIR = path.join(__dirname, "..", "Case Study - Data");
-const BATCH_SIZE = 500; // Neon HTTP has payload limits — keep batches small
+const BATCH_SIZE = 100; // Neon HTTP has strict payload limits — 100 rows keeps params under limit
 
 async function seedDrugInfo() {
   console.log("Seeding drug_info...");
-  const raw = fs.readFileSync(path.join(DATA_DIR, "Drug_Info.csv"), "utf-8");
+  const rawBuffer = fs.readFileSync(path.join(DATA_DIR, "Drug_Info.csv"));
+  // Strip BOM if present (Drug_Info.csv also has BOM)
+  const raw =
+    rawBuffer[0] === 0xef && rawBuffer[1] === 0xbb && rawBuffer[2] === 0xbf
+      ? rawBuffer.subarray(3).toString("utf-8")
+      : rawBuffer.toString("utf-8");
   const records = parse(raw, {
     delimiter: "~",
     columns: true,
@@ -112,6 +117,11 @@ async function seedClaims(entityId: number) {
 
 async function main() {
   console.log("Starting seed...\n");
+
+  // Clean slate — truncate all tables and reset serial IDs
+  console.log("Clearing existing data...");
+  await sql`TRUNCATE TABLE claims, drug_info, entities RESTART IDENTITY CASCADE`;
+  console.log("  Cleared.\n");
 
   // Create the entity for Pharmacy A
   console.log("Creating entity: Pharmacy A");

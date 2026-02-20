@@ -2,7 +2,10 @@
 
 ## Up Next
 
-- [ ] Vercel setup: link repo, create Postgres DB, pull env vars, push schema, seed data (Framework)
+- [x] Write SPEC-002: FilterContext + FilterBar + URL sync
+- [x] Write SPEC-003: Executive Overview page
+- [x] Write SPEC-004: Claims Explorer page
+- [x] Vercel setup: link repo, create Postgres DB, pull env vars, push schema, seed data
 - [x] Fix SPEC-003 spec-check notes (Mac) → READY
 - [x] Fix SPEC-004 spec-check notes (Mac) → READY
 
@@ -66,3 +69,5 @@
 - [x] Spec-check SPEC-002 → READY (20 ACs, prerequisites documented)
 - [x] Spec-check SPEC-003 → READY (7 fixes applied)
 - [x] Spec-check SPEC-004 → READY (7 fixes applied)
+- [x] Vercel setup: link repo, create Postgres DB, pull env vars, push schema, seed data (246,955 drugs, 596,090 claims)
+- [x] Fix seed script: BOM handling for Drug_Info.csv, batch size reduction, FK removal for 30 unmatched NDCs, truncate with identity reset

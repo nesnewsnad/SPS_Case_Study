@@ -45,7 +45,7 @@ export const claims = pgTable(
     adjudicated: boolean("adjudicated"),
     formulary: varchar("formulary", { length: 20 }), // OPEN, MANAGED, HMF
     dateFilled: date("date_filled"),
-    ndc: varchar("ndc", { length: 20 }).references(() => drugInfo.ndc),
+    ndc: varchar("ndc", { length: 20 }), // No FK — 30 claim NDCs don't exist in drug_info (0.05%)
     daysSupply: integer("days_supply"),
     groupId: varchar("group_id", { length: 50 }),
     pharmacyState: char("pharmacy_state", { length: 2 }),
