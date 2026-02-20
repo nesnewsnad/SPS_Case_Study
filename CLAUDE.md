@@ -1,19 +1,34 @@
 # SPS Health — AI Implementation Intern Case Study
 
 ## What This Is
-An interactive, web-based dashboard analyzing a year of pharmacy claims data from a prospective long-term care pharmacy client (Pharmacy A) for SPS Health's RFP evaluation. The dashboard tells the story of this client's 2021 utilization patterns and demonstrates AI-driven analytical capability.
+A production-grade, interactive claims analytics dashboard for SPS Health's RFP evaluation. Analyzes Pharmacy A's 2021 claims data. Built as a multi-entity platform — Pharmacy A is entity #1, architecture supports onboarding additional pharmacy clients day one.
 
-## Dual Machine Architecture
-- **Mac**: architecture, planning, design docs, session logs, prioritizes TODO, writes specs, reviews
-- **Framework Desktop**: implementation, builds dashboard, tests, commits
-- **Git**: coordination layer between the two machines
-- **Rule**: writer/reviewer separation — whoever wrote the code doesn't verify it
+**This needs to win.** State-of-the-art design, analytical depth, domain fluency. Not a homework assignment — a product they could deploy.
+
+## Scoring Axes (from the case study brief)
+1. **AI Proficiency** — how you leverage AI tools (process IS the deliverable)
+2. **Data Storytelling** — patterns, trends, anomalies communicated clearly ("tell a story, not just display charts")
+3. **Dashboard Design & Interactivity** — filters, drill-downs, layout, UX ("pseudo-Power BI")
 
 ## Deliverables
-1. **Interactive Dashboard** — web-based, pseudo-Power BI, self-contained HTML
-2. **Follow-Up Questions & Next Steps** — embedded in dashboard
-3. **Dashboard Extension Mock-Up** — placeholder panels with narrative
-4. **AI Process Documentation** — methodology, prompts, iterations
+1. **Interactive Dashboard** — 4 views: Executive Overview, Claims Explorer, Anomalies & Recommendations, AI Process
+2. **Follow-Up Questions & Next Steps** — embedded in Anomalies & Recommendations view
+3. **Dashboard Extension Mock-Up** — placeholder panels with narrative in Anomalies & Recommendations view
+4. **AI Process Documentation** — built as a real dashboard page, not a PDF
+
+## Dual Machine Architecture
+- **Mac**: architecture, planning, design docs, session logs, narrative content, specs, reviews
+- **Framework Desktop**: implementation, builds dashboard, tests, commits
+- **Git**: coordination layer (remote: github.com/nesnewsnad/SPS_Case_Study)
+- **Rule**: writer/reviewer separation — whoever wrote the code doesn't verify it
+
+## Tech Stack
+- **Framework**: Next.js 14 (App Router) — server components, API routes, Vercel-native
+- **Database**: Vercel Postgres (Neon) — multi-entity from day one
+- **ORM**: Drizzle — lightweight, type-safe, SQL-close
+- **UI**: Tailwind CSS + shadcn/ui — production-grade components
+- **Charts**: Recharts — React-native, flexible
+- **Deployment**: Vercel — live URL, preview deploys
 
 ## Data Architecture
 
@@ -52,28 +67,30 @@ An interactive, web-based dashboard analyzing a year of pharmacy claims data fro
 - **Short days-supply dominance**: 14, 7, 30 days most common (LTC pattern)
 - **Formulary reversal rates**: consistent ~10.7% across OPEN/MANAGED/HMF
 
-## Tech Stack
-- **Dashboard**: Single self-contained HTML file
-- **Charting**: Chart.js (interactive, lightweight, no build step)
-- **Data**: Embedded JSON (pre-processed from CSV)
-- **Styling**: Inline CSS, responsive layout
-- **No server required**: opens in any browser
+## Database Schema
+See `docs/ARCHITECTURE.md` for full schema. Key design: `entity_id` on claims table makes this multi-tenant.
 
-## Artifact Chain
-```
-Case Study PDF (immutable intent — the "PDR")
-  └→ CLAUDE.md (this file — project context & architecture)
-       └→ Session Logs (docs/sessions/YYYY-MM-DD.md)
-            └→ TODO.md (live task queue)
-                 └→ Discuss (gray areas → CONTEXT doc)
-                      └→ Research (investigate before spec)
-                           └→ Specs (docs/specs/SPEC-NNN-*.md)
-                                └→ Implementation
-                                     └→ Verify (goal-backward)
-```
+## API Routes
+Server-side aggregation — never ship raw rows to the browser.
+- `GET /api/overview` — KPI summary, monthly aggregates
+- `GET /api/claims` — filtered aggregations for Explorer
+- `GET /api/anomalies` — pre-computed anomaly breakdowns
+- `GET /api/drugs` — top drugs with counts and rates
+- `GET /api/entities` — list of onboarded entities
+
+## Timeline
+- **Thu night**: Scaffold, schema, seed, deploy skeleton
+- **Fri**: Core dashboard (Overview + Explorer views)
+- **Sat**: Anomalies view, narrative layer, filters
+- **Sun**: AI Process page, extension mock-ups, polish
+- **Mon**: QA, final deploy, submit
 
 ## Context Management
-- One spec per session
-- Use `/continue-here` when context degrades or switching tasks
-- Use `/close-session` at end of every work period
 - Start every session with `/open-session`
+- Use `/continue-here` when context degrades or switching tasks
+- End every session with `/close-session`
+
+# currentDate
+Today's date is 2026-02-19.
+
+      IMPORTANT: this context may or may not be relevant to your tasks. You should not respond to this context unless it is highly relevant to your task.

@@ -1,8 +1,32 @@
-.env
-.DS_Store
+# dependencies
 node_modules/
+.pnp
+.pnp.js
+
+# next.js
+.next/
+out/
+
+# env
+.env
+.env*.local
+
+# misc
+.DS_Store
+*.log
+
+# python
 __pycache__/
 *.pyc
 .venv/
 venv/
-*.log
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# data (too large for git — seed from CSVs)
+# Case Study - Data/ is tracked since it's the source data

@@ -1,27 +1,48 @@
 # TODO — SPS Health Case Study
 
-Ownership: Mac writes specs and prioritizes. Framework implements and checks off.
+## Thursday Night (Scaffold & Foundation)
 
-## Up Next
+- [ ] Scaffold Next.js 14 + Tailwind + TypeScript
+- [ ] Set up Drizzle ORM + database schema (entities, claims, drug_info)
+- [ ] Install and configure shadcn/ui
+- [ ] Write seed script (CSV → Postgres)
+- [ ] Deploy skeleton to Vercel with Postgres
+- [ ] Create basic app shell (sidebar nav, 4 view placeholders)
+- [ ] Push — Framework can pull and start building
 
-- [ ] **Discuss: Dashboard Architecture** — Run `/discuss` to lock design decisions (layout, chart types, interaction patterns, narrative structure, color palette) before writing any specs
-- [ ] **Research: Dashboard Patterns** — Investigate best-in-class pharmacy/claims dashboards, Chart.js capabilities for required interactions, LTC industry KPIs
-- [ ] **SPEC-001: Data Pipeline & Embedding** — Pre-process CSVs into embedded JSON, handle BOM, merge on NDC, compute derived fields (month, reversal flag, MONY labels)
-- [ ] **SPEC-002: Dashboard Layout & Navigation** — Overall structure, tabs/sections, responsive grid, header/KPI cards, tab switching
-- [ ] **SPEC-003: Utilization Summary View** — Total claims, monthly trend line, adjudication rates, net claim counts, KPI cards with sparklines
-- [ ] **SPEC-004: Drill-Down & Filtering** — Filter bar (formulary, state, group, MONY, manufacturer, drug), cross-filtering behavior, reset, active filter display
-- [ ] **SPEC-005: Trend & Anomaly Identification** — September spike callout, November dip, KS reversal anomaly, top drugs by volume, seasonal patterns
-- [ ] **SPEC-006: Narrative Layer** — Commentary annotations on charts, insight cards, "what this means" sections, storytelling flow
-- [ ] **SPEC-007: Follow-Up Questions & Next Steps** — Client questions, internal team questions, additional data requests section
-- [ ] **SPEC-008: Dashboard Extension Mock-Up** — Placeholder panels for pricing, demographics, formulary tiers, reimbursement; written explanation of each
-- [ ] **SPEC-009: AI Process Documentation** — Tool choices, key prompts, iteration log, limitations section
-- [ ] **Final: Integration & Polish** — Cross-section consistency, load testing, browser compatibility, final narrative review
+## Friday (Core Dashboard)
+
+- [ ] API route: /api/overview (KPIs, monthly aggregates, adjudication rates)
+- [ ] API route: /api/claims (filtered aggregations)
+- [ ] API route: /api/drugs (top drugs, reversal rates)
+- [ ] Executive Overview view (KPI cards, monthly trend chart, breakdowns)
+- [ ] Claims Explorer view (filter bar + cross-filtering charts)
+- [ ] Anomaly annotations on monthly trend chart (Sept spike, Nov dip)
+
+## Saturday (Deep Dive & Narrative)
+
+- [ ] API route: /api/anomalies (pre-computed breakdowns)
+- [ ] Anomalies & Recommendations view (deep-dive panels)
+- [ ] Narrative layer — insight callouts on all charts
+- [ ] Follow-up questions section (client, internal, data requests)
+- [ ] Dashboard extension mock-up (placeholder panels + written explanations)
+- [ ] Cross-filter polish (all filters affect all charts)
+
+## Sunday (AI Process & Polish)
+
+- [ ] AI Process page (tools, prompts, iterations, limitations)
+- [ ] Design polish pass (colors, spacing, typography, consistency)
+- [ ] Edge cases (empty filter states, loading states, error states)
+- [ ] Entity/upload concept page (shows multi-entity pattern)
+
+## Monday (Ship)
+
+- [ ] Final QA — all views, all filters, all narratives
+- [ ] Browser testing (Chrome, Safari, Firefox)
+- [ ] Final Vercel deploy
+- [ ] Write submission email/message
+- [ ] Submit
 
 ## Done
 
 (none yet)
-
-## Later
-
-- [ ] Deploy to hosted URL (Netlify/Vercel) for submission link
-- [ ] Screen recording of AI process (optional deliverable)
