@@ -37,13 +37,15 @@ interface FilterState {
   dateStart?: string;
   dateEnd?: string;
   groupId?: string;
+  includeFlaggedNdcs: boolean;   // default false — excludes FLAGGED_NDCS
 }
 
 interface FilterContextValue {
   filters: FilterState;
-  setFilter: (key: keyof Omit<FilterState, 'entityId'>, value: string) => void;
-  removeFilter: (key: keyof Omit<FilterState, 'entityId'>) => void;
-  toggleFilter: (key: keyof Omit<FilterState, 'entityId'>, value: string) => void;
+  setFilter: (key: keyof Omit<FilterState, 'entityId' | 'includeFlaggedNdcs'>, value: string) => void;
+  removeFilter: (key: keyof Omit<FilterState, 'entityId' | 'includeFlaggedNdcs'>) => void;
+  toggleFilter: (key: keyof Omit<FilterState, 'entityId' | 'includeFlaggedNdcs'>, value: string) => void;
+  toggleFlaggedNdcs: () => void;  // flips includeFlaggedNdcs
   clearAll: () => void;
   activeFilterCount: number;
 }
@@ -51,11 +53,13 @@ interface FilterContextValue {
 
 **Rules:**
 - `entityId` always defaults to `1` and is not user-editable (entity selector is locked)
+- `includeFlaggedNdcs` defaults to `false` — flagged/test NDCs are excluded from all queries
 - `setFilter(key, value)` sets a single filter dimension. If value is empty string, removes the filter.
 - `removeFilter(key)` deletes the key from active filters
 - `toggleFilter(key, value)` — if the filter already equals `value`, removes it; otherwise sets it. This powers chart cross-filtering (click once to filter, click again to un-filter).
-- `clearAll()` removes all filters except `entityId`
-- `activeFilterCount` is derived — count of non-undefined, non-entityId keys
+- `toggleFlaggedNdcs()` flips `includeFlaggedNdcs` between true/false
+- `clearAll()` removes all filters except `entityId` and resets `includeFlaggedNdcs` to `false`
+- `activeFilterCount` is derived — count of non-undefined, non-entityId, non-includeFlaggedNdcs keys (the flagged toggle does NOT count toward active filters)
 
 ### URL Sync
 
@@ -63,7 +67,7 @@ Filters sync bidirectionally with URL search params via `next/navigation`:
 
 - **Filters → URL:** When `setFilter`, `removeFilter`, `toggleFilter`, or `clearAll` is called, update the URL search params using `router.replace()` (not `router.push()` — avoid polluting browser history on every filter change).
 - **URL → Filters:** On mount and on `popstate` (back/forward), read search params and hydrate `FilterState`.
-- **Param format:** `?state=CA&formulary=OPEN&dateStart=2021-03-01`. Only active filters appear — no empty params.
+- **Param format:** `?state=CA&formulary=OPEN&dateStart=2021-03-01&flagged=true`. Only active filters appear — no empty params. `flagged=true` only appears when the toggle is on; absent means off.
 - **Debounce:** URL updates are debounced at 200ms to avoid flooding the browser history during rapid filter changes.
 - **Shareable:** Copy-pasting the URL into a new tab restores the exact filter state.
 
@@ -117,6 +121,16 @@ interface FilterBarProps {
 - Default: empty (no date filter = full year 2021)
 - Start defaults to 2021-01-01 when only end is set; end defaults to 2021-12-31 when only start is set
 - Validation: start <= end
+
+**Flagged NDC toggle (all views):**
+- Positioned at the right end of the filter bar, visually separated from the dropdowns (e.g., a divider or gap)
+- shadcn/ui `Switch` component with label **"Include flagged NDCs"**
+- Default: OFF (unchecked) — flagged/test NDCs excluded
+- When toggled ON: all views recalculate including flagged NDCs. KPIs change, monthly trend reshapes (May spikes to ~49K), reversal rates shift. The visual delta IS the point — this demonstrates the analyst caught the test data.
+- Subtle warning style when ON: switch area gets a faint amber background or the label changes to "Flagged NDCs included" in amber text — visual signal that the data includes test records
+- Calls `toggleFlaggedNdcs()` from FilterContext
+- Does NOT render as a chip pill (it's a mode toggle, not a filter dimension)
+- Does NOT count toward `activeFilterCount`
 
 ### Chip Pills
 
@@ -203,6 +217,10 @@ The `contexts/` and `hooks/` directories are new. Component split between `filte
 13. "Clear All" button appears when any filter is active and resets all filters when clicked
 14. FilterBar is sticky (`sticky top-0`) and persists while scrolling page content
 15. URL updates are debounced (no history flooding during rapid filter changes)
+16. Flagged NDC toggle (`Switch`) renders on the right side of the filter bar on all views, default OFF
+17. Toggling the switch calls `toggleFlaggedNdcs()` and adds/removes `?flagged=true` in the URL
+18. When the toggle is ON, a subtle amber visual signal indicates test data is included
+19. `clearAll()` resets the flagged toggle to OFF along with all other filters
 
 ---
 

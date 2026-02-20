@@ -101,6 +101,23 @@ Note: `unfilteredKpis` is always the full-dataset KPIs regardless of active filt
 - Computed client-side using `unfilteredKpis` from the API response
 - Positive deltas in emerald, negative in amber, neutral in slate
 
+### 7. Flagged NDC Handling — Global Toggle (Added 2026-02-19 post-EDA)
+- Fresh EDA discovered NDC 65862020190 ("KRYPTONITE XR" by "LEX LUTHER INC.") — a synthetic test drug, 49,567 claims (8.3%), 99.5% in May
+- **Approach**: `buildWhereClause` excludes flagged NDCs by default via `AND ndc NOT IN (...)`. A global `includeFlaggedNdcs` toggle (default OFF) in FilterBar re-includes them when flipped ON.
+- The toggle is a `Switch` on all views, right-aligned in the FilterBar, with amber visual when ON
+- Does NOT count toward `activeFilterCount`, does NOT render as a chip pill
+- `clearAll()` resets the toggle to OFF
+- Anomalies page has a dedicated Kryptonite panel with `beforeAfter[]` comparison — shows impact with/without the flagged NDC regardless of toggle state
+- `FLAGGED_NDCS` is an extensible registry (array of `{ ndc, label, reason }`) — currently 1 entry
+
+### 8. Corrected Anomaly Narratives (Added 2026-02-19 post-EDA)
+- September spike: **+57%** (was +43% — old number included Kryptonite in baseline)
+- November dip: **-49%** (was -54% — old number included Kryptonite)
+- Kansas: NOT a general "high reversal" state. It's a **specific August batch reversal event** — 18 KS-only groups with 100% reversal in Aug, then re-incur in Sep. KS reversal rate is ~10% in every other month.
+- Anomaly panels now 4 (was 3): `kryptonite-xr`, `sept-spike`, `nov-dip`, `ks-aug-batch-reversal`
+- KS bar on Overview no longer gets amber highlighting (rates are normal)
+- MONY donut: Y (single-source generic) is 77% of claims, not O — color assignments corrected
+
 ---
 
 ## Claude's Discretion

@@ -105,8 +105,9 @@ Recharts `AreaChart` with two stacked series:
 - Data source: `monthly[]` array from OverviewResponse
 
 **Reference lines:**
-- **September spike:** Vertical reference line at Sep 2021, amber (#d97706), dashed, with label "▲ +43%" positioned above
-- **November dip:** Vertical reference line at Nov 2021, slate (#64748b), dashed, with label "▼ -54%" positioned above
+- **September spike:** Vertical reference line at Sep 2021, amber (#d97706), dashed, with label "▲ +57%" positioned above
+- **November dip:** Vertical reference line at Nov 2021, slate (#64748b), dashed, with label "▼ -49%" positioned above
+- **May (when flagged NDCs excluded):** May bar will be near-zero (~5 claims). No special annotation needed — the visual emptiness speaks for itself and the Anomalies page explains it. When flagged NDCs ARE included, May spikes to ~49K — the dramatic reshape is the demonstration.
 - Reference lines always visible regardless of filter state (they're annotations, not data)
 
 **Cross-filtering:**
@@ -144,8 +145,8 @@ Recharts `BarChart` with horizontal layout:
 
 - 5 bars: CA, IN, PA, KS, MN
 - Data source: `states[]` from OverviewResponse, sorted by `netClaims` descending
-- Bar color: teal (#0d9488) default
-- **KS highlight:** If Kansas reversal rate > 12%, render KS bar in amber (#d97706) to subtly flag the anomaly
+- Bar color: teal (#0d9488) for all states
+- No special KS highlighting — EDA confirmed KS reversal rates are ~10% (same as all states) when the August batch event is understood. The KS story belongs on the Anomalies page, not here.
 - Y-axis: state abbreviations
 - X-axis: net claims, abbreviated (50K, 100K)
 
@@ -201,14 +202,16 @@ interface InsightCard {
 
 | Condition | Example Insight |
 |-----------|----------------|
-| No filters | "Pharmacy A processed 596,437 total claims in 2021 with a 10.1% reversal rate across 5,640 unique drugs — a utilization profile consistent with large-scale LTC pharmacy operations." |
-| No filters | "100% of claims were dispensed through retail channels. No mail-order volume was recorded, consistent with LTC pharmacy distribution patterns." |
+| No filters | "Pharmacy A processed ~546K claims in 2021 with a 10.8% reversal rate across 5,639 unique drugs — a utilization profile consistent with large-scale LTC pharmacy operations." |
+| No filters | "100% of claims dispensed through retail channels. No mail-order volume — consistent with LTC pharmacy distribution. All 189 groups are state-specific (no group spans multiple states)." |
+| No filters | "First-of-month cycle fills run 7-8x average daily volume — a strong LTC signal where facilities batch-dispense on day 1 of each cycle." |
 | State = CA | "California represents the largest claims volume at XXK net claims. As the primary state, CA volume trends will disproportionately influence overall metrics." |
-| State = KS | "Kansas shows a 15.8% reversal rate — significantly above the 10.1% overall average. This warrants investigation before RFP pricing." |
-| Formulary = any | "Under the [type] formulary, reversal rates are X.X% with XXK net claims, [above/below/in line with] the overall average." |
-| Month = Sep | "September claims surged 43% above the monthly average, driven primarily by CA and PA. This volume volatility has direct implications for capacity planning and pricing models." |
-| Month = Nov | "November volume dropped 54% below average — the sharpest monthly decline in 2021. Whether this reflects processing delays, seasonal patterns, or facility closures requires clarification." |
-| MONY = O | "Generic multi-source drugs (MONY O) account for X% of claims, indicating strong formulary management and generic utilization." |
+| State = KS | "Kansas shows a normal ~10% reversal rate in most months. However, August is a major outlier — 18 KS-only groups were fully reversed (81.6% rate), then re-incurred in September. See Anomalies for the full investigation." |
+| Formulary = any | "Under the [type] formulary, reversal rates are X.X% with XXK net claims — essentially in line with the ~10.8% overall average. Formulary type shows minimal correlation with reversal behavior." |
+| Month = Sep | "September claims surged 57% above the normal-month average, uniformly across all states and formularies. Partially explained by KS rebill groups re-incurring post-August batch reversal." |
+| Month = Nov | "November volume dropped 49% below average — uniformly across all states and groups. All 30 days are present; this is not missing data. Root cause requires clarification." |
+| Month = May (flagged off) | "May shows near-zero claims because a synthetic test drug (KRYPTONITE XR) was excluded. Toggle 'Include flagged NDCs' to see its impact, or visit the Anomalies page." |
+| MONY = Y | "Single-source generics (MONY Y) account for 77% of claims — heavily generic, consistent with aggressive LTC formulary management." |
 | Multiple filters | Combine relevant insights, show the most specific first, max 3 cards |
 
 Implementor writes ~15-20 templates. Exact wording at discretion — the tone and data-grounding are the requirements, not the verbatim text.
@@ -261,10 +264,10 @@ Component file organization within `overview/` is at implementor's discretion �
 3. Four KPI cards display Total Claims, Net Claims, Reversal Rate, and Unique Drugs with correct formatting (commas, one-decimal %)
 4. KPI cards show delta indicators ("↑ X% vs avg" / "↓ X% vs avg") when filters are active; no delta when unfiltered
 5. Hero stacked area chart renders monthly incurred vs. reversed claims for all 12 months of 2021
-6. Hero chart has reference lines for September spike (amber, "+43%") and November dip (slate, "-54%")
+6. Hero chart has reference lines for September spike (amber, "+57%") and November dip (slate, "-49%")
 7. Clicking a month on the hero chart toggles a date filter via `toggleFilter`
 8. Formulary donut renders OPEN/MANAGED/HMF proportions; clicking a slice toggles a formulary filter
-9. State horizontal bars render 5 states sorted by net claims descending; Kansas bar is amber when its reversal rate > 12%
+9. State horizontal bars render 5 states sorted by net claims descending, all in teal (no special KS highlighting — KS rates are normal outside the August batch event)
 10. Clicking a state bar toggles a state filter
 11. Adjudication gauge renders as a semicircle with center percentage label and LTC context note beneath
 12. 1-3 dynamic insight cards render below charts with filter-responsive content and consultant-analyst tone

@@ -135,7 +135,7 @@ Recharts `PieChart` as a donut:
 
 - Four segments: M, O, N, Y
 - Data source: `mony[]` from ClaimsResponse, using `netClaims` for segment size
-- Colors: teal (O - generic multi, largest), navy (M - brand multi), violet (Y - generic single), amber (N - brand single)
+- Colors: teal (Y - single-source generic, 77% of claims), violet (N - single-source brand, 21%), navy (O - multi-source generic, 1.4%), amber (M - multi-source brand, 1.0%)
 - Inner radius ~60%, outer radius ~80%
 - Center label: total net claims or percentage of largest segment
 
@@ -205,14 +205,15 @@ Same system as SPEC-003 — `generateInsights(filters, data)` returns 1-3 cards.
 
 | Condition | Example Insight |
 |-----------|----------------|
-| No filters | "Generics (MONY O+Y) account for X% of claims, consistent with aggressive formulary management and LTC generic utilization targets." |
-| No filters | "Short-duration supplies dominate — 7-day and 14-day fills account for X% of claims, reflecting LTC dispensing patterns where medications are reviewed and adjusted frequently." |
+| No filters | "Generics (MONY Y+O) account for ~78% of claims — heavily generic, consistent with aggressive LTC formulary management and generic utilization targets." |
+| No filters | "Short-duration supplies dominate — 7-day and 14-day fills account for 52% of claims, reflecting LTC dispensing cycles where medications are reviewed and adjusted frequently." |
+| No filters | "Top drug Atorvastatin Calcium 40mg (10K claims) leads a mix of statins, GI drugs, pain management, and anticoagulants — a profile consistent with an elderly LTC population." |
 | Drug filtered | "[Drug Name] accounts for XXK net claims with a X.X% reversal rate. This drug is primarily dispensed under [formulary] formulary in [state]." |
-| Manufacturer filtered | "[Manufacturer] supplies X drugs representing XXK net claims. Generic concentration is X%." |
-| MONY = O | "Multi-source generics (MONY O) represent the largest category at X% of net claims — a strong indicator of formulary-driven generic substitution." |
-| MONY = N | "Single-source brands (MONY N) account for X% of claims — these represent drugs with no generic alternative and typically carry higher costs." |
-| Group filtered | "Group [ID] represents XXK net claims with X unique drugs. Reversal rate is X.X%, [above/below] the overall average." |
-| State filtered | "[State] accounts for X% of explorer claims with X unique drugs dispensed." |
+| Manufacturer filtered | "[Manufacturer] supplies X drugs representing XXK net claims. Top generic manufacturers (Aurobindo, Ascend, Amneal, Apotex) dominate volume." |
+| MONY = Y | "Single-source generics (MONY Y) represent the largest category at 77% of net claims — the dominant drug type, consistent with LTC generic-first dispensing." |
+| MONY = N | "Single-source brands (MONY N) account for 21% of claims — drugs with no generic alternative, typically carrying higher costs. Eliquis 5mg is the top brand by volume." |
+| Group filtered | "Group [ID] represents XXK net claims with X unique drugs. Reversal rate is X.X%, [above/below] the 10.8% overall average. Note: all groups are state-specific." |
+| State filtered | "[State] accounts for X% of explorer claims with X unique drugs dispensed across X groups." |
 
 Implementor writes ~10-15 templates. Consultant-analyst tone. Data-grounded.
 

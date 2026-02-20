@@ -38,6 +38,7 @@ All routes accept these query params (all optional except entityId which default
 | `dateStart` | string | `2021-03-01` | YYYY-MM-DD inclusive start |
 | `dateEnd` | string | `2021-09-30` | YYYY-MM-DD inclusive end |
 | `groupId` | string | `GRP001` | Group identifier |
+| `flagged` | string | `true` | Include flagged/test NDCs (default: excluded) |
 
 Filters that reference drug_info fields (`mony`, `manufacturer`, `drug`, `ndc`) require a JOIN to drug_info on `claims.ndc = drug_info.ndc`.
 
@@ -58,7 +59,13 @@ export interface FilterParams {
   dateStart?: string;
   dateEnd?: string;
   groupId?: string;
+  includeFlaggedNdcs?: boolean;  // default false — excludes FLAGGED_NDCS from all queries
 }
+
+// Registry of flagged NDCs — excluded from all queries unless toggled on
+export const FLAGGED_NDCS: { ndc: string; label: string; reason: string }[] = [
+  { ndc: '65862020190', label: 'KRYPTONITE XR (LEX LUTHER INC.)', reason: 'Synthetic test drug — 49,567 claims, 99.5% in May' }
+];
 
 // KPI summary — used by both overview and claims
 export interface KpiSummary {
@@ -149,15 +156,22 @@ export interface ClaimsResponse {
 
 // --- /api/anomalies ---
 
+export interface BeforeAfterMetric {
+  metric: string;                // "Total Claims", "May Volume", "Reversal Rate", etc.
+  withFlagged: string;           // formatted value with flagged NDCs included
+  withoutFlagged: string;        // formatted value with flagged NDCs excluded
+}
+
 export interface AnomalyPanel {
-  id: string;                    // "sept-spike" | "nov-dip" | "ks-reversals"
+  id: string;                    // "kryptonite-xr" | "sept-spike" | "nov-dip" | "ks-aug-batch-reversal"
   title: string;
-  keyStat: string;               // "+43%", "-54%", "15.8%"
+  keyStat: string;               // "49,567 claims", "+57%", "-49%", "81.6%"
   whatWeSee: string;
   whyItMatters: string;
   toConfirm: string;
   rfpImpact: string;
   miniCharts: AnomalyMiniChart[];
+  beforeAfter?: BeforeAfterMetric[];  // Kryptonite panel only — impact comparison
 }
 
 export interface AnomalyMiniChart {
@@ -221,15 +235,26 @@ Key query logic:
 
 #### `GET /api/anomalies`
 
-Returns `AnomaliesResponse`. Three pre-computed panels:
+Returns `AnomaliesResponse`. Four pre-computed panels:
 
-- **September spike**: Monthly totals for comparison, September claims by state (grouped bar), September claims by formulary (stacked bar).
-- **November dip**: Monthly totals for comparison, November claims by state, November claims by top 10 groups (which groups dropped off?).
-- **Kansas reversals**: Reversal rate by state (bar chart, all 5 states).
+- **Kryptonite XR (test drug)**: `id: "kryptonite-xr"`. Always computed regardless of the `includeFlaggedNdcs` toggle. Returns:
+  - `beforeAfter[]` with 5 metrics computed **with** and **without** NDC 65862020190: Total Claims, May Volume, Net Claims, Reversal Rate, Unique Drugs. Both values always returned so the panel can show the comparison without the user toggling.
+  - `miniCharts`: monthly volume chart showing the Kryptonite-only claims by month (the May spike).
+  - NDC details in narrative: drug name, label name, manufacturer, MONY, state/formulary distribution match.
+
+- **September spike**: `id: "sept-spike"`. Monthly totals for comparison (excluding Kryptonite by default), September claims by state (grouped bar), September claims by formulary (stacked bar). `keyStat: "+57%"` (vs. normal-month average excluding May/Nov). Notes partial explanation from KS rebill groups re-incurring in September.
+
+- **November dip**: `id: "nov-dip"`. Monthly totals for comparison, November claims by state, November claims by top 10 groups (ratio vs. their average month). `keyStat: "-49%"`. Notes that the dip is uniform across all states and groups — not caused by missing data or specific groups dropping off.
+
+- **Kansas August batch reversal**: `id: "ks-aug-batch-reversal"`. NOT a general "KS has high reversals" story. Specific drill-down showing:
+  - 18 KS-only groups with 100% reversal rate in August (4,790 claims, zero incurred)
+  - Jul→Aug→Sep pattern for top affected groups (normal → full reversal → elevated re-incurrence)
+  - `keyStat: "81.6%"` (KS August reversal rate)
+  - `miniCharts`: KS monthly reversal rates (showing August as the sole outlier), top 5 batch-reversal groups with their Jul/Aug/Sep volume.
 
 Narrative strings (whatWeSee, whyItMatters, toConfirm, rfpImpact) are hardcoded server-side — they reference specific data points but the prose is pre-written. Mini chart data is queried from the database.
 
-Accepts filter params but primarily designed for unfiltered view. Filters narrow the underlying data if applied.
+Accepts filter params but primarily designed for unfiltered view. Filters narrow the underlying data if applied. The Kryptonite panel always computes both with/without regardless of the `includeFlaggedNdcs` toggle.
 
 #### `GET /api/filters`
 
@@ -249,12 +274,15 @@ Returns `EntitiesResponse`. Simple SELECT from entities table. No filter params 
 A `parseFilters(searchParams: URLSearchParams): FilterParams` utility in `src/lib/parse-filters.ts` that:
 - Extracts all filter params from the URL search params
 - Defaults `entityId` to 1
+- Defaults `includeFlaggedNdcs` to `false`; set to `true` only when `?flagged=true` is present
 - Returns a typed `FilterParams` object
 - Used by every route to avoid duplicating param parsing
 
 A `buildWhereClause(filters: FilterParams)` utility in `src/lib/build-where.ts` that:
 - Takes parsed filters and returns Drizzle `where` conditions
 - Handles the drug_info JOIN when mony/manufacturer/drug/ndc filters are present
+- **When `includeFlaggedNdcs` is false (default):** appends `AND claims.ndc NOT IN (65862020190)` (all NDCs from `FLAGGED_NDCS` registry). This globally excludes synthetic/test drug data.
+- **When `includeFlaggedNdcs` is true:** omits the exclusion — all rows included
 - Shared across all routes for consistent filter behavior
 
 ---
@@ -268,7 +296,8 @@ A `buildWhereClause(filters: FilterParams)` utility in `src/lib/build-where.ts` 
 5. `GET /api/overview?state=CA` returns KPIs filtered to California; `unfilteredKpis` remains the full-dataset baseline
 6. `GET /api/claims` returns valid `ClaimsResponse` JSON with top drugs, days supply bins, MONY breakdown, top groups, and top manufacturers
 7. `GET /api/claims?limit=50` returns up to 50 drugs instead of the default 20
-8. `GET /api/anomalies` returns 3 panels with narrative strings and mini chart data arrays
+8. `GET /api/anomalies` returns 4 panels (kryptonite-xr, sept-spike, nov-dip, ks-aug-batch-reversal) with narrative strings and mini chart data arrays
+8a. Kryptonite panel includes `beforeAfter[]` with 5 metrics comparing with/without the flagged NDC, regardless of the current `includeFlaggedNdcs` toggle
 9. `GET /api/filters` returns sorted arrays of distinct drug names, manufacturers, and group IDs that exist in claims
 10. `GET /api/entities` returns the entities list including Pharmacy A
 11. All routes return `{ error: string }` with 400 status for malformed params or 500 for server errors

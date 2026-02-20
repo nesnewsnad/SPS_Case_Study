@@ -58,14 +58,67 @@ A production-grade, interactive claims analytics dashboard for SPS Health's RFP 
 - 5,640 unique NDCs in claims → 99.5% match to Drug_Info (30 unmatched)
 - BOM character in Claims_Export.csv header — use `encoding='utf-8-sig'`
 
-## Key Data Findings (from EDA)
-- **September spike**: 70,984 claims (+43% vs ~50K avg) — unexplained
-- **November dip**: 23,350 claims (-54%) — unexplained
-- **Kansas reversals**: 15.8% vs ~10% all other states
-- **100% retail**: no mail-order claims (expected for LTC)
-- **75% not adjudicated at POS**: typical for LTC but worth flagging
-- **Short days-supply dominance**: 14, 7, 30 days most common (LTC pattern)
-- **Formulary reversal rates**: consistent ~10.7% across OPEN/MANAGED/HMF
+## Key Data Findings (verified EDA, 2026-02-19)
+
+### Headline Numbers
+- **596,090 total rows** (531,988 incurred, 64,102 reversed). Zero nulls in any column.
+- **546,523 "real" rows** after excluding the Kryptonite test drug (see below).
+- **5,640 unique NDCs** in claims → 5,610 match Drug_Info (99.5%), 30 unmatched (321 rows, 0.05%).
+- **Drug_Info**: 246,955 rows, 246,955 unique NDCs (zero duplicates), zero nulls/empties.
+- **189 GROUP_IDs — every single one is state-specific** (no group spans multiple states). Confidence: verified, 189/189 in exactly 1 state.
+- **365 unique dates** — every day of 2021 has claims.
+- **100% Retail (R)** — no mail-order. Expected for LTC pharmacy.
+
+### ANOMALY 1: "Kryptonite XR" Test Drug (HIGH CONFIDENCE — deliberate Easter egg)
+- **NDC 65862020190** = "KRYPTONITE XR" / "KINGSLAYER 2.0 1000mg" by "LEX LUTHER INC." (MONY=N)
+- **49,567 claims (8.3% of dataset)**. Of these, **49,301 are in May** — May is 99.99% Kryptonite (only 5 real claims). The remaining 266 Kryptonite claims are scattered across other months (13-43/month).
+- State/formulary/adjudication distributions mirror overall dataset proportions exactly — it's a synthetic injection matching the data's statistical profile.
+- **Impact**: May is effectively a fake month. Exclude NDC 65862020190 from all real analysis. Monthly trend charts should either omit May or annotate it.
+- **Evidence**: Fictional drug name, fictional manufacturer, 99.5% concentration in one month, perfectly mirrored distributions. This is almost certainly a test to see if the analyst catches it.
+
+### ANOMALY 2: Kansas August Batch Reversal (HIGH CONFIDENCE — rebill event)
+- **KS August**: 6,029 rows, **81.6% reversal rate** (4,921 reversed, net = -3,813).
+- **Root cause**: 18 KS-only groups (all with "400xxx" prefix) have **100% reversal / zero incurred** in August = 4,790 rows. The remaining 1,239 KS Aug rows have a normal 10.6% reversal rate.
+- **Pattern**: These 18 groups have normal claims in July (~10% reversal), then 100% reversal in August (zero new incurred), then re-incur in September at ~1.4-1.5x normal volume with normal reversal rates. Classic **batch reversal + rebill** — all July claims reversed in August, re-submitted in September.
+- **Evidence**: GROUP 400127: Jul=1,210 rows (10.5% rev), Aug=1,194 rows (100% rev, 0 incurred), Sep=1,733 rows (9.8% rev). Same pattern for all 18 groups.
+- **This is NOT a general "Kansas has high reversals" story**. KS in every other month has ~9.3-10.4% reversal rate, indistinguishable from other states. The 15.8% annual KS reversal rate reported earlier was entirely an artifact of the August batch event.
+
+### ANOMALY 3: September Spike (+57% excl. Kryptonite) (MEDIUM CONFIDENCE — partially explained)
+- **70,941 real claims** (excl. Kryptonite) vs. ~45,224 avg for normal months. **+57% above average**.
+- The spike is **perfectly uniform**: all 5 states up 47-50%, all 3 formularies up 48-50%, all top drugs up ~1.4x. No single group or drug drives it.
+- **Partially explained**: KS rebill groups re-incurring in September adds ~2,700 extra claims. But the remaining ~23,000 excess claims are unexplained and uniformly distributed.
+- **Sep 1 has 13,741 claims** — but this fits the first-of-month pattern (all months show 7-8x volume on day 1, a classic LTC cycle-fill pattern). Sep 1 is high in proportion, not anomalously so.
+- **Possible explanations**: Q3-end catch-up processing, LTC facility re-enrollment cycle, or synthetic data amplification.
+
+### ANOMALY 4: November Dip (-49% excl. Kryptonite) (MEDIUM CONFIDENCE — unexplained)
+- **23,337 real claims** vs. ~45,224 avg. **All 30 days present**, all 183 active groups present (6 tiny groups with 88 total claims absent — immaterial).
+- The dip is **perfectly uniform**: all states down 54-56%, all top groups at ~0.45-0.54x normal. Not driven by missing groups, missing days, or a holiday gap.
+- Nov 20-22 (Sat-Mon around Thanksgiving) are especially low (67-123 claims/day), but the deficit is spread across the entire month — every day is roughly half volume.
+- **Possible explanations**: Data extract truncated mid-processing, reduced LTC admissions, or synthetic data artifact.
+
+### Baseline Rates (remarkably uniform)
+- **Reversal rate**: 10.81% overall (real claims). By state: CA 10.0%, IN 10.0%, KS 10.0% (excl. Aug batch), MN 10.0%, PA 10.2%. By formulary: OPEN 10.8%, MANAGED 10.7%, HMF 10.7%. By MONY: M 11.0%, O 11.0%, N 10.4%, Y 10.8%.
+- **Adjudication rate**: 25.1% overall. Essentially flat across every dimension — state (25.0-25.2%), formulary (25.0-25.1%), month (24.2-26.5%). ~75% not adjudicated at POS — typical for LTC.
+- **First-of-month cycle fills**: Day 1 of every month has 7-8x the volume of an average day. Strong LTC signal.
+
+### Drug Mix
+- **MONY by claims volume**: Y (generic single-source) 76.8%, N (brand single-source) 20.8%, O (generic multi-source) 1.4%, M (brand multi-source) 1.0%. Heavily generic — expected for LTC cost management.
+- **MONY by NDC count (drug_info)**: Y 60.4%, N 33.3%, O 5.8%, M 0.4%. Claims are more concentrated in generics than the drug universe would suggest.
+- **Top real drugs**: Atorvastatin 40mg (10,154), Tamsulosin 0.4mg (8,617), Pantoprazole 40mg (7,833), Hydrocodone-APAP 5-325mg (7,625), Eliquis 5mg (7,466). Mix of statins, GI, pain, anticoagulants — standard LTC elderly population.
+- **Top manufacturers by volume**: Aurobindo (43K), Ascend (35K), Amneal (34K), Apotex (31K), Zydus (26K) — generic manufacturers dominate.
+
+### Days Supply Distribution
+- **Top values**: 14 days (113K, 19%), 7 days (80K, 13%), 30 days (39K, 7%), 1 day (32K, 5%).
+- **Buckets**: 1-7 days (224K, 38%), 8-14 days (203K, 34%), 15-30 days (144K, 24%), 31-60 days (24K, 4%), 61+ days (379, <0.1%).
+- Short supply dominance confirms LTC — facilities dispense in 7-14 day cycles, not 90-day mail-order.
+- **Mean**: 13.0 days, **Median**: 12 days, **Max**: 120 days.
+
+### Groups
+- **Top groups by volume**: 6P6002 (18,568), 101320 (15,680), 400127 (14,804), 400132 (14,072), 6P6000 (13,833).
+- Groups 400127 and 400132 have elevated annual reversal rates (17.3%) — entirely due to the August batch reversal event. Excluding August, their rates are ~10%.
+
+### Unmatched NDCs
+- 30 NDCs (321 claim rows) don't match Drug_Info. Top unmatched: NDC 37000002304 (116 claims), 8026420200 (63), 54629070090 (33). Likely OTC or non-drug items (NDC prefix 37000 is Procter & Gamble).
 
 ## Database Schema
 See `docs/ARCHITECTURE.md` for full schema. Key design: `entity_id` on claims table makes this multi-tenant.
