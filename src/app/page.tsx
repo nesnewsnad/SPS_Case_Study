@@ -15,6 +15,7 @@ import {
   formatPercent,
   abbreviateNumber,
   getLastDayOfMonth,
+  fillAllMonths,
 } from '@/lib/format';
 import type { OverviewResponse } from '@/lib/api-types';
 
@@ -337,7 +338,7 @@ export default function OverviewPage() {
             </CardHeader>
             <CardContent className="h-80">
               <MonthlyAreaChart
-                data={data.monthly}
+                data={fillAllMonths(data.monthly)}
                 onMonthClick={handleMonthClick}
               />
             </CardContent>

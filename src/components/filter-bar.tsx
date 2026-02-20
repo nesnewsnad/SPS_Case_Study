@@ -301,37 +301,6 @@ export function FilterBar({ view }: FilterBarProps) {
           </SelectContent>
         </Select>
 
-        {/* Date Range */}
-        <div className="flex items-center gap-1">
-          <input
-            type="date"
-            value={filters.dateStart ?? ''}
-            min="2021-01-01"
-            max={filters.dateEnd ?? '2021-12-31'}
-            onChange={(e) =>
-              e.target.value
-                ? setFilter('dateStart', e.target.value)
-                : removeFilter('dateStart')
-            }
-            className="border-input bg-background h-8 rounded-md border px-2 text-sm"
-            aria-label="Start date"
-          />
-          <span className="text-muted-foreground text-xs">&ndash;</span>
-          <input
-            type="date"
-            value={filters.dateEnd ?? ''}
-            min={filters.dateStart ?? '2021-01-01'}
-            max="2021-12-31"
-            onChange={(e) =>
-              e.target.value
-                ? setFilter('dateEnd', e.target.value)
-                : removeFilter('dateEnd')
-            }
-            className="border-input bg-background h-8 rounded-md border px-2 text-sm"
-            aria-label="End date"
-          />
-        </div>
-
         {/* Explorer-only: Drug, Manufacturer, Group comboboxes */}
         {view === 'explorer' ? (
           <>

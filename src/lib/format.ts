@@ -39,6 +39,18 @@ export function formatMonthFull(yearMonth: string): string {
   return `${MONTH_FULL[month - 1] ?? m} ${year}`;
 }
 
+/** Fill missing months with zeros so charts always show all 12 months */
+export function fillAllMonths(
+  data: { month: string; incurred: number; reversed: number }[],
+  year = '2021',
+): { month: string; incurred: number; reversed: number }[] {
+  const byMonth = new Map(data.map((d) => [d.month, d]));
+  return Array.from({ length: 12 }, (_, i) => {
+    const month = `${year}-${String(i + 1).padStart(2, '0')}`;
+    return byMonth.get(month) ?? { month, incurred: 0, reversed: 0 };
+  });
+}
+
 /** "2021-09" → "2021-09-30" */
 export function getLastDayOfMonth(yearMonth: string): string {
   const [year, month] = yearMonth.split('-').map(Number);
