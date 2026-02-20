@@ -9,35 +9,37 @@ import { FilterBar } from '@/components/filter-bar';
 import { useFilters } from '@/contexts/filter-context';
 import { InsightCards } from '@/components/overview/insight-cards';
 import { generateInsights } from '@/lib/generate-insights';
-import {
-  fillAllMonths,
-  getLastDayOfMonth,
-} from '@/lib/format';
+import { fillAllMonths, getLastDayOfMonth } from '@/lib/format';
 import type { ClaimsResponse } from '@/lib/api-types';
 
 // Dynamic imports — no SSR for chart components (Recharts uses browser APIs)
 const MiniTrend = dynamic(
-  () => import('@/components/explorer/mini-trend').then(m => ({ default: m.MiniTrend })),
+  () => import('@/components/explorer/mini-trend').then((m) => ({ default: m.MiniTrend })),
   { ssr: false, loading: () => <Skeleton className="h-full w-full" /> },
 );
 const DrugsTable = dynamic(
-  () => import('@/components/explorer/drugs-table').then(m => ({ default: m.DrugsTable })),
+  () => import('@/components/explorer/drugs-table').then((m) => ({ default: m.DrugsTable })),
   { ssr: false, loading: () => <Skeleton className="h-full w-full" /> },
 );
 const DaysSupplyChart = dynamic(
-  () => import('@/components/explorer/days-supply-chart').then(m => ({ default: m.DaysSupplyChart })),
+  () =>
+    import('@/components/explorer/days-supply-chart').then((m) => ({ default: m.DaysSupplyChart })),
   { ssr: false, loading: () => <Skeleton className="h-full w-full" /> },
 );
 const MonyDonut = dynamic(
-  () => import('@/components/explorer/mony-donut').then(m => ({ default: m.MonyDonut })),
+  () => import('@/components/explorer/mony-donut').then((m) => ({ default: m.MonyDonut })),
   { ssr: false, loading: () => <Skeleton className="h-full w-full" /> },
 );
 const TopGroupsChart = dynamic(
-  () => import('@/components/explorer/top-groups-chart').then(m => ({ default: m.TopGroupsChart })),
+  () =>
+    import('@/components/explorer/top-groups-chart').then((m) => ({ default: m.TopGroupsChart })),
   { ssr: false, loading: () => <Skeleton className="h-full w-full" /> },
 );
 const TopManufacturersChart = dynamic(
-  () => import('@/components/explorer/top-manufacturers-chart').then(m => ({ default: m.TopManufacturersChart })),
+  () =>
+    import('@/components/explorer/top-manufacturers-chart').then((m) => ({
+      default: m.TopManufacturersChart,
+    })),
   { ssr: false, loading: () => <Skeleton className="h-full w-full" /> },
 );
 
@@ -122,7 +124,9 @@ export default function ExplorerPage() {
         }
       });
 
-    return () => { cancelled = true; };
+    return () => {
+      cancelled = true;
+    };
   }, [queryString]);
 
   // Insight cards
@@ -170,7 +174,9 @@ export default function ExplorerPage() {
 
   const handleManufacturerClick = useCallback(
     (manufacturer: string) => {
-      filters.manufacturer === manufacturer ? removeFilter('manufacturer') : setFilter('manufacturer', manufacturer);
+      filters.manufacturer === manufacturer
+        ? removeFilter('manufacturer')
+        : setFilter('manufacturer', manufacturer);
     },
     [filters.manufacturer, setFilter, removeFilter],
   );
@@ -180,9 +186,9 @@ export default function ExplorerPage() {
     return (
       <>
         <FilterBar view="explorer" />
-        <div className="flex flex-col items-center justify-center p-12 space-y-4">
+        <div className="flex flex-col items-center justify-center space-y-4 p-12">
           <p className="text-destructive font-medium">Failed to load explorer data</p>
-          <p className="text-sm text-muted-foreground">{error}</p>
+          <p className="text-muted-foreground text-sm">{error}</p>
           <Button variant="outline" onClick={() => window.location.reload()}>
             Retry
           </Button>
@@ -199,12 +205,14 @@ export default function ExplorerPage() {
         <div className="space-y-6 p-6">
           <div>
             <h1 className="text-2xl font-semibold">Claims Explorer</h1>
-            <p className="text-muted-foreground">Pharmacy A — Drug-Level Drill-Down &amp; Distribution Analysis</p>
+            <p className="text-muted-foreground">
+              Pharmacy A — Drug-Level Drill-Down &amp; Distribution Analysis
+            </p>
           </div>
           <ChartSkeleton height="h-36" />
           <div className="grid gap-4 lg:grid-cols-5">
             <TableSkeleton />
-            <div className="lg:col-span-2 space-y-4">
+            <div className="space-y-4 lg:col-span-2">
               <ChartSkeleton />
               <ChartSkeleton />
             </div>
@@ -223,9 +231,9 @@ export default function ExplorerPage() {
     return (
       <>
         <FilterBar view="explorer" />
-        <div className="flex flex-col items-center justify-center p-12 space-y-4">
+        <div className="flex flex-col items-center justify-center space-y-4 p-12">
           <p className="text-lg font-medium">No data matches current filters</p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-muted-foreground text-sm">
             Try removing some filters or clearing all to see the full dataset.
           </p>
           <Button variant="outline" onClick={clearAll}>
@@ -244,19 +252,18 @@ export default function ExplorerPage() {
         {/* Header */}
         <div>
           <h1 className="text-2xl font-semibold">Claims Explorer</h1>
-          <p className="text-muted-foreground">Pharmacy A — Drug-Level Drill-Down &amp; Distribution Analysis</p>
+          <p className="text-muted-foreground">
+            Pharmacy A — Drug-Level Drill-Down &amp; Distribution Analysis
+          </p>
         </div>
 
         {/* Mini Monthly Trend */}
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-sm text-muted-foreground">Monthly Trend</CardTitle>
+            <CardTitle className="text-muted-foreground text-sm">Monthly Trend</CardTitle>
           </CardHeader>
           <CardContent className="h-36">
-            <MiniTrend
-              data={fillAllMonths(data.monthly)}
-              onMonthClick={handleMonthClick}
-            />
+            <MiniTrend data={fillAllMonths(data.monthly)} onMonthClick={handleMonthClick} />
           </CardContent>
         </Card>
 
@@ -277,7 +284,7 @@ export default function ExplorerPage() {
             </CardContent>
           </Card>
 
-          <div className="lg:col-span-2 space-y-4">
+          <div className="space-y-4 lg:col-span-2">
             <Card>
               <CardHeader>
                 <CardTitle>Days Supply Distribution</CardTitle>
@@ -291,31 +298,25 @@ export default function ExplorerPage() {
                 <CardTitle>Brand vs. Generic Mix (MONY)</CardTitle>
               </CardHeader>
               <CardContent className="h-72">
-                <MonyDonut
-                  data={data.mony}
-                  onSliceClick={handleMonyClick}
-                />
+                <MonyDonut data={data.mony} onSliceClick={handleMonyClick} />
               </CardContent>
             </Card>
           </div>
         </div>
 
-        {/* Bottom row: Top Groups + Top Manufacturers */}
+        {/* Bottom row: Groups + Manufacturers */}
         <div className="grid gap-4 lg:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>Top 10 Groups by Volume</CardTitle>
+              <CardTitle>Group Volume</CardTitle>
             </CardHeader>
             <CardContent className="h-72">
-              <TopGroupsChart
-                data={data.topGroups}
-                onBarClick={handleGroupClick}
-              />
+              <TopGroupsChart data={data.topGroups} onBarClick={handleGroupClick} />
             </CardContent>
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>Top 10 Manufacturers by Volume</CardTitle>
+              <CardTitle>Manufacturer Volume</CardTitle>
             </CardHeader>
             <CardContent className="h-72">
               <TopManufacturersChart
