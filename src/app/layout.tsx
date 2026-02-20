@@ -1,7 +1,9 @@
+import { Suspense } from 'react';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Sidebar } from '@/components/sidebar';
+import { FilterProvider } from '@/contexts/filter-context';
 import './globals.css';
 
 const geistSans = Geist({
@@ -31,7 +33,11 @@ export default function RootLayout({
         <TooltipProvider>
           <div className="flex h-screen overflow-hidden">
             <Sidebar />
-            <main className="bg-muted/30 flex-1 overflow-y-auto p-6">{children}</main>
+            <Suspense>
+              <FilterProvider>
+                <main className="bg-muted/30 flex-1 overflow-y-auto">{children}</main>
+              </FilterProvider>
+            </Suspense>
           </div>
         </TooltipProvider>
       </body>
