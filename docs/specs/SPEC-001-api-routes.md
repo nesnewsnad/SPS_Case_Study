@@ -212,7 +212,7 @@ export interface EntitiesResponse {
 Returns `OverviewResponse`. Key query logic:
 
 - **kpis**: COUNT(*) for totalClaims, SUM(net_claim_count) for netClaims, reversal rate = count of net_claim_count=-1 / total * 100, COUNT(DISTINCT ndc) for uniqueDrugs. All respect active filters.
-- **unfilteredKpis**: Same 4 KPIs but ignoring all filters except entityId. Always returns the full-dataset baseline.
+- **unfilteredKpis**: Same 4 KPIs but ignoring all dimension filters (state, formulary, mony, drug, manufacturer, ndc, dateStart, dateEnd, groupId). Still respects `entityId` and `includeFlaggedNdcs`. Returns the clean-dataset baseline (~546K when flagged excluded, ~596K when included).
 - **monthly**: GROUP BY date_trunc('month', date_filled). Incurred = SUM where net_claim_count=1, reversed = ABS(SUM where net_claim_count=-1). Sorted chronologically.
 - **formulary**: GROUP BY formulary. Net claims and reversal rate per type.
 - **states**: GROUP BY pharmacy_state. Net claims, total claims, reversal rate. Sorted by net claims descending.
@@ -258,12 +258,12 @@ Accepts filter params but primarily designed for unfiltered view. Filters narrow
 
 #### `GET /api/filters`
 
-Returns `FiltersResponse`. Three queries:
-- SELECT DISTINCT drug_name FROM drug_info WHERE ndc IN (SELECT DISTINCT ndc FROM claims WHERE entity_id = ?) ORDER BY drug_name
-- SELECT DISTINCT manufacturer_name FROM drug_info WHERE ndc IN (SELECT DISTINCT ndc FROM claims WHERE entity_id = ?) ORDER BY manufacturer_name
-- SELECT DISTINCT group_id FROM claims WHERE entity_id = ? ORDER BY group_id
+Returns `FiltersResponse`. Accepts `?flagged=true` to include flagged NDCs. Three queries:
+- SELECT DISTINCT drug_name FROM drug_info WHERE ndc IN (SELECT DISTINCT ndc FROM claims WHERE entity_id = ? AND ndc NOT IN (...flagged...)) ORDER BY drug_name
+- SELECT DISTINCT manufacturer_name FROM drug_info WHERE ndc IN (SELECT DISTINCT ndc FROM claims WHERE entity_id = ? AND ndc NOT IN (...flagged...)) ORDER BY manufacturer_name
+- SELECT DISTINCT group_id FROM claims WHERE entity_id = ? AND ndc NOT IN (...flagged...) ORDER BY group_id
 
-Only returns values that actually appear in claims for this entity. Sorted alphabetically.
+When `includeFlaggedNdcs` is true, the `NOT IN` clause is omitted. Only returns values that actually appear in claims for this entity. Sorted alphabetically.
 
 #### `GET /api/entities`
 
@@ -290,8 +290,8 @@ A `buildWhereClause(filters: FilterParams)` utility in `src/lib/build-where.ts` 
 ## Acceptance Criteria
 
 1. `src/lib/api-types.ts` exports all TypeScript interfaces listed above
-2. `src/lib/parse-filters.ts` exports `parseFilters()` that extracts and validates filter params from URLSearchParams
-3. `src/lib/build-where.ts` exports a helper that builds Drizzle where conditions from FilterParams
+2. `src/lib/parse-filters.ts` exports `parseFilters()` that extracts filter params from URLSearchParams, defaults `entityId` to `1`, and defaults `includeFlaggedNdcs` to `false`
+3. `src/lib/build-where.ts` exports a helper that takes `FilterParams` and returns Drizzle `where` conditions (composed with `and()`/`or()`) plus a boolean indicating whether a drug_info JOIN is needed
 4. `GET /api/overview` returns valid `OverviewResponse` JSON with correct KPI calculations against seeded data
 5. `GET /api/overview?state=CA` returns KPIs filtered to California; `unfilteredKpis` remains the full-dataset baseline
 6. `GET /api/claims` returns valid `ClaimsResponse` JSON with top drugs, days supply bins, MONY breakdown, top groups, and top manufacturers
@@ -300,9 +300,17 @@ A `buildWhereClause(filters: FilterParams)` utility in `src/lib/build-where.ts` 
 8a. Kryptonite panel includes `beforeAfter[]` with 5 metrics comparing with/without the flagged NDC, regardless of the current `includeFlaggedNdcs` toggle
 9. `GET /api/filters` returns sorted arrays of distinct drug names, manufacturers, and group IDs that exist in claims
 10. `GET /api/entities` returns the entities list including Pharmacy A
-11. All routes return `{ error: string }` with 400 status for malformed params or 500 for server errors
+11. All routes wrap query execution in try/catch and return `{ error: string }` with 500 status on database or server errors. No input validation beyond type coercion in `parseFilters` — invalid filter values simply return empty results.
 12. All routes set `Content-Type: application/json`
 13. No route returns raw claim rows — all data is aggregated
+14. When `includeFlaggedNdcs` is false (default), all routes exclude NDCs in the `FLAGGED_NDCS` registry. Verify: `/api/overview` returns ~546K totalClaims (not ~596K) when flagged NDCs are excluded.
+15. `unfilteredKpis` ignores all dimension filters (state, formulary, mony, etc.) but **respects the flagged toggle**. When flagged NDCs are excluded, `unfilteredKpis` reflects the clean dataset (~546K). When included, it reflects the full dataset (~596K). The flagged toggle is a data-quality control, not a dimension filter.
+16. `/api/filters` excludes drugs and manufacturers that appear **only** on flagged NDCs when `includeFlaggedNdcs` is false. In practice: KRYPTONITE XR and LEX LUTHER INC. are omitted from the drug/manufacturer lists when the toggle is off.
+
+### Implementor Notes
+
+- **MODE() for drug formulary**: The `drugs` query in `/api/claims` needs the "most common formulary" per drug. Postgres lacks a built-in `MODE()` aggregate. Use a subquery or window function: `ROW_NUMBER() OVER (PARTITION BY ndc ORDER BY COUNT(*) DESC)` to pick the most frequent formulary, then join back. Same pattern for `topState`.
+- **buildWhereClause return shape**: Return an object like `{ where: SQL, needsJoin: boolean }` so routes know whether to JOIN drug_info. Alternatively, always JOIN (drug_info is small) — either approach is fine.
 
 ---
 

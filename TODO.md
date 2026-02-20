@@ -19,7 +19,7 @@
 ## Saturday (Deep Dive & Narrative)
 
 - [ ] API route: /api/anomalies (pre-computed breakdowns per anomaly)
-- [ ] Anomalies page: 3 investigation panels (Sept spike, Nov dip, KS reversals)
+- [ ] Anomalies page: 4 investigation panels (Kryptonite XR, Sept spike, Nov dip, KS Aug batch reversal)
 - [ ] Mini charts within each investigation panel
 - [ ] Follow-up questions (3 tabs: client, internal, data requests)
 - [ ] Extension mock-up (3 placeholder panels: pricing, demographics, formulary tiers)
