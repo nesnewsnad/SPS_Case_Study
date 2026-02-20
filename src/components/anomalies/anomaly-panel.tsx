@@ -5,6 +5,7 @@ import dynamic from 'next/dynamic';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { cn } from '@/lib/utils';
 import { BeforeAfterTable } from './before-after-table';
 import type { AnomalyPanel as AnomalyPanelData } from '@/lib/api-types';
 
@@ -14,11 +15,34 @@ const AnomalyMiniChart = dynamic(
 );
 
 // Severity badge mapping (frontend-only — API has no severity field)
-const SEVERITY_MAP: Record<string, { label: string; color: string }> = {
-  'kryptonite-xr': { label: 'Data Quality', color: 'bg-amber-100 text-amber-800' },
-  'sept-spike': { label: 'Volume Anomaly', color: 'bg-red-100 text-red-800' },
-  'nov-dip': { label: 'Volume Anomaly', color: 'bg-red-100 text-red-800' },
-  'ks-aug-batch-reversal': { label: 'Operational', color: 'bg-amber-100 text-amber-800' },
+const SEVERITY_MAP: Record<
+  string,
+  { label: string; color: string; border: string; accent: string }
+> = {
+  'kryptonite-xr': {
+    label: 'Data Quality',
+    color: 'bg-amber-100 text-amber-800',
+    border: 'border-l-amber-400',
+    accent: 'amber',
+  },
+  'sept-spike': {
+    label: 'Volume Anomaly',
+    color: 'bg-red-100 text-red-800',
+    border: 'border-l-red-400',
+    accent: 'red',
+  },
+  'nov-dip': {
+    label: 'Volume Anomaly',
+    color: 'bg-red-100 text-red-800',
+    border: 'border-l-red-400',
+    accent: 'red',
+  },
+  'ks-aug-batch-reversal': {
+    label: 'Operational',
+    color: 'bg-amber-100 text-amber-800',
+    border: 'border-l-amber-400',
+    accent: 'amber',
+  },
 };
 
 // Key stat badge colors
@@ -34,31 +58,36 @@ interface Props {
 }
 
 export const AnomalyPanel = memo(function AnomalyPanel({ panel }: Props) {
-  const severity = SEVERITY_MAP[panel.id] ?? { label: 'Info', color: 'bg-muted text-foreground' };
+  const severity = SEVERITY_MAP[panel.id] ?? {
+    label: 'Info',
+    color: 'bg-muted text-foreground',
+    border: 'border-l-muted-foreground',
+    accent: 'gray',
+  };
   const statColor = STAT_COLORS[panel.id] ?? 'bg-muted text-foreground';
 
   // Mini chart grid: 1 = full, 2 = side-by-side, 3 = first full + two side-by-side
   const chartCount = panel.miniCharts.length;
 
   return (
-    <Card>
+    <Card className={cn('border-l-4', severity.border)}>
       <CardHeader className="pb-4">
         <div className="flex flex-wrap items-center gap-3">
           <span
-            className={`inline-flex items-center rounded-md border px-2.5 py-1 font-mono text-lg font-bold ${statColor}`}
+            className={`inline-flex items-center rounded-md border px-3 py-1.5 font-mono text-lg font-bold ${statColor}`}
           >
             {panel.keyStat}
           </span>
-          <CardTitle className="text-lg">{panel.title}</CardTitle>
-          <Badge className={`${severity.color} ml-auto border-0`}>{severity.label}</Badge>
+          <div className="min-w-0 flex-1">
+            <CardTitle className="text-lg">{panel.title}</CardTitle>
+          </div>
+          <Badge className={`${severity.color} shrink-0 border-0`}>{severity.label}</Badge>
         </div>
       </CardHeader>
       <CardContent className="space-y-5">
         {/* What We See */}
         <div>
-          <h4 className="text-muted-foreground mb-1 text-sm font-semibold tracking-wide uppercase">
-            What We See
-          </h4>
+          <SectionLabel>What We See</SectionLabel>
           <p className="text-sm leading-relaxed">{panel.whatWeSee}</p>
         </div>
 
@@ -75,14 +104,24 @@ export const AnomalyPanel = memo(function AnomalyPanel({ panel }: Props) {
           >
             {chartCount === 3 ? (
               <>
-                <AnomalyMiniChart chart={panel.miniCharts[0]} />
+                <ChartContainer>
+                  <AnomalyMiniChart chart={panel.miniCharts[0]} />
+                </ChartContainer>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                  <AnomalyMiniChart chart={panel.miniCharts[1]} />
-                  <AnomalyMiniChart chart={panel.miniCharts[2]} />
+                  <ChartContainer>
+                    <AnomalyMiniChart chart={panel.miniCharts[1]} />
+                  </ChartContainer>
+                  <ChartContainer>
+                    <AnomalyMiniChart chart={panel.miniCharts[2]} />
+                  </ChartContainer>
                 </div>
               </>
             ) : (
-              panel.miniCharts.map((chart, i) => <AnomalyMiniChart key={i} chart={chart} />)
+              panel.miniCharts.map((chart, i) => (
+                <ChartContainer key={i}>
+                  <AnomalyMiniChart chart={chart} />
+                </ChartContainer>
+              ))
             )}
           </div>
         )}
@@ -92,28 +131,41 @@ export const AnomalyPanel = memo(function AnomalyPanel({ panel }: Props) {
 
         {/* Why It Matters */}
         <div>
-          <h4 className="text-muted-foreground mb-1 text-sm font-semibold tracking-wide uppercase">
-            Why It Matters
-          </h4>
+          <SectionLabel>Why It Matters</SectionLabel>
           <p className="text-sm leading-relaxed">{panel.whyItMatters}</p>
         </div>
 
         {/* To Confirm */}
-        <div className="rounded-r border-l-4 border-amber-300 bg-amber-50/50 py-1 pl-4">
-          <h4 className="mb-1 text-sm font-semibold tracking-wide text-amber-700 uppercase">
+        <div className="rounded-r border-l-4 border-amber-300 bg-amber-50/50 px-4 py-3">
+          <h4 className="mb-1 text-xs font-semibold tracking-wider text-amber-700 uppercase">
             To Confirm
           </h4>
-          <p className="text-sm leading-relaxed italic">{panel.toConfirm}</p>
+          <p className="text-sm leading-relaxed text-amber-900">{panel.toConfirm}</p>
         </div>
 
         {/* RFP Impact */}
-        <div>
-          <h4 className="text-muted-foreground mb-1 text-sm font-semibold tracking-wide uppercase">
+        <div className="rounded-r border-l-4 border-teal-300 bg-teal-50/50 px-4 py-3">
+          <h4 className="mb-1 text-xs font-semibold tracking-wider text-teal-700 uppercase">
             RFP Impact
           </h4>
-          <p className="text-sm leading-relaxed text-teal-700 italic">{panel.rfpImpact}</p>
+          <p className="text-sm leading-relaxed text-teal-900">{panel.rfpImpact}</p>
         </div>
       </CardContent>
     </Card>
   );
 });
+
+// ── Shared sub-components ────────────────────────────────────────────────
+
+function SectionLabel({ children }: { children: React.ReactNode }) {
+  return (
+    <h4 className="text-muted-foreground mb-1.5 flex items-center gap-2 text-xs font-semibold tracking-wider uppercase">
+      <span className="inline-block h-1 w-1 rounded-full bg-teal-500" />
+      {children}
+    </h4>
+  );
+}
+
+function ChartContainer({ children }: { children: React.ReactNode }) {
+  return <div className="bg-muted/30 rounded-lg border p-3">{children}</div>;
+}

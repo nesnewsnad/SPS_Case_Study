@@ -93,12 +93,12 @@ function QuestionList({ items }: { items: { q: string; context: string }[] }) {
     <ol className="list-none space-y-4 pl-0">
       {items.map((item, i) => (
         <li key={i} className="flex gap-3">
-          <span className="bg-muted flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-xs font-semibold">
+          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-teal-100 text-xs font-semibold text-teal-700">
             {i + 1}
           </span>
           <div>
-            <p className="text-sm font-medium">{item.q}</p>
-            <p className="text-muted-foreground mt-0.5 text-sm">{item.context}</p>
+            <p className="text-sm leading-snug font-medium">{item.q}</p>
+            <p className="text-muted-foreground mt-1 text-xs leading-relaxed">{item.context}</p>
           </div>
         </li>
       ))}
@@ -109,7 +109,7 @@ function QuestionList({ items }: { items: { q: string; context: string }[] }) {
 export const FollowUpQuestions = memo(function FollowUpQuestions() {
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="pb-3">
         <CardTitle>Follow-Up Questions &amp; Next Steps</CardTitle>
         <p className="text-muted-foreground text-sm">
           Structured questions derived from the data findings above

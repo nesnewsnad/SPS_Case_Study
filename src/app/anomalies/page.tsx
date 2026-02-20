@@ -157,19 +157,28 @@ export default function AnomaliesPage() {
       </div>
 
       {/* Section 1: Anomaly Investigation Panels */}
-      <div className="space-y-4">
+      <section className="space-y-4">
+        <h2 className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+          Investigation Panels
+        </h2>
         {data.panels.map((panel) => (
           <AnomalyPanel key={panel.id} panel={panel} />
         ))}
-      </div>
+      </section>
 
       {/* Section 2: Follow-Up Questions */}
-      <section className="border-t pt-6">
+      <section className="space-y-4 border-t pt-6">
+        <h2 className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+          Follow-Up &amp; Next Steps
+        </h2>
         <FollowUpQuestions />
       </section>
 
       {/* Section 3: Dashboard Extension Mock-Ups */}
-      <section className="border-t pt-6">
+      <section className="space-y-4 border-t pt-6">
+        <h2 className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+          Forward-Looking Extensions
+        </h2>
         <ExtensionMockups />
       </section>
     </div>
