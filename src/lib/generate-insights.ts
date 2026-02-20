@@ -16,17 +16,33 @@ interface InsightTemplate {
   generate: (filters: FilterState, data: OverviewResponse) => InsightCard;
 }
 
+const STATE_NAMES: Record<string, string> = {
+  CA: 'California',
+  IN: 'Indiana',
+  KS: 'Kansas',
+  MN: 'Minnesota',
+  PA: 'Pennsylvania',
+};
+
+function ordinal(n: number): string {
+  if (n === 1) return '1st';
+  if (n === 2) return '2nd';
+  if (n === 3) return '3rd';
+  return `${n}th`;
+}
+
 const templates: InsightTemplate[] = [
   // --- Unfiltered insights (show when no filters active) ---
   {
     id: 'portfolio-summary',
     priority: 10,
-    match: (f, _d, v) => v === 'overview' && !f.state && !f.formulary && !f.mony && !f.dateStart && !f.groupId,
+    match: (f, _d, v) =>
+      v === 'overview' && !f.state && !f.formulary && !f.mony && !f.dateStart && !f.groupId,
     generate: (_f, d) => ({
       id: 'portfolio-summary',
       severity: 'info',
       title: 'Portfolio Summary',
-      body: `${abbreviateNumber(d.kpis.netClaims)} net claims across ${d.states.length} states and ${d.formulary.length} formulary types. Overall reversal rate: ${formatPercent(d.kpis.reversalRate)}.`,
+      body: `${abbreviateNumber(d.kpis.netClaims)} net claims across ${d.allStates.length} states and ${d.formulary.length} formulary types. Overall reversal rate: ${formatPercent(d.kpis.reversalRate)}.`,
     }),
   },
   {
@@ -52,76 +68,56 @@ const templates: InsightTemplate[] = [
     }),
   },
 
-  // --- Per-state insights ---
+  // --- Per-state: KS batch reversal warning (highest priority) ---
   {
-    id: 'state-ca',
-    priority: 20,
-    match: (f) => f.state === 'CA',
-    generate: (_f, d) => {
-      const ca = d.states.find(s => s.state === 'CA');
-      return {
-        id: 'state-ca',
-        severity: 'info',
-        title: 'California Claims',
-        body: ca ? `CA accounts for ${formatNumber(ca.netClaims)} net claims with a ${formatPercent(ca.reversalRate)} reversal rate, in line with the portfolio average.` : 'California data is filtered.',
-      };
-    },
-  },
-  {
-    id: 'state-in',
-    priority: 21,
-    match: (f) => f.state === 'IN',
-    generate: (_f, d) => {
-      const ind = d.states.find(s => s.state === 'IN');
-      return {
-        id: 'state-in',
-        severity: 'info',
-        title: 'Indiana Claims',
-        body: ind ? `IN contributes ${formatNumber(ind.netClaims)} net claims. Reversal rate of ${formatPercent(ind.reversalRate)} is consistent across all Indiana groups.` : 'Indiana data is filtered.',
-      };
-    },
-  },
-  {
-    id: 'state-pa',
-    priority: 22,
-    match: (f) => f.state === 'PA',
-    generate: (_f, d) => {
-      const pa = d.states.find(s => s.state === 'PA');
-      return {
-        id: 'state-pa',
-        severity: 'info',
-        title: 'Pennsylvania Claims',
-        body: pa ? `PA shows ${formatNumber(pa.netClaims)} net claims with a ${formatPercent(pa.reversalRate)} reversal rate, tracking the national average.` : 'Pennsylvania data is filtered.',
-      };
-    },
-  },
-  {
-    id: 'state-mn',
-    priority: 23,
-    match: (f) => f.state === 'MN',
-    generate: (_f, d) => {
-      const mn = d.states.find(s => s.state === 'MN');
-      return {
-        id: 'state-mn',
-        severity: 'info',
-        title: 'Minnesota Claims',
-        body: mn ? `MN has ${formatNumber(mn.netClaims)} net claims. Performance is uniform — no anomalous reversal patterns detected.` : 'Minnesota data is filtered.',
-      };
-    },
-  },
-  {
-    id: 'state-ks',
-    priority: 19, // higher priority — has the batch reversal warning
+    id: 'state-ks-warning',
+    priority: 19,
     match: (f) => f.state === 'KS',
-    generate: (_f, d) => {
-      const ks = d.states.find(s => s.state === 'KS');
+    generate: () => ({
+      id: 'state-ks-warning',
+      severity: 'warning',
+      title: 'August Batch Reversal',
+      body: '18 Kansas groups (400xxx prefix) had 100% reversal in August — a batch reversal event. Claims were re-submitted in September at ~1.4× normal volume. Excluding August, KS reversal rate is ~10%, matching other states.',
+    }),
+  },
+
+  // --- Per-state: rank + share (any state) ---
+  {
+    id: 'state-rank',
+    priority: 20,
+    match: (f) => !!f.state,
+    generate: (f, d) => {
+      const sorted = [...d.allStates].sort((a, b) => b.netClaims - a.netClaims);
+      const rank = sorted.findIndex((s) => s.state === f.state) + 1;
+      const total = sorted.reduce((sum, s) => sum + s.netClaims, 0);
+      const stateData = sorted.find((s) => s.state === f.state);
+      const share = total > 0 && stateData ? ((stateData.netClaims / total) * 100).toFixed(1) : '0';
+      const name = STATE_NAMES[f.state!] ?? f.state;
       return {
-        id: 'state-ks',
-        severity: 'warning',
-        title: 'Kansas — August Batch Reversal',
-        body: ks
-          ? `KS shows ${formatNumber(ks.netClaims)} net claims. Note: 18 KS groups had 100% reversal in August (batch reversal + rebill in September). Excluding August, KS reversal rate is ~10%, matching other states.`
-          : 'Kansas data is filtered.',
+        id: 'state-rank',
+        severity: 'info',
+        title: `${name} — ${ordinal(rank)} of ${sorted.length}`,
+        body: `${f.state} accounts for ${share}% of total claims volume across all states.`,
+      };
+    },
+  },
+
+  // --- Per-state: group density ---
+  {
+    id: 'state-groups',
+    priority: 21,
+    match: (f, d) => !!f.state && d.allStates.some((s) => s.state === f.state && s.groupCount > 0),
+    generate: (f, d) => {
+      const stateData = d.allStates.find((s) => s.state === f.state);
+      const groups = stateData?.groupCount ?? 0;
+      const net = stateData?.netClaims ?? 0;
+      const avg = groups > 0 ? Math.round(net / groups) : 0;
+      const totalGroups = d.allStates.reduce((sum, s) => sum + s.groupCount, 0);
+      return {
+        id: 'state-groups',
+        severity: 'info',
+        title: `${groups} Groups`,
+        body: `${f.state} has ${groups} of ${totalGroups} total groups, averaging ${formatNumber(avg)} claims per group. All groups are state-specific — no group spans multiple states.`,
       };
     },
   },
@@ -132,7 +128,7 @@ const templates: InsightTemplate[] = [
     priority: 15,
     match: (f) => f.dateStart === '2021-09-01' || f.dateStart?.startsWith('2021-09') === true,
     generate: (_f, d) => {
-      const sep = d.monthly.find(m => m.month === '2021-09');
+      const sep = d.monthly.find((m) => m.month === '2021-09');
       const net = sep ? sep.incurred - sep.reversed : 0;
       return {
         id: 'month-sep',
@@ -147,7 +143,7 @@ const templates: InsightTemplate[] = [
     priority: 16,
     match: (f) => f.dateStart === '2021-11-01' || f.dateStart?.startsWith('2021-11') === true,
     generate: (_f, d) => {
-      const nov = d.monthly.find(m => m.month === '2021-11');
+      const nov = d.monthly.find((m) => m.month === '2021-11');
       const net = nov ? nov.incurred - nov.reversed : 0;
       return {
         id: 'month-nov',
@@ -175,7 +171,7 @@ const templates: InsightTemplate[] = [
     priority: 25,
     match: (f) => !!f.formulary,
     generate: (f, d) => {
-      const match = d.formulary.find(x => x.type === f.formulary);
+      const match = d.formulary.find((x) => x.type === f.formulary);
       return {
         id: 'formulary-active',
         severity: 'info',
@@ -211,18 +207,7 @@ const templates: InsightTemplate[] = [
     }),
   },
 
-  // --- Multi-filter ---
-  {
-    id: 'state-formulary-combo',
-    priority: 30,
-    match: (f) => !!f.state && !!f.formulary,
-    generate: (f, d) => ({
-      id: 'state-formulary-combo',
-      severity: 'info',
-      title: `${f.state} × ${f.formulary}`,
-      body: `Viewing ${f.state} claims under ${f.formulary} formulary: ${formatNumber(d.kpis.netClaims)} net claims, ${formatPercent(d.kpis.reversalRate)} reversal rate.`,
-    }),
-  },
+  // --- Group filter ---
   {
     id: 'group-filter',
     priority: 28,
@@ -231,20 +216,7 @@ const templates: InsightTemplate[] = [
       id: 'group-filter',
       severity: 'info',
       title: `Group ${f.groupId}`,
-      body: `Group ${f.groupId}: ${formatNumber(d.kpis.netClaims)} net claims, ${formatPercent(d.kpis.reversalRate)} reversal rate. All 189 groups are state-specific — no group spans multiple states.`,
-    }),
-  },
-
-  // --- Fallback ---
-  {
-    id: 'fallback',
-    priority: 100,
-    match: () => true,
-    generate: (_f, d) => ({
-      id: 'fallback',
-      severity: 'info',
-      title: 'Filtered View',
-      body: `Showing ${formatNumber(d.kpis.netClaims)} net claims (${formatPercent(d.kpis.reversalRate)} reversal rate) for the current filter selection. ${formatNumber(d.kpis.uniqueDrugs)} unique drugs in this view.`,
+      body: `Group ${f.groupId}: ${formatNumber(d.kpis.netClaims)} net claims, ${formatPercent(d.kpis.reversalRate)} reversal rate. All groups are state-specific — no group spans multiple states.`,
     }),
   },
 ];

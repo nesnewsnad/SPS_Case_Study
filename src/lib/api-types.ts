@@ -45,6 +45,7 @@ export interface StateBreakdown {
   netClaims: number;
   totalClaims: number;
   reversalRate: number;
+  groupCount: number;
 }
 
 export interface AdjudicationSummary {

@@ -85,9 +85,18 @@ function buildNoStateWhere(filters: FilterParams): { where: SQL; needsJoin: bool
   if (filters.dateStart) parts.push(sql`c.date_filled >= ${filters.dateStart}`);
   if (filters.dateEnd) parts.push(sql`c.date_filled <= ${filters.dateEnd}`);
 
-  if (filters.mony) { needsJoin = true; parts.push(sql`d.mony = ${filters.mony}`); }
-  if (filters.manufacturer) { needsJoin = true; parts.push(sql`d.manufacturer_name = ${filters.manufacturer}`); }
-  if (filters.drug) { needsJoin = true; parts.push(sql`d.drug_name = ${filters.drug}`); }
+  if (filters.mony) {
+    needsJoin = true;
+    parts.push(sql`d.mony = ${filters.mony}`);
+  }
+  if (filters.manufacturer) {
+    needsJoin = true;
+    parts.push(sql`d.manufacturer_name = ${filters.manufacturer}`);
+  }
+  if (filters.drug) {
+    needsJoin = true;
+    parts.push(sql`d.drug_name = ${filters.drug}`);
+  }
 
   return { where: sql.join(parts, sql` AND `), needsJoin };
 }
@@ -107,9 +116,16 @@ export async function GET(request: NextRequest) {
       ? sql`FROM claims c LEFT JOIN drug_info d ON c.ndc = d.ndc`
       : sql`FROM claims c`;
 
-    const [kpiResult, unfilteredResult, monthlyResult, formularyResult, statesResult, allStatesResult, adjResult] =
-      await Promise.all([
-        db.execute(sql`
+    const [
+      kpiResult,
+      unfilteredResult,
+      monthlyResult,
+      formularyResult,
+      statesResult,
+      allStatesResult,
+      adjResult,
+    ] = await Promise.all([
+      db.execute(sql`
           SELECT
             COUNT(*)::int AS total_claims,
             COALESCE(SUM(c.net_claim_count), 0)::int AS net_claims,
@@ -119,7 +135,7 @@ export async function GET(request: NextRequest) {
           WHERE ${where}
         `),
 
-        db.execute(sql`
+      db.execute(sql`
           SELECT
             COUNT(*)::int AS total_claims,
             COALESCE(SUM(c.net_claim_count), 0)::int AS net_claims,
@@ -129,7 +145,7 @@ export async function GET(request: NextRequest) {
           WHERE ${baselineWhere}
         `),
 
-        db.execute(sql`
+      db.execute(sql`
           SELECT
             to_char(c.date_filled, 'YYYY-MM') AS month,
             COUNT(*) FILTER (WHERE c.net_claim_count = 1)::int AS incurred,
@@ -140,7 +156,7 @@ export async function GET(request: NextRequest) {
           ORDER BY month
         `),
 
-        db.execute(sql`
+      db.execute(sql`
           SELECT
             c.formulary AS type,
             COALESCE(SUM(c.net_claim_count), 0)::int AS net_claims,
@@ -151,32 +167,34 @@ export async function GET(request: NextRequest) {
           ORDER BY net_claims DESC
         `),
 
-        db.execute(sql`
+      db.execute(sql`
           SELECT
             c.pharmacy_state AS state,
             COALESCE(SUM(c.net_claim_count), 0)::int AS net_claims,
             COUNT(*)::int AS total_claims,
-            ROUND(COUNT(*) FILTER (WHERE c.net_claim_count = -1)::numeric / NULLIF(COUNT(*), 0) * 100, 2) AS reversal_rate
+            ROUND(COUNT(*) FILTER (WHERE c.net_claim_count = -1)::numeric / NULLIF(COUNT(*), 0) * 100, 2) AS reversal_rate,
+            COUNT(DISTINCT c.group_id)::int AS group_count
           ${fromClause}
           WHERE ${where}
           GROUP BY c.pharmacy_state
           ORDER BY net_claims DESC
         `),
 
-        // All states (ignoring state filter) — for highlight-style bar chart
-        db.execute(sql`
+      // All states (ignoring state filter) — for highlight-style bar chart
+      db.execute(sql`
           SELECT
             c.pharmacy_state AS state,
             COALESCE(SUM(c.net_claim_count), 0)::int AS net_claims,
             COUNT(*)::int AS total_claims,
-            ROUND(COUNT(*) FILTER (WHERE c.net_claim_count = -1)::numeric / NULLIF(COUNT(*), 0) * 100, 2) AS reversal_rate
+            ROUND(COUNT(*) FILTER (WHERE c.net_claim_count = -1)::numeric / NULLIF(COUNT(*), 0) * 100, 2) AS reversal_rate,
+            COUNT(DISTINCT c.group_id)::int AS group_count
           ${noStateFrom}
           WHERE ${noStateWhere}
           GROUP BY c.pharmacy_state
           ORDER BY net_claims DESC
         `),
 
-        db.execute(sql`
+      db.execute(sql`
           SELECT
             COUNT(*) FILTER (WHERE c.adjudicated = true)::int AS adjudicated,
             COUNT(*) FILTER (WHERE c.adjudicated = false)::int AS not_adjudicated,
@@ -184,7 +202,7 @@ export async function GET(request: NextRequest) {
           ${fromClause}
           WHERE ${where}
         `),
-      ]);
+    ]);
 
     const kpiRow = kpiResult.rows[0] as Record<string, unknown>;
     const kpis: KpiSummary = {
@@ -223,14 +241,18 @@ export async function GET(request: NextRequest) {
       netClaims: Number(r.net_claims) || 0,
       totalClaims: Number(r.total_claims) || 0,
       reversalRate: Number(r.reversal_rate) || 0,
+      groupCount: Number(r.group_count) || 0,
     }));
 
-    const allStates: StateBreakdown[] = (allStatesResult.rows as Record<string, unknown>[]).map((r) => ({
-      state: String(r.state),
-      netClaims: Number(r.net_claims) || 0,
-      totalClaims: Number(r.total_claims) || 0,
-      reversalRate: Number(r.reversal_rate) || 0,
-    }));
+    const allStates: StateBreakdown[] = (allStatesResult.rows as Record<string, unknown>[]).map(
+      (r) => ({
+        state: String(r.state),
+        netClaims: Number(r.net_claims) || 0,
+        totalClaims: Number(r.total_claims) || 0,
+        reversalRate: Number(r.reversal_rate) || 0,
+        groupCount: Number(r.group_count) || 0,
+      }),
+    );
 
     const adjRow = adjResult.rows[0] as Record<string, unknown>;
     const adjudication: AdjudicationSummary = {
