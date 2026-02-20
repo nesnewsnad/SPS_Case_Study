@@ -245,13 +245,16 @@ export function FilterBar({ view }: FilterBarProps) {
       <div className="flex flex-wrap items-center gap-2 px-6 py-3">
         {/* Formulary */}
         <Select
-          value={filters.formulary}
-          onValueChange={(val) => setFilter('formulary', val)}
+          value={filters.formulary ?? '__all__'}
+          onValueChange={(val) =>
+            val === '__all__' ? removeFilter('formulary') : setFilter('formulary', val)
+          }
         >
           <SelectTrigger className="w-[150px]" size="sm">
-            <SelectValue placeholder="All Formularies" />
+            <SelectValue />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="__all__">All Formularies</SelectItem>
             <SelectItem value="OPEN">OPEN</SelectItem>
             <SelectItem value="MANAGED">MANAGED</SelectItem>
             <SelectItem value="HMF">HMF</SelectItem>
@@ -260,13 +263,16 @@ export function FilterBar({ view }: FilterBarProps) {
 
         {/* State */}
         <Select
-          value={filters.state}
-          onValueChange={(val) => setFilter('state', val)}
+          value={filters.state ?? '__all__'}
+          onValueChange={(val) =>
+            val === '__all__' ? removeFilter('state') : setFilter('state', val)
+          }
         >
           <SelectTrigger className="w-[130px]" size="sm">
-            <SelectValue placeholder="All States" />
+            <SelectValue />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="__all__">All States</SelectItem>
             <SelectItem value="CA">CA</SelectItem>
             <SelectItem value="IN">IN</SelectItem>
             <SelectItem value="KS">KS</SelectItem>
@@ -277,13 +283,16 @@ export function FilterBar({ view }: FilterBarProps) {
 
         {/* MONY */}
         <Select
-          value={filters.mony}
-          onValueChange={(val) => setFilter('mony', val)}
+          value={filters.mony ?? '__all__'}
+          onValueChange={(val) =>
+            val === '__all__' ? removeFilter('mony') : setFilter('mony', val)
+          }
         >
           <SelectTrigger className="w-[200px]" size="sm">
-            <SelectValue placeholder="All MONY" />
+            <SelectValue />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="__all__">All MONY</SelectItem>
             {Object.entries(MONY_LABELS).map(([code, label]) => (
               <SelectItem key={code} value={code}>
                 {code} — {label}
