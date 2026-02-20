@@ -111,8 +111,8 @@ Note: `unfilteredKpis` is always the full-dataset KPIs regardless of active filt
 - `FLAGGED_NDCS` is an extensible registry (array of `{ ndc, label, reason }`) — currently 1 entry
 
 ### 8. Corrected Anomaly Narratives (Added 2026-02-19 post-EDA)
-- September spike: **+57%** (was +43% — old number included Kryptonite in baseline)
-- November dip: **-49%** (was -54% — old number included Kryptonite)
+- September spike: **+41%** vs 9-normal-month baseline (was +43% with Kryptonite, was +57% with flawed baseline that included near-zero May)
+- November dip: **-54%** vs 9-normal-month baseline (was -54% with Kryptonite — coincidentally similar, now methodologically correct)
 - Kansas: NOT a general "high reversal" state. It's a **specific August batch reversal event** — 18 KS-only groups with 100% reversal in Aug, then re-incur in Sep. KS reversal rate is ~10% in every other month.
 - Anomaly panels now 4 (was 3): `kryptonite-xr`, `sept-spike`, `nov-dip`, `ks-aug-batch-reversal`
 - KS bar on Overview no longer gets amber highlighting (rates are normal)

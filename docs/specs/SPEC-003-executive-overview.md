@@ -105,8 +105,8 @@ Recharts `AreaChart` with two stacked series:
 - Data source: `monthly[]` array from OverviewResponse
 
 **Reference lines:**
-- **September spike:** Vertical reference line at Sep 2021, amber (#d97706), dashed, with label "▲ +57%" positioned above
-- **November dip:** Vertical reference line at Nov 2021, slate (#64748b), dashed, with label "▼ -49%" positioned above
+- **September spike:** Vertical reference line at Sep 2021, amber (#d97706), dashed, with label "▲ +41%" positioned above
+- **November dip:** Vertical reference line at Nov 2021, slate (#64748b), dashed, with label "▼ -54%" positioned above
 - **May (when flagged NDCs excluded):** May bar will be near-zero (~5 claims). No special annotation needed — the visual emptiness speaks for itself and the Anomalies page explains it. When flagged NDCs ARE included, May spikes to ~49K — the dramatic reshape is the demonstration.
 - Reference lines always visible regardless of filter state (they're annotations, not data)
 
@@ -208,8 +208,8 @@ interface InsightCard {
 | State = CA | "California represents the largest claims volume at XXK net claims. As the primary state, CA volume trends will disproportionately influence overall metrics." |
 | State = KS | "Kansas shows a normal ~10% reversal rate in most months. However, August is a major outlier — 18 KS-only groups were fully reversed (81.6% rate), then re-incurred in September. See Anomalies for the full investigation." |
 | Formulary = any | "Under the [type] formulary, reversal rates are X.X% with XXK net claims — essentially in line with the ~10.8% overall average. Formulary type shows minimal correlation with reversal behavior." |
-| Month = Sep | "September claims surged 57% above the normal-month average, uniformly across all states and formularies. Partially explained by KS rebill groups re-incurring post-August batch reversal." |
-| Month = Nov | "November volume dropped 49% below average — uniformly across all states and groups. All 30 days are present; this is not missing data. Root cause requires clarification." |
+| Month = Sep | "September claims surged 41% above the normal-month average, uniformly across all states and formularies. Partially explained by KS rebill groups re-incurring post-August batch reversal." |
+| Month = Nov | "November volume dropped 54% below average — uniformly across all states and groups. All 30 days are present; this is not missing data. Root cause requires clarification." |
 | Month = May (flagged off) | "May shows near-zero claims because a synthetic test drug (KRYPTONITE XR) was excluded. Toggle 'Include flagged NDCs' to see its impact, or visit the Anomalies page." |
 | MONY = Y | "Single-source generics (MONY Y) account for 77% of claims — heavily generic, consistent with aggressive LTC formulary management." |
 | Multiple filters | Combine relevant insights, show the most specific first, max 3 cards |
@@ -264,7 +264,7 @@ Component file organization within `overview/` is at implementor's discretion �
 3. Four KPI cards display Total Claims, Net Claims, Reversal Rate, and Unique Drugs with correct formatting (commas, one-decimal %)
 4. KPI cards show delta indicators ("↑ X% vs avg" / "↓ X% vs avg") when filters are active; no delta when unfiltered
 5. Hero stacked area chart renders monthly incurred vs. reversed claims for all 12 months of 2021
-6. Hero chart has reference lines for September spike (amber, "+57%") and November dip (slate, "-49%")
+6. Hero chart has reference lines for September spike (amber, "+41%") and November dip (slate, "-54%")
 7. Clicking a month on the hero chart toggles a date filter via `toggleFilter`
 8. Formulary donut renders OPEN/MANAGED/HMF proportions; clicking a slice toggles a formulary filter
 9. State horizontal bars render 5 states sorted by net claims descending, all in teal (no special KS highlighting — KS rates are normal outside the August batch event)

@@ -83,15 +83,15 @@ A production-grade, interactive claims analytics dashboard for SPS Health's RFP 
 - **Evidence**: GROUP 400127: Jul=1,210 rows (10.5% rev), Aug=1,194 rows (100% rev, 0 incurred), Sep=1,733 rows (9.8% rev). Same pattern for all 18 groups.
 - **This is NOT a general "Kansas has high reversals" story**. KS in every other month has ~9.3-10.4% reversal rate, indistinguishable from other states. The 15.8% annual KS reversal rate reported earlier was entirely an artifact of the August batch event.
 
-### ANOMALY 3: September Spike (+57% excl. Kryptonite) (MEDIUM CONFIDENCE — partially explained)
-- **70,941 real claims** (excl. Kryptonite) vs. ~45,224 avg for normal months. **+57% above average**.
+### ANOMALY 3: September Spike (+41% vs normal months) (MEDIUM CONFIDENCE — partially explained)
+- **70,941 real claims** (excl. Kryptonite) vs. ~50,249 avg for the 9 normal months (excl. fake May, anomalous Sep/Nov). **+41% above normal-month average**.
 - The spike is **perfectly uniform**: all 5 states up 47-50%, all 3 formularies up 48-50%, all top drugs up ~1.4x. No single group or drug drives it.
 - **Partially explained**: KS rebill groups re-incurring in September adds ~2,700 extra claims. But the remaining ~23,000 excess claims are unexplained and uniformly distributed.
 - **Sep 1 has 13,741 claims** — but this fits the first-of-month pattern (all months show 7-8x volume on day 1, a classic LTC cycle-fill pattern). Sep 1 is high in proportion, not anomalously so.
 - **Possible explanations**: Q3-end catch-up processing, LTC facility re-enrollment cycle, or synthetic data amplification.
 
-### ANOMALY 4: November Dip (-49% excl. Kryptonite) (MEDIUM CONFIDENCE — unexplained)
-- **23,337 real claims** vs. ~45,224 avg. **All 30 days present**, all 183 active groups present (6 tiny groups with 88 total claims absent — immaterial).
+### ANOMALY 4: November Dip (-54% vs normal months) (MEDIUM CONFIDENCE — unexplained)
+- **23,337 real claims** vs. ~50,249 normal-month avg. **-54% below normal**. All 30 days present, all 183 active groups present (6 tiny groups with 88 total claims absent — immaterial).
 - The dip is **perfectly uniform**: all states down 54-56%, all top groups at ~0.45-0.54x normal. Not driven by missing groups, missing days, or a holiday gap.
 - Nov 20-22 (Sat-Mon around Thanksgiving) are especially low (67-123 claims/day), but the deficit is spread across the entire month — every day is roughly half volume.
 - **Possible explanations**: Data extract truncated mid-processing, reduced LTC admissions, or synthetic data artifact.

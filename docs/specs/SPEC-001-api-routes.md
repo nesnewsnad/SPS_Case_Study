@@ -165,7 +165,7 @@ export interface BeforeAfterMetric {
 export interface AnomalyPanel {
   id: string;                    // "kryptonite-xr" | "sept-spike" | "nov-dip" | "ks-aug-batch-reversal"
   title: string;
-  keyStat: string;               // "49,567 claims", "+57%", "-49%", "81.6%"
+  keyStat: string;               // "49,567 claims", "+41%", "-54%", "81.6%"
   whatWeSee: string;
   whyItMatters: string;
   toConfirm: string;
@@ -242,9 +242,9 @@ Returns `AnomaliesResponse`. Four pre-computed panels:
   - `miniCharts`: monthly volume chart showing the Kryptonite-only claims by month (the May spike).
   - NDC details in narrative: drug name, label name, manufacturer, MONY, state/formulary distribution match.
 
-- **September spike**: `id: "sept-spike"`. Monthly totals for comparison (excluding Kryptonite by default), September claims by state (grouped bar), September claims by formulary (stacked bar). `keyStat: "+57%"` (vs. normal-month average excluding May/Nov). Notes partial explanation from KS rebill groups re-incurring in September.
+- **September spike**: `id: "sept-spike"`. Monthly totals for comparison (excluding Kryptonite by default), September claims by state (grouped bar), September claims by formulary (stacked bar). `keyStat: "+41%"` (vs. normal-month average excluding May/Nov). Notes partial explanation from KS rebill groups re-incurring in September.
 
-- **November dip**: `id: "nov-dip"`. Monthly totals for comparison, November claims by state, November claims by top 10 groups (ratio vs. their average month). `keyStat: "-49%"`. Notes that the dip is uniform across all states and groups — not caused by missing data or specific groups dropping off.
+- **November dip**: `id: "nov-dip"`. Monthly totals for comparison, November claims by state, November claims by top 10 groups (ratio vs. their average month). `keyStat: "-54%"`. Notes that the dip is uniform across all states and groups — not caused by missing data or specific groups dropping off.
 
 - **Kansas August batch reversal**: `id: "ks-aug-batch-reversal"`. NOT a general "KS has high reversals" story. Specific drill-down showing:
   - 18 KS-only groups with 100% reversal rate in August (4,790 claims, zero incurred)
