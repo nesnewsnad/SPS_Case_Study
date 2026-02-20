@@ -2,32 +2,11 @@
 
 ## Up Next
 
-- [ ] Write SPEC-005: Anomalies & Recommendations page ← **NOW**
-- [ ] Write SPEC-006: AI Process page
-- [ ] Implement SPEC-005 (Framework)
-- [ ] Implement SPEC-006 (Framework)
+- [ ] Verify SPEC-005 (14 ACs)
+- [ ] Verify SPEC-006 (14 ACs)
 - [ ] "Ask the Data" chat sidebar
 - [ ] Enterprise polish pass
 - [ ] Final QA + submit
-
-## Anomalies & Recommendations (SPEC-005)
-
-- [ ] 4 investigation panels (Kryptonite XR, KS Aug batch reversal, Sept spike, Nov dip)
-- [ ] Mini charts within each investigation panel
-- [ ] Follow-up questions (3 tabs: client, internal, data requests)
-- [ ] Extension mock-up panels with written narrative:
-  - [ ] MOCK: Client onboarding + comparison
-  - [ ] MOCK: Pricing & reimbursement overlay
-  - [ ] MOCK: Patient demographics
-  - [ ] MOCK: Automated anomaly detection
-- [ ] Insight cards for anomalies view
-
-## AI Process (SPEC-006)
-
-- [ ] Tools & architecture cards
-- [ ] Workflow methodology (dual-machine, CLAUDE.md, session mgmt)
-- [ ] Build journey timeline (expandable phases)
-- [ ] Honest limitations section
 
 ## Chat Sidebar
 
@@ -70,3 +49,8 @@
 - [x] Implement SPEC-004: Claims Explorer (mini trend, drugs table, days supply, MONY donut, groups, manufacturers, 14 insight templates)
 - [x] Verify SPEC-004: PASS (17/17 ACs)
 - [x] UX fixes: single-item chart states, "All" options in comboboxes, chart title renames, overview-fallback regression fix
+- [x] Write SPEC-005: Anomalies & Recommendations page
+- [x] Implement SPEC-005: Anomalies & Recommendations (4 investigation panels, mini charts, follow-up questions, extension mock-ups)
+- [x] Write SPEC-006: AI Process page
+- [x] Discuss SPEC-006: lock 5 design decisions (pipeline viz, teal gradient, artifact styling, full scroll, amber limitations)
+- [x] Implement SPEC-006: AI Process page (pipeline flow, artifact evidence, toolkit, honest limitations — 7 files, 511 lines)
