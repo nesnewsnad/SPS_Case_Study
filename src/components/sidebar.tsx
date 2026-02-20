@@ -54,17 +54,35 @@ export function Sidebar() {
       )}
     >
       {/* Logo / Header */}
-      <div className="border-b px-3 py-5">
+      <div className="border-b px-3 py-4">
         <div className={cn('flex items-center', collapsed ? 'justify-center' : 'gap-3 px-3')}>
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-teal-600">
             <Building2 className="h-5 w-5 text-white" />
           </div>
           {!collapsed && (
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <h1 className="text-sm font-semibold tracking-tight">SPS Health</h1>
               <p className="text-muted-foreground text-xs">Claims Analytics</p>
             </div>
           )}
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <button
+                onClick={() => setCollapsed(!collapsed)}
+                className="text-muted-foreground hover:bg-muted hover:text-foreground shrink-0 rounded-md p-1.5 transition-colors"
+                aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              >
+                {collapsed ? (
+                  <PanelLeftOpen className="h-4 w-4" />
+                ) : (
+                  <PanelLeftClose className="h-4 w-4" />
+                )}
+              </button>
+            </TooltipTrigger>
+            <TooltipContent side="right" sideOffset={8}>
+              {collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
 
@@ -137,41 +155,13 @@ export function Sidebar() {
         })}
       </nav>
 
-      {/* Footer with collapse toggle */}
-      <div className={cn('border-t', collapsed ? 'px-2 py-3' : 'px-4 py-3')}>
-        {!collapsed && (
-          <div className="mb-2">
-            <p className="text-muted-foreground text-xs">Built with Claude Code</p>
-            <p className="text-muted-foreground text-xs">AI Implementation Case Study</p>
-          </div>
-        )}
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <button
-              onClick={() => setCollapsed(!collapsed)}
-              className={cn(
-                'text-muted-foreground hover:bg-muted hover:text-foreground flex items-center rounded-md transition-colors',
-                collapsed ? 'mx-auto p-2' : 'w-full gap-2 px-2 py-1.5 text-xs',
-              )}
-              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-            >
-              {collapsed ? (
-                <PanelLeftOpen className="h-4 w-4" />
-              ) : (
-                <>
-                  <PanelLeftClose className="h-4 w-4" />
-                  <span>Collapse</span>
-                </>
-              )}
-            </button>
-          </TooltipTrigger>
-          {collapsed && (
-            <TooltipContent side="right" sideOffset={8}>
-              Expand sidebar
-            </TooltipContent>
-          )}
-        </Tooltip>
-      </div>
+      {/* Footer */}
+      {!collapsed && (
+        <div className="border-t px-4 py-3">
+          <p className="text-muted-foreground text-xs">Built with Claude Code</p>
+          <p className="text-muted-foreground text-xs">AI Implementation Case Study</p>
+        </div>
+      )}
     </aside>
   );
 }
