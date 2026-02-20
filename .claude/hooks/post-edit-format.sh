@@ -16,7 +16,7 @@ esac
 # Only format supported file types
 case "$file_path" in
   *.ts|*.tsx|*.js|*.jsx|*.json|*.css|*.md)
-    cd /Users/danswensen/Desktop/SPS_Case_Study || exit 0
+    cd "$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
     npx prettier --write "$file_path" 2>/dev/null
     ;;
 esac

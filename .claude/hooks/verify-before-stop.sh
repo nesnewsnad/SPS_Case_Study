@@ -1,7 +1,7 @@
 #!/bin/bash
 # Stop hook: verify no uncommitted changes to key files before session ends
 
-cd /Users/danswensen/Desktop/SPS_Case_Study || exit 0
+cd "$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
 
 # Check for uncommitted changes to project files
 changed_files=$(git diff --name-only HEAD 2>/dev/null)

@@ -16,7 +16,7 @@ esac
 
 # Check TypeScript/TSX files with tsc (syntax only, fast)
 if [[ "$file_path" == *.ts || "$file_path" == *.tsx ]]; then
-  cd /Users/danswensen/Desktop/SPS_Case_Study || exit 0
+  cd "$(git rev-parse --show-toplevel 2>/dev/null)" || exit 0
   errors=$(npx tsc --noEmit --pretty false 2>&1 | grep "^${file_path}" | head -5)
   if [ -n "$errors" ]; then
     echo "TypeScript errors in $file_path:" >&2
