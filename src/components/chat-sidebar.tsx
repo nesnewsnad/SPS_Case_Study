@@ -114,8 +114,8 @@ export function ChatSidebar() {
         <button
           onClick={() => setOpen(true)}
           className={cn(
-            'fixed right-6 bottom-6 z-40 flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-all hover:scale-105',
-            'bg-teal-600 text-white hover:bg-teal-700',
+            'fixed right-6 bottom-6 z-40 flex h-14 w-14 items-center justify-center rounded-full transition-all duration-300 hover:scale-105',
+            'bg-gradient-to-br from-teal-500 to-teal-700 text-white shadow-[0_4px_14px_-3px_rgba(13,148,136,0.5)] hover:shadow-[0_6px_20px_-3px_rgba(13,148,136,0.6)]',
             !hasMessages && 'animate-pulse',
           )}
           aria-label="Open chat"
@@ -261,7 +261,7 @@ export function ChatSidebar() {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about claims, drugs, anomalies..."
                 disabled={isBusy}
-                className="bg-muted flex-1 rounded-md px-3 py-2 text-sm outline-none placeholder:text-xs disabled:opacity-50"
+                className="bg-muted flex-1 rounded-lg border border-transparent px-3 py-2 text-sm transition-colors outline-none placeholder:text-xs focus:border-teal-300 focus:ring-1 focus:ring-teal-200/50 disabled:opacity-50"
               />
               <Button
                 type="submit"

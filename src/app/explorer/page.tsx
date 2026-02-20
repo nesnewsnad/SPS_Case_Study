@@ -204,7 +204,7 @@ export default function ExplorerPage() {
         <FilterBar view="explorer" />
         <div className="space-y-6 p-6">
           <div>
-            <h1 className="text-2xl font-semibold">Claims Explorer</h1>
+            <h1 className="text-2xl font-bold tracking-tight">Claims Explorer</h1>
             <p className="text-muted-foreground">
               Pharmacy A — Drug-Level Drill-Down &amp; Distribution Analysis
             </p>
@@ -251,10 +251,11 @@ export default function ExplorerPage() {
       <div className="stagger-children space-y-6 p-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-semibold">Claims Explorer</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Claims Explorer</h1>
           <p className="text-muted-foreground">
             Pharmacy A — Drug-Level Drill-Down &amp; Distribution Analysis
           </p>
+          <div className="mt-2 h-0.5 w-12 rounded-full bg-gradient-to-r from-teal-400 to-teal-600" />
         </div>
 
         {/* Mini Monthly Trend */}

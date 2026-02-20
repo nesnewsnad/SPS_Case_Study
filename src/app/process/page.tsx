@@ -10,10 +10,11 @@ export default function ProcessPage() {
     <div className="stagger-children space-y-8 p-6">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">AI Process</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl font-bold tracking-tight">AI Process</h1>
+        <p className="text-muted-foreground text-sm">
           How one person with a system built a production analytics platform in four days.
         </p>
+        <div className="mt-2 h-0.5 w-12 rounded-full bg-gradient-to-r from-teal-400 to-teal-600" />
       </div>
 
       {/* Section 1: Hero Stat Bar + Framing */}

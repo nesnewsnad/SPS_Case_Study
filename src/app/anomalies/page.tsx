@@ -129,7 +129,7 @@ export default function AnomaliesPage() {
     return (
       <div className="space-y-6 p-6">
         <div>
-          <h1 className="text-2xl font-semibold">Anomalies &amp; Recommendations</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Anomalies &amp; Recommendations</h1>
           <p className="text-muted-foreground">
             Pharmacy A — Data Quality Findings, Follow-Up Questions, &amp; Forward-Looking Analysis
           </p>
@@ -150,10 +150,11 @@ export default function AnomaliesPage() {
     <div className="stagger-children space-y-6 p-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-semibold">Anomalies &amp; Recommendations</h1>
+        <h1 className="text-2xl font-bold tracking-tight">Anomalies &amp; Recommendations</h1>
         <p className="text-muted-foreground">
           Pharmacy A — Data Quality Findings, Follow-Up Questions, &amp; Forward-Looking Analysis
         </p>
+        <div className="mt-2 h-0.5 w-12 rounded-full bg-gradient-to-r from-teal-400 to-teal-600" />
       </div>
 
       {/* Section 1: Anomaly Investigation Panels */}

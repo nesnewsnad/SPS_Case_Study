@@ -11,15 +11,16 @@ interface KpiCardProps {
 
 export const KpiCard = memo(function KpiCard({ label, value, subtitle }: KpiCardProps) {
   return (
-    <Card>
-      <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-        <CardTitle className="text-sm font-medium font-sans">{label}</CardTitle>
+    <Card className="relative overflow-hidden">
+      <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-teal-400 via-teal-500 to-teal-600" />
+      <CardHeader className="flex flex-row items-center justify-between space-y-0 pt-5 pb-1">
+        <CardTitle className="text-muted-foreground font-sans text-xs font-semibold tracking-wider uppercase">
+          {label}
+        </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold font-mono">{value}</div>
-        {subtitle && (
-          <p className="text-xs mt-1 text-muted-foreground">{subtitle}</p>
-        )}
+        <div className="font-mono text-3xl font-bold tracking-tight">{value}</div>
+        {subtitle && <p className="text-muted-foreground mt-1.5 text-xs">{subtitle}</p>}
       </CardContent>
     </Card>
   );

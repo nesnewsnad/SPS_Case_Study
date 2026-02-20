@@ -59,21 +59,21 @@ export function PipelineFlow() {
       {stages.map((stage, i) => (
         <div key={stage.number} className="flex items-stretch">
           <div
-            className={`${stage.bg} ${stage.border} flex min-w-[180px] flex-1 flex-col rounded-lg border p-4`}
+            className={`${stage.bg} ${stage.border} flex min-w-[180px] flex-1 flex-col rounded-lg border p-4 shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] transition-shadow duration-200 hover:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)]`}
           >
-            <div className="mb-2 flex items-center gap-2">
+            <div className="mb-2 flex items-center gap-2.5">
               <span
-                className={`${stage.circle} flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-sm font-bold`}
+                className={`${stage.circle} flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold shadow-sm`}
               >
                 {stage.number}
               </span>
-              <span className="font-semibold">{stage.name}</span>
+              <span className="font-bold tracking-tight">{stage.name}</span>
             </div>
             <p className="text-muted-foreground text-sm leading-snug">{stage.description}</p>
           </div>
           {i < stages.length - 1 && (
-            <div className={`${stage.arrow} flex items-center px-1`}>
-              <ChevronRight className="h-6 w-6" strokeWidth={2.5} />
+            <div className={`${stage.arrow} flex items-center px-1.5`}>
+              <ChevronRight className="h-5 w-5" strokeWidth={3} />
             </div>
           )}
         </div>

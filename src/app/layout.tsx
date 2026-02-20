@@ -1,19 +1,19 @@
 import { Suspense } from 'react';
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Outfit, JetBrains_Mono } from 'next/font/google';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Sidebar } from '@/components/sidebar';
 import { ChatSidebar } from '@/components/chat-sidebar';
 import { FilterProvider } from '@/contexts/filter-context';
 import './globals.css';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
+const outfit = Outfit({
+  variable: '--font-outfit',
   subsets: ['latin'],
 });
 
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const jetbrainsMono = JetBrains_Mono({
+  variable: '--font-jetbrains-mono',
   subsets: ['latin'],
 });
 
@@ -30,13 +30,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased`}>
+      <body className={`${outfit.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
         <TooltipProvider>
           <div className="flex h-screen overflow-hidden">
             <Sidebar />
             <Suspense>
               <FilterProvider>
-                <main className="bg-muted/30 flex-1 overflow-y-auto">{children}</main>
+                <main className="dashboard-bg flex-1 overflow-y-auto">{children}</main>
                 <ChatSidebar />
               </FilterProvider>
             </Suspense>

@@ -239,8 +239,11 @@ export default function OverviewPage() {
         <FilterBar view="overview" />
         <div className="space-y-6 p-6">
           <div>
-            <h1 className="text-2xl font-semibold">Executive Overview</h1>
-            <p className="text-muted-foreground">Pharmacy A — 2021 Claims Utilization Summary</p>
+            <h1 className="text-2xl font-bold tracking-tight">Executive Overview</h1>
+            <p className="text-muted-foreground text-sm">
+              Pharmacy A — 2021 Claims Utilization Summary
+            </p>
+            <div className="mt-2 h-0.5 w-12 rounded-full bg-gradient-to-r from-teal-400 to-teal-600" />
           </div>
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -285,8 +288,11 @@ export default function OverviewPage() {
       <div className="stagger-children space-y-6 p-6">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-semibold">Executive Overview</h1>
-          <p className="text-muted-foreground">Pharmacy A — 2021 Claims Utilization Summary</p>
+          <h1 className="text-2xl font-bold tracking-tight">Executive Overview</h1>
+          <p className="text-muted-foreground text-sm">
+            Pharmacy A — 2021 Claims Utilization Summary
+          </p>
+          <div className="mt-2 h-0.5 w-12 rounded-full bg-gradient-to-r from-teal-400 to-teal-600" />
         </div>
 
         {/* KPI Row */}

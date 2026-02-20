@@ -49,20 +49,21 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        'bg-card flex flex-col border-r transition-all duration-300',
+        'flex flex-col border-r transition-all duration-300',
+        'bg-gradient-to-b from-white via-white to-slate-50/80',
         collapsed ? 'w-16' : 'w-64',
       )}
     >
       {/* Logo / Header */}
       <div className="border-b px-3 py-4">
         <div className={cn('flex items-center', collapsed ? 'justify-center' : 'gap-3 px-3')}>
-          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-teal-600">
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-teal-500 to-teal-700 shadow-sm">
             <Building2 className="h-5 w-5 text-white" />
           </div>
           {!collapsed && (
             <div className="min-w-0 flex-1">
-              <h1 className="text-sm font-semibold tracking-tight">SPS Health</h1>
-              <p className="text-muted-foreground text-xs">Claims Analytics</p>
+              <h1 className="text-sm font-bold tracking-tight">SPS Health</h1>
+              <p className="text-muted-foreground text-[11px] tracking-wide">Claims Analytics</p>
             </div>
           )}
           <Tooltip>
@@ -89,10 +90,12 @@ export function Sidebar() {
       {/* Entity Selector — hidden when collapsed */}
       {!collapsed && (
         <div className="border-b px-4 py-3">
-          <div className="bg-muted/50 rounded-md px-3 py-2">
-            <p className="text-muted-foreground text-xs font-medium">Active Entity</p>
-            <p className="text-sm font-semibold">Pharmacy A</p>
-            <p className="text-muted-foreground text-xs">2021 Claims Data</p>
+          <div className="border-border/50 rounded-lg border bg-gradient-to-br from-slate-50 to-slate-100/50 px-3 py-2.5">
+            <p className="text-muted-foreground text-[10px] font-semibold tracking-wider uppercase">
+              Active Entity
+            </p>
+            <p className="text-sm font-bold tracking-tight">Pharmacy A</p>
+            <p className="text-muted-foreground text-[11px]">2021 Claims Data</p>
           </div>
         </div>
       )}
@@ -113,8 +116,8 @@ export function Sidebar() {
                   ? 'justify-center rounded-lg p-2.5'
                   : 'items-start gap-3 rounded-lg px-3 py-2.5',
                 isActive
-                  ? 'bg-teal-50 text-teal-900 shadow-sm'
-                  : 'text-muted-foreground hover:bg-muted hover:text-foreground',
+                  ? 'bg-teal-50/80 text-teal-900 shadow-sm ring-1 ring-teal-200/50'
+                  : 'text-muted-foreground hover:bg-muted/60 hover:text-foreground',
               )}
             >
               <item.icon
