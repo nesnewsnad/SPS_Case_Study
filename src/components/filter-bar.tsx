@@ -12,11 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
   Command,
   CommandInput,
@@ -115,6 +111,20 @@ function SearchableCombobox({
                     : `${options.length.toLocaleString()} ${label.toLowerCase()}s`
                 }
               >
+                {!search && (
+                  <CommandItem
+                    value={`__all_${label}__`}
+                    onSelect={() => {
+                      onSelect(undefined);
+                      setOpen(false);
+                    }}
+                  >
+                    <Check
+                      className={cn('mr-2 h-3.5 w-3.5', !value ? 'opacity-100' : 'opacity-0')}
+                    />
+                    <span className="text-muted-foreground">All {label}s</span>
+                  </CommandItem>
+                )}
                 {display.map((option) => (
                   <CommandItem
                     key={option}
@@ -199,11 +209,7 @@ function FilterChips() {
   return (
     <div className="flex flex-wrap items-center gap-1.5 border-t border-slate-100 px-6 py-2">
       {chips.map(({ key, label, display }) => (
-        <Badge
-          key={key}
-          variant="secondary"
-          className="gap-1 pr-1 transition-all duration-150"
-        >
+        <Badge key={key} variant="secondary" className="gap-1 pr-1 transition-all duration-150">
           <span className="text-muted-foreground text-xs">{label}:</span>
           <span className="text-xs">{display}</span>
           <button
@@ -221,12 +227,7 @@ function FilterChips() {
           </button>
         </Badge>
       ))}
-      <Button
-        variant="ghost"
-        size="xs"
-        onClick={clearAll}
-        className="text-muted-foreground"
-      >
+      <Button variant="ghost" size="xs" onClick={clearAll} className="text-muted-foreground">
         Clear all
       </Button>
     </div>
@@ -345,10 +346,8 @@ export function FilterBar({ view }: FilterBarProps) {
           <label
             htmlFor="flagged-toggle"
             className={cn(
-              'cursor-pointer whitespace-nowrap text-xs',
-              filters.includeFlaggedNdcs
-                ? 'font-medium text-amber-600'
-                : 'text-muted-foreground',
+              'cursor-pointer text-xs whitespace-nowrap',
+              filters.includeFlaggedNdcs ? 'font-medium text-amber-600' : 'text-muted-foreground',
             )}
           >
             {filters.includeFlaggedNdcs ? 'Flagged NDCs included' : 'Include flagged NDCs'}
