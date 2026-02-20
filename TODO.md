@@ -2,13 +2,13 @@
 
 ## Up Next
 
-- [x] Write SPEC-002: FilterContext + FilterBar + URL sync
-- [x] Write SPEC-003: Executive Overview page
-- [x] Write SPEC-004: Claims Explorer page
-- [ ] Vercel setup: link repo, create Postgres DB, pull env vars, push schema, seed data
+- [ ] Vercel setup: link repo, create Postgres DB, pull env vars, push schema, seed data (Framework)
+- [ ] Fix SPEC-003 spec-check notes (Mac)
+- [ ] Fix SPEC-004 spec-check notes (Mac)
 
 ## Friday (Core Dashboard)
 
+- [ ] Install missing shadcn components: `npx shadcn@latest add command popover switch skeleton`
 - [ ] Implement SPEC-001: API routes + shared types (parse-filters, build-where, 6 endpoints)
 - [ ] Implement SPEC-002: FilterContext + FilterBar + URL sync + chip pills
 - [ ] Implement SPEC-003: Executive Overview (KPIs, hero chart, donut, bars, gauge, insight cards)
@@ -56,3 +56,13 @@
 - [x] Brainstorm design — 12 decisions locked, SOTA validated, design doc written
 - [x] `/discuss` — 6 gray areas locked, horizontal slice architecture (DISCUSS-001)
 - [x] Write SPEC-001: API routes + shared TypeScript types (6 endpoints, unified filters)
+- [x] Write SPEC-002: FilterContext + FilterBar + URL sync
+- [x] Write SPEC-003: Executive Overview page
+- [x] Write SPEC-004: Claims Explorer page
+- [x] Fresh EDA — verified all data findings, discovered Kryptonite XR test drug + KS Aug batch reversal
+- [x] Amend all 4 specs for flagged NDC toggle + corrected anomaly narratives
+- [x] 69 pytests codifying EDA findings as data contracts
+- [x] Spec-check SPEC-001 → READY (16 ACs, 2 implementor notes)
+- [x] Spec-check SPEC-002 → READY (20 ACs, prerequisites documented)
+- [x] Spec-check SPEC-003 → READY WITH NOTES (needs minor fixes)
+- [x] Spec-check SPEC-004 → READY WITH NOTES (needs minor fixes)
