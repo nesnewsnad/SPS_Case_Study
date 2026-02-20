@@ -12,7 +12,7 @@
 ## Friday (Core Dashboard)
 
 - [ ] Install missing shadcn components: `npx shadcn@latest add command popover switch skeleton`
-- [ ] Implement SPEC-001: API routes + shared types (parse-filters, build-where, 6 endpoints)
+- [x] Implement SPEC-001: API routes + shared types (parse-filters, build-where, 6 endpoints) — Mac to verify
 - [ ] Implement SPEC-002: FilterContext + FilterBar + URL sync + chip pills
 - [ ] Implement SPEC-003: Executive Overview (KPIs, hero chart, donut, bars, gauge, insight cards)
 - [ ] Implement SPEC-004: Claims Explorer (mini trend, drugs table, days supply, MONY, groups, manufacturers)
@@ -21,7 +21,7 @@
 
 ## Saturday (Deep Dive & Narrative)
 
-- [ ] API route: /api/anomalies (pre-computed breakdowns per anomaly)
+- [x] API route: /api/anomalies (pre-computed breakdowns per anomaly) — included in SPEC-001
 - [ ] Anomalies page: 4 investigation panels (Kryptonite XR, Sept spike, Nov dip, KS Aug batch reversal)
 - [ ] Mini charts within each investigation panel
 - [ ] Follow-up questions (3 tabs: client, internal, data requests)
@@ -71,3 +71,4 @@
 - [x] Spec-check SPEC-004 → READY (7 fixes applied)
 - [x] Vercel setup: link repo, create Postgres DB, pull env vars, push schema, seed data (246,955 drugs, 596,090 claims)
 - [x] Fix seed script: BOM handling for Drug_Info.csv, batch size reduction, FK removal for 30 unmatched NDCs, truncate with identity reset
+- [x] Implement SPEC-001: 8 files — api-types, parse-filters, build-where, 6 API routes (entities, filters, overview, claims, anomalies). All smoke-tested against live DB, EDA oracle values match.
