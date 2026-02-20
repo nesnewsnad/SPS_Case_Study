@@ -1,0 +1,385 @@
+'use client';
+
+import { useState } from 'react';
+import { Check, ChevronsUpDown, X } from 'lucide-react';
+import { useFilters, type FilterKey } from '@/contexts/filter-context';
+import { useFilterOptions } from '@/hooks/use-filter-options';
+import { cn } from '@/lib/utils';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
+  Command,
+  CommandInput,
+  CommandList,
+  CommandEmpty,
+  CommandGroup,
+  CommandItem,
+} from '@/components/ui/command';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+
+// ── Module-scope constants (rerender-memo-with-default-value) ───────────
+
+interface FilterBarProps {
+  view: 'overview' | 'explorer';
+}
+
+const MONY_LABELS: Record<string, string> = {
+  M: 'Multi-Source Brand',
+  O: 'Multi-Source Generic',
+  N: 'Single-Source Brand',
+  Y: 'Single-Source Generic',
+};
+
+const MONY_SHORT: Record<string, string> = {
+  M: 'Brand Multi',
+  O: 'Generic Multi',
+  N: 'Brand Single',
+  Y: 'Generic Single',
+};
+
+function formatDateLabel(dateStr: string): string {
+  const d = new Date(dateStr + 'T00:00:00');
+  return d.toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+}
+
+// ── Searchable Combobox ─────────────────────────────────────────────────
+
+function SearchableCombobox({
+  label,
+  options,
+  value,
+  onSelect,
+  loading,
+  error,
+}: {
+  label: string;
+  options: string[];
+  value: string | undefined;
+  onSelect: (value: string | undefined) => void;
+  loading: boolean;
+  error: string | null;
+}) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
+
+  const filtered = search
+    ? options.filter((opt) => opt.toLowerCase().includes(search.toLowerCase()))
+    : options;
+  const display = filtered.slice(0, 100);
+
+  return (
+    <Popover open={open} onOpenChange={setOpen}>
+      <PopoverTrigger asChild>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          size="sm"
+          className="w-[180px] justify-between font-normal"
+        >
+          <span className="truncate">{value ?? `All ${label}s`}</span>
+          <ChevronsUpDown className="ml-1 h-3.5 w-3.5 shrink-0 opacity-50" />
+        </Button>
+      </PopoverTrigger>
+      <PopoverContent className="w-[220px] p-0" align="start">
+        <Command shouldFilter={false}>
+          <CommandInput
+            placeholder={`Search ${label.toLowerCase()}s...`}
+            value={search}
+            onValueChange={setSearch}
+          />
+          <CommandList>
+            {error ? (
+              <CommandEmpty>Failed to load options</CommandEmpty>
+            ) : loading ? (
+              <CommandEmpty>Loading...</CommandEmpty>
+            ) : display.length === 0 ? (
+              <CommandEmpty>No results found</CommandEmpty>
+            ) : (
+              <CommandGroup
+                heading={
+                  search
+                    ? `${filtered.length} of ${options.length.toLocaleString()} ${label.toLowerCase()}s`
+                    : `${options.length.toLocaleString()} ${label.toLowerCase()}s`
+                }
+              >
+                {display.map((option) => (
+                  <CommandItem
+                    key={option}
+                    value={option}
+                    onSelect={() => {
+                      onSelect(option === value ? undefined : option);
+                      setOpen(false);
+                      setSearch('');
+                    }}
+                  >
+                    <Check
+                      className={cn(
+                        'mr-2 h-3.5 w-3.5',
+                        value === option ? 'opacity-100' : 'opacity-0',
+                      )}
+                    />
+                    <span className="truncate">{option}</span>
+                  </CommandItem>
+                ))}
+                {filtered.length > 100 ? (
+                  <p className="text-muted-foreground px-2 py-1.5 text-xs">
+                    Type to narrow {filtered.length.toLocaleString()} results...
+                  </p>
+                ) : null}
+              </CommandGroup>
+            )}
+          </CommandList>
+        </Command>
+      </PopoverContent>
+    </Popover>
+  );
+}
+
+// ── Chip Pills ──────────────────────────────────────────────────────────
+
+function FilterChips() {
+  const { filters, removeFilter, clearAll, activeFilterCount } = useFilters();
+
+  if (activeFilterCount === 0) return null;
+
+  const chips: { key: FilterKey; label: string; display: string }[] = [];
+
+  // Date range: combine into one chip if both set, otherwise separate
+  if (filters.dateStart && filters.dateEnd) {
+    chips.push({
+      key: 'dateStart',
+      label: 'Date',
+      display: `${formatDateLabel(filters.dateStart)} – ${formatDateLabel(filters.dateEnd)}`,
+    });
+  } else if (filters.dateStart) {
+    chips.push({
+      key: 'dateStart',
+      label: 'From',
+      display: formatDateLabel(filters.dateStart),
+    });
+  } else if (filters.dateEnd) {
+    chips.push({
+      key: 'dateEnd',
+      label: 'To',
+      display: formatDateLabel(filters.dateEnd),
+    });
+  }
+
+  // Dimension chips
+  const dimensions: { key: FilterKey; label: string; format?: (v: string) => string }[] = [
+    { key: 'formulary', label: 'Formulary' },
+    { key: 'state', label: 'State' },
+    { key: 'mony', label: 'MONY', format: (v) => `${v} (${MONY_SHORT[v] ?? v})` },
+    { key: 'drug', label: 'Drug' },
+    { key: 'manufacturer', label: 'Manufacturer' },
+    { key: 'groupId', label: 'Group' },
+    { key: 'ndc', label: 'NDC' },
+  ];
+
+  for (const { key, label, format } of dimensions) {
+    const val = filters[key];
+    if (val !== undefined) {
+      chips.push({ key, label, display: format ? format(val) : val });
+    }
+  }
+
+  return (
+    <div className="flex flex-wrap items-center gap-1.5 border-t border-slate-100 px-6 py-2">
+      {chips.map(({ key, label, display }) => (
+        <Badge
+          key={key}
+          variant="secondary"
+          className="gap-1 pr-1 transition-all duration-150"
+        >
+          <span className="text-muted-foreground text-xs">{label}:</span>
+          <span className="text-xs">{display}</span>
+          <button
+            onClick={() => {
+              removeFilter(key);
+              // Combined date chip — remove both dates
+              if (key === 'dateStart' && filters.dateEnd && filters.dateStart) {
+                removeFilter('dateEnd');
+              }
+            }}
+            className="hover:bg-muted ml-0.5 rounded-full p-0.5"
+            aria-label={`Remove ${label} filter`}
+          >
+            <X className="h-3 w-3" />
+          </button>
+        </Badge>
+      ))}
+      <Button
+        variant="ghost"
+        size="xs"
+        onClick={clearAll}
+        className="text-muted-foreground"
+      >
+        Clear all
+      </Button>
+    </div>
+  );
+}
+
+// ── Main FilterBar ──────────────────────────────────────────────────────
+
+export function FilterBar({ view }: FilterBarProps) {
+  const { filters, setFilter, removeFilter, toggleFlaggedNdcs } = useFilters();
+  const filterOptions = useFilterOptions();
+
+  return (
+    <div className="sticky top-0 z-10 border-b border-slate-200 bg-white">
+      {/* Dropdowns Row */}
+      <div className="flex flex-wrap items-center gap-2 px-6 py-3">
+        {/* Formulary */}
+        <Select
+          value={filters.formulary}
+          onValueChange={(val) => setFilter('formulary', val)}
+        >
+          <SelectTrigger className="w-[150px]" size="sm">
+            <SelectValue placeholder="All Formularies" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="OPEN">OPEN</SelectItem>
+            <SelectItem value="MANAGED">MANAGED</SelectItem>
+            <SelectItem value="HMF">HMF</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* State */}
+        <Select
+          value={filters.state}
+          onValueChange={(val) => setFilter('state', val)}
+        >
+          <SelectTrigger className="w-[130px]" size="sm">
+            <SelectValue placeholder="All States" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="CA">CA</SelectItem>
+            <SelectItem value="IN">IN</SelectItem>
+            <SelectItem value="KS">KS</SelectItem>
+            <SelectItem value="MN">MN</SelectItem>
+            <SelectItem value="PA">PA</SelectItem>
+          </SelectContent>
+        </Select>
+
+        {/* MONY */}
+        <Select
+          value={filters.mony}
+          onValueChange={(val) => setFilter('mony', val)}
+        >
+          <SelectTrigger className="w-[200px]" size="sm">
+            <SelectValue placeholder="All MONY" />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.entries(MONY_LABELS).map(([code, label]) => (
+              <SelectItem key={code} value={code}>
+                {code} — {label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+
+        {/* Date Range */}
+        <div className="flex items-center gap-1">
+          <input
+            type="date"
+            value={filters.dateStart ?? ''}
+            min="2021-01-01"
+            max={filters.dateEnd ?? '2021-12-31'}
+            onChange={(e) =>
+              e.target.value
+                ? setFilter('dateStart', e.target.value)
+                : removeFilter('dateStart')
+            }
+            className="border-input bg-background h-8 rounded-md border px-2 text-sm"
+            aria-label="Start date"
+          />
+          <span className="text-muted-foreground text-xs">&ndash;</span>
+          <input
+            type="date"
+            value={filters.dateEnd ?? ''}
+            min={filters.dateStart ?? '2021-01-01'}
+            max="2021-12-31"
+            onChange={(e) =>
+              e.target.value
+                ? setFilter('dateEnd', e.target.value)
+                : removeFilter('dateEnd')
+            }
+            className="border-input bg-background h-8 rounded-md border px-2 text-sm"
+            aria-label="End date"
+          />
+        </div>
+
+        {/* Explorer-only: Drug, Manufacturer, Group comboboxes */}
+        {view === 'explorer' ? (
+          <>
+            <div className="bg-border mx-1 h-6 w-px" />
+            <SearchableCombobox
+              label="Drug"
+              options={filterOptions.drugs}
+              value={filters.drug}
+              onSelect={(val) => (val ? setFilter('drug', val) : removeFilter('drug'))}
+              loading={filterOptions.loading}
+              error={filterOptions.error}
+            />
+            <SearchableCombobox
+              label="Manufacturer"
+              options={filterOptions.manufacturers}
+              value={filters.manufacturer}
+              onSelect={(val) =>
+                val ? setFilter('manufacturer', val) : removeFilter('manufacturer')
+              }
+              loading={filterOptions.loading}
+              error={filterOptions.error}
+            />
+            <SearchableCombobox
+              label="Group"
+              options={filterOptions.groups}
+              value={filters.groupId}
+              onSelect={(val) => (val ? setFilter('groupId', val) : removeFilter('groupId'))}
+              loading={filterOptions.loading}
+              error={filterOptions.error}
+            />
+          </>
+        ) : null}
+
+        {/* Flagged NDC Toggle — right-aligned */}
+        <div className="ml-auto flex items-center gap-2">
+          <Switch
+            checked={filters.includeFlaggedNdcs}
+            onCheckedChange={toggleFlaggedNdcs}
+            id="flagged-toggle"
+            size="sm"
+          />
+          <label
+            htmlFor="flagged-toggle"
+            className={cn(
+              'cursor-pointer whitespace-nowrap text-xs',
+              filters.includeFlaggedNdcs
+                ? 'font-medium text-amber-600'
+                : 'text-muted-foreground',
+            )}
+          >
+            {filters.includeFlaggedNdcs ? 'Flagged NDCs included' : 'Include flagged NDCs'}
+          </label>
+        </div>
+      </div>
+
+      {/* Chip Pills Row */}
+      <FilterChips />
+    </div>
+  );
+}
