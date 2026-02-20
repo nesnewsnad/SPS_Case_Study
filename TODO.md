@@ -13,7 +13,9 @@
 
 - [ ] Install missing shadcn components: `npx shadcn@latest add command popover switch skeleton`
 - [x] Implement SPEC-001: API routes + shared types (parse-filters, build-where, 6 endpoints) — Mac to verify
+  - [ ] Include `labelName` in drugs API response (brief lists LABEL_NAME in data dictionary — surface in drug table tooltip)
 - [ ] Implement SPEC-002: FilterContext + FilterBar + URL sync + chip pills
+  - [ ] Add disabled "Retail (100%)" chip in FilterBar — brief lists mail/retail as a drill-down dimension, this shows we noticed
 - [ ] Implement SPEC-003: Executive Overview (KPIs, hero chart, donut, bars, gauge, insight cards)
 - [ ] Implement SPEC-004: Claims Explorer (mini trend, drugs table, days supply, MONY, groups, manufacturers)
 - [ ] Cross-filtering: click any chart element → updates all charts + KPIs
@@ -25,12 +27,20 @@
 - [ ] Anomalies page: 4 investigation panels (Kryptonite XR, Sept spike, Nov dip, KS Aug batch reversal)
 - [ ] Mini charts within each investigation panel
 - [ ] Follow-up questions (3 tabs: client, internal, data requests)
-- [ ] Extension mock-up (3 placeholder panels: pricing, demographics, formulary tiers)
+- [ ] Extension mock-up panels with written narrative per panel (brief says "both" — visual AND written):
+  - [ ] MOCK: Client onboarding + comparison — CSV upload flow → auto-ingest → side-by-side KPIs, overlay trends, benchmark reversal rates. Written narrative explains multi-entity architecture already in place.
+  - [ ] MOCK: Pricing & reimbursement overlay — how cost data would layer onto utilization
+  - [ ] MOCK: Patient demographics — age/gender stratification, what it unlocks for LTC analysis
+  - [ ] MOCK: Automated anomaly detection — statistical engine that flags outliers on ingestion
 - [ ] Narrative polish — insight cards on all views, 100% retail callout
 - [ ] Loading skeletons + empty/filtered-out states
 
 ## Sunday (AI Process & Polish)
 
+- [ ] "Ask the Data" chat sidebar — slide-out Sheet, Anthropic API (Haiku), context-stuffed with EDA findings + schema, streamed via Vercel AI SDK `useChat()`. 2-3 hrs.
+  - [ ] `/api/chat` route — system prompt with key data findings, schema, Pharmacy A context
+  - [ ] Chat UI — shadcn Sheet + input + message list
+  - [ ] ANTHROPIC_API_KEY in Vercel env vars
 - [ ] AI Process: tools & architecture cards
 - [ ] AI Process: workflow methodology section (dual-machine, CLAUDE.md, session mgmt)
 - [ ] AI Process: build journey timeline (expandable phases)
