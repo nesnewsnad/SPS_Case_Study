@@ -1,17 +1,8 @@
 'use client';
 
 import { memo } from 'react';
-import {
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  Label,
-} from 'recharts';
 import type { AdjudicationSummary } from '@/lib/api-types';
-import { formatPercent } from '@/lib/format';
-
-const COLORS = ['#0d9488', '#94a3b8'] as const;
+import { formatPercent, formatNumber } from '@/lib/format';
 
 interface AdjudicationGaugeProps {
   data: AdjudicationSummary;
@@ -22,41 +13,44 @@ export const AdjudicationGauge = memo(function AdjudicationGauge({
   data,
   isFiltered,
 }: AdjudicationGaugeProps) {
-  const segments = [
-    { name: 'Adjudicated', value: data.adjudicated },
-    { name: 'Not Adjudicated', value: data.notAdjudicated },
-  ];
+  const notAdjRate = 100 - data.rate;
 
   return (
-    <div className="flex flex-col items-center">
-      <ResponsiveContainer width="100%" height={180}>
-        <PieChart>
-          <Pie
-            data={segments}
-            dataKey="value"
-            startAngle={180}
-            endAngle={0}
-            cx="50%"
-            cy="85%"
-            innerRadius="65%"
-            outerRadius="95%"
-          >
-            {segments.map((_, i) => (
-              <Cell key={i} fill={COLORS[i]} />
-            ))}
-            <Label
-              value={formatPercent(data.rate)}
-              position="center"
-              dy={-10}
-              className="fill-foreground font-mono text-lg font-bold"
-            />
-          </Pie>
-        </PieChart>
-      </ResponsiveContainer>
-      <p className="text-xs text-muted-foreground text-center max-w-[280px] -mt-2">
+    <div className="flex h-full flex-col justify-center gap-5 px-2">
+      {/* Big stat */}
+      <div className="text-center">
+        <span className="font-mono text-4xl font-bold text-foreground">
+          {formatPercent(data.rate)}
+        </span>
+        <p className="text-sm text-muted-foreground mt-1">adjudicated at point of sale</p>
+      </div>
+
+      {/* Progress bar */}
+      <div>
+        <div className="h-3 w-full overflow-hidden rounded-full bg-slate-200">
+          <div
+            className="h-full rounded-full bg-teal-600 transition-all duration-500"
+            style={{ width: `${data.rate}%` }}
+          />
+        </div>
+        {/* Legend */}
+        <div className="mt-2 flex justify-between text-xs text-muted-foreground">
+          <span className="flex items-center gap-1.5">
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-teal-600" />
+            Adjudicated ({formatNumber(data.adjudicated)})
+          </span>
+          <span className="flex items-center gap-1.5">
+            <span className="inline-block h-2.5 w-2.5 rounded-full bg-slate-200" />
+            Not Adjudicated ({formatNumber(data.notAdjudicated)})
+          </span>
+        </div>
+      </div>
+
+      {/* Context note */}
+      <p className="text-xs text-muted-foreground text-center">
         {isFiltered
-          ? `In the current selection, ${formatPercent(100 - data.rate)} of claims were not adjudicated at point of sale.`
-          : '75% of claims were not adjudicated at point of sale — typical for long-term care pharmacies where claims are often processed retrospectively.'}
+          ? `${formatPercent(notAdjRate)} not adjudicated at POS in this selection.`
+          : 'Typical for LTC pharmacies — claims are often processed retrospectively.'}
       </p>
     </div>
   );
