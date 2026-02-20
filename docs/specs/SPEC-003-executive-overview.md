@@ -1,7 +1,7 @@
 # SPEC-003 — Executive Overview Page
 
 **Date:** 2026-02-19
-**Status:** DRAFT
+**Status:** READY
 **Dependencies:** SPEC-001 (API routes + types), SPEC-002 (FilterContext + FilterBar)
 **Context:** DISCUSS-001 decisions #2, #3, #4, #6; Design doc View 1
 
@@ -87,9 +87,15 @@ Four cards in a responsive grid (`grid grid-cols-4 gap-4`):
 
 **Delta indicators** (DISCUSS-001 decision #6):
 - Shown ONLY when at least one filter is active (besides entityId)
-- Formula: `((filteredValue - unfilteredAvg) / unfilteredAvg * 100).toFixed(1)`
-- `unfilteredAvg` = `unfilteredKpis.totalClaims / dimensionCount` where dimensionCount depends on the active filter dimension (5 for state, 3 for formulary, 4 for MONY, 12 for month)
-- When multiple filters active, compare against full unfiltered value instead of per-dimension average
+- **Single-dimension filter** (exactly one of state, formulary, mony, or month is active):
+  - Formula: `((filteredValue - unfilteredAvg) / unfilteredAvg * 100).toFixed(1)`
+  - `unfilteredAvg` = `unfilteredKpis[metric] / dimensionCount`
+  - Dimension counts: state = 5, formulary = 3, mony = 4, month (dateStart/dateEnd) = 12
+  - Label: `"vs avg"`
+- **Multi-dimension or groupId filter** (more than one dimension active, or groupId is active):
+  - Formula: `((filteredValue - unfilteredValue) / unfilteredValue * 100).toFixed(1)`
+  - Compares against full unfiltered value (per-group average across 189 groups is meaningless)
+  - Label: `"vs total"`
 - Positive delta: `"↑ 23.4% vs avg"` in emerald (#059669)
 - Negative delta: `"↓ 12.1% vs avg"` in amber (#d97706)
 - Near zero (±2%): no delta shown
@@ -111,8 +117,7 @@ Recharts `AreaChart` with two stacked series:
 - Reference lines always visible regardless of filter state (they're annotations, not data)
 
 **Cross-filtering:**
-- Click a month data point → `toggleFilter('dateStart', 'YYYY-MM-01')` and `toggleFilter('dateEnd', 'YYYY-MM-DD')` where DD is last day of month
-- Simpler alternative at implementor's discretion: clicking a month sets both dateStart and dateEnd to bracket that month
+- Click a month data point → sets `dateStart` to `'YYYY-MM-01'` and `dateEnd` to `'YYYY-MM-DD'` (last day of that month) via `setFilters()`. Clicking the same month again clears both date filters (toggle behavior).
 
 **Tooltip:**
 - Geist Mono
@@ -169,10 +174,11 @@ Custom Recharts `PieChart` gauge (DISCUSS-001 decision #4):
 - Below the gauge: "Adjudicated at Point of Sale" label
 
 **Context note** beneath the chart:
-> "75% of claims were not adjudicated at point of sale — typical for long-term care (LTC) pharmacies where claims are often processed retrospectively."
 
 - Rendered in text-sm text-muted-foreground, max-width for readability
-- Note adjusts if filters change the rate significantly (e.g., "In [state], XX% were not adjudicated...")
+- **Unfiltered variant:** "75% of claims were not adjudicated at point of sale — typical for long-term care (LTC) pharmacies where claims are often processed retrospectively."
+- **Filtered variant** (when any filter is active): "In the current selection, XX.X% of claims were not adjudicated at point of sale." — where XX.X% is `100 - adjudication.rate` computed from the filtered response
+- Threshold for switching: always show the filtered variant when any filter besides entityId is active
 
 **Card wrapper:** `Card` with title "Adjudication Rate"
 
@@ -255,6 +261,8 @@ src/
 
 Component file organization within `overview/` is at implementor's discretion — the above is a suggestion, not a mandate.
 
+**Ownership:** SPEC-003 owns creation of `src/lib/generate-insights.ts` and `src/lib/format.ts`. SPEC-004 extends `generateInsights` with Claims Explorer templates but does not own the file or its core logic.
+
 ---
 
 ## Acceptance Criteria
@@ -270,11 +278,11 @@ Component file organization within `overview/` is at implementor's discretion �
 9. State horizontal bars render 5 states sorted by net claims descending, all in teal (no special KS highlighting — KS rates are normal outside the August batch event)
 10. Clicking a state bar toggles a state filter
 11. Adjudication gauge renders as a semicircle with center percentage label and LTC context note beneath
-12. 1-3 dynamic insight cards render below charts with filter-responsive content and consultant-analyst tone
+12. 1-3 dynamic insight cards render below charts; `generateInsights()` has at least 15 templates covering: unfiltered (3+), per-state (5), per-month (3+ including Sep/Nov/May), per-formulary (1+), per-MONY (1+), and multi-filter combinations (2+)
 13. Skeleton loading states render for all cards and charts while data is loading (no blank screens)
 14. Empty/filtered state shows "No data matches current filters" with a clear-filters nudge when no data is returned
 15. All numbers use Geist Mono; all labels use Geist Sans
-16. Chart tooltips display formatted values (commas, percentages)
+16. Chart tooltips display formatted values per Behavior section: hero chart shows month name + incurred/reversed/net with commas; donut shows segment name + net claims + reversal rate %; state bars show state + net/total claims + reversal rate %; all numbers comma-formatted, all percentages one-decimal
 
 ---
 
@@ -287,3 +295,4 @@ Component file organization within `overview/` is at implementor's discretion �
 - Mobile/responsive layout (desktop only, min 1200px)
 - Animation beyond skeleton shimmers and chart fade-in
 - Export or download functionality
+- Dark mode theming

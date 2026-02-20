@@ -3,8 +3,8 @@
 ## Up Next
 
 - [ ] Vercel setup: link repo, create Postgres DB, pull env vars, push schema, seed data (Framework)
-- [ ] Fix SPEC-003 spec-check notes (Mac)
-- [ ] Fix SPEC-004 spec-check notes (Mac)
+- [x] Fix SPEC-003 spec-check notes (Mac) → READY
+- [x] Fix SPEC-004 spec-check notes (Mac) → READY
 
 ## Friday (Core Dashboard)
 
@@ -64,5 +64,5 @@
 - [x] 69 pytests codifying EDA findings as data contracts
 - [x] Spec-check SPEC-001 → READY (16 ACs, 2 implementor notes)
 - [x] Spec-check SPEC-002 → READY (20 ACs, prerequisites documented)
-- [x] Spec-check SPEC-003 → READY WITH NOTES (needs minor fixes)
-- [x] Spec-check SPEC-004 → READY WITH NOTES (needs minor fixes)
+- [x] Spec-check SPEC-003 → READY (7 fixes applied)
+- [x] Spec-check SPEC-004 → READY (7 fixes applied)

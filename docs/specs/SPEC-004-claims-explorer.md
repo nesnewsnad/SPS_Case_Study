@@ -1,7 +1,7 @@
 # SPEC-004 — Claims Explorer Page
 
 **Date:** 2026-02-19
-**Status:** DRAFT
+**Status:** READY
 **Dependencies:** SPEC-001 (API routes + types), SPEC-002 (FilterContext + FilterBar)
 **Context:** DISCUSS-001 decisions #2, #3, #5; Design doc View 2
 
@@ -99,7 +99,7 @@ The centerpiece of the Explorer. A sortable, paginated data table.
 - Click column header to sort ascending/descending (toggle)
 - Active sort column has a visual indicator (arrow icon)
 - Pagination: toggle between "Top 20" / "Top 50" — sends `limit` param to API
-- Use shadcn/ui `Table` + custom sort/pagination logic (not a full DataTable library)
+- Use shadcn/ui `Table` with `@tanstack/react-table` for sort/pagination logic (already installed as a dependency)
 
 **Cross-filtering:**
 - Click any row → `toggleFilter('drug', drugName)` — filters the entire page to that drug
@@ -122,7 +122,7 @@ Recharts `BarChart` — vertical bars:
 - Y-axis: count, abbreviated
 
 **Cross-filtering:**
-- Click a bar → `toggleFilter('daysSupply', binValue)` — note: daysSupply is not currently in the unified filter params. Cross-filtering on days supply is a visual highlight only (no API re-fetch). The bar gets a selected-state style. If full cross-filtering is desired, this requires a filter param addition to SPEC-001 — defer to implementor's judgment on whether to add it or keep it visual-only.
+- Click a bar → visual highlight only (selected-state style, teal-100 background). No API re-fetch — daysSupply is not a filter dimension in SPEC-001 and adding it is out of scope. This is the one chart where clicking is purely visual feedback, not a filter toggle.
 
 **Tooltip:**
 - Bin label, count (formatted)
@@ -253,6 +253,8 @@ src/
 
 Component file organization is at implementor's discretion.
 
+**Dependency:** SPEC-004 extends `generateInsights()` in `src/lib/generate-insights.ts` (owned by SPEC-003) with Explorer-specific templates. It does not create that file or modify its core matching logic.
+
 ---
 
 ## Acceptance Criteria
@@ -260,7 +262,8 @@ Component file organization is at implementor's discretion.
 1. Claims Explorer page at `/explorer` fetches `GET /api/claims` with current filter params and renders all sections
 2. Re-fetches data when filters change (via `useFilters()` from SPEC-002)
 3. FilterBar renders with `view="explorer"` showing all overview dropdowns plus searchable Drug Name, Manufacturer, and Group ID comboboxes
-4. Mini monthly trend chart renders a compact stacked area for all 12 months
+4. Mini monthly trend chart renders a compact (~150px tall) stacked area with incurred (teal) and reversed (red) series for all 12 months
+4a. Clicking a month on the mini trend toggles a date filter (same bracket behavior as SPEC-003 hero chart)
 5. Top Drugs table displays drugName, NDC, netClaims, reversalRate, formulary, and topState columns
 6. Drug table is sortable by clicking column headers (Net Claims descending by default)
 7. Drug table supports pagination toggle between Top 20 and Top 50
@@ -270,7 +273,7 @@ Component file organization is at implementor's discretion.
 11. Top 10 Groups horizontal bars render and clicking a bar toggles a group filter
 12. Top 10 Manufacturers horizontal bars render and clicking a bar toggles a manufacturer filter
 13. Reversal rate cells in the drug table highlight amber (>15%) or red (>20%)
-14. 1-3 dynamic insight cards render below charts with filter-responsive content
+14. 1-3 dynamic insight cards render below charts; Explorer templates added to `generateInsights()` with at least 10 templates covering: unfiltered (3+), per-drug (1+), per-manufacturer (1+), per-MONY (2+), per-group (1+), per-state (1+), and combinations (1+)
 15. Skeleton loading states for all elements while data loads
 16. Empty/filtered state shows clear-filters nudge when no data matches
 17. All numbers formatted: commas, one-decimal percentages, Geist Mono for values
@@ -287,3 +290,6 @@ Component file organization is at implementor's discretion.
 - Drill-down from drug to individual claims (no row-level claim data in the browser)
 - Mobile/responsive layout
 - Export or download
+- KPI summary row (Overview owns KPIs; Explorer focuses on distribution/drill-down)
+- Dark mode theming
+- Days Supply as a full filter dimension (visual highlight only — see Behavior)
