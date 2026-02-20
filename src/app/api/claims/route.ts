@@ -125,7 +125,7 @@ export async function GET(request: NextRequest) {
         FROM claims c
         LEFT JOIN drug_info d ON c.ndc = d.ndc
         WHERE ${where}
-        GROUP BY d.drug_name, c.ndc
+        GROUP BY d.drug_name, d.label_name, c.ndc
         ORDER BY SUM(c.net_claim_count) DESC
         LIMIT ${limit}
       `),
