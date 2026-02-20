@@ -115,7 +115,7 @@ export function ChatSidebar() {
           onClick={() => setOpen(true)}
           className={cn(
             'fixed right-6 bottom-6 z-40 flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-all hover:scale-105',
-            'bg-primary text-primary-foreground hover:bg-primary/90',
+            'bg-teal-600 text-white hover:bg-teal-700',
             !hasMessages && 'animate-pulse',
           )}
           aria-label="Open chat"
