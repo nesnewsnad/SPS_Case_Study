@@ -65,10 +65,10 @@ interface FilterContextValue {
 
 Filters sync bidirectionally with URL search params via `next/navigation`:
 
-- **Filters → URL:** When `setFilter`, `removeFilter`, `toggleFilter`, or `clearAll` is called, update the URL search params using `router.replace()` (not `router.push()` — avoid polluting browser history on every filter change).
+- **Filters → URL:** When `setFilter`, `removeFilter`, `toggleFilter`, or `clearAll` is called, update the URL search params. Use `router.push()` so each debounced update creates a history entry (enabling back/forward navigation between filter states). The 200ms debounce prevents history flooding — rapid changes coalesce into a single entry.
 - **URL → Filters:** On mount and on `popstate` (back/forward), read search params and hydrate `FilterState`.
 - **Param format:** `?state=CA&formulary=OPEN&dateStart=2021-03-01&flagged=true`. Only active filters appear — no empty params. `flagged=true` only appears when the toggle is on; absent means off.
-- **Debounce:** URL updates are debounced at 200ms to avoid flooding the browser history during rapid filter changes.
+- **Debounce:** URL updates are debounced at 200ms. Within the debounce window, filter changes accumulate and produce a single `router.push()` call, creating one history entry per user action batch.
 - **Shareable:** Copy-pasting the URL into a new tab restores the exact filter state.
 
 ### FilterBar Component
@@ -110,6 +110,7 @@ interface FilterBarProps {
 - Uses shadcn/ui `Combobox` (Command + Popover) pattern
 - Popover max-height ~300px with scroll
 - Displays the count of matching options while typing (e.g., "23 of 5,640 drugs")
+- If the fetch fails, show empty options with "Failed to load options" placeholder. No retry logic — user refreshes the page.
 
 **Select dropdown behavior:**
 - Uses shadcn/ui `Select` component
@@ -127,7 +128,7 @@ interface FilterBarProps {
 - shadcn/ui `Switch` component with label **"Include flagged NDCs"**
 - Default: OFF (unchecked) — flagged/test NDCs excluded
 - When toggled ON: all views recalculate including flagged NDCs. KPIs change, monthly trend reshapes (May spikes to ~49K), reversal rates shift. The visual delta IS the point — this demonstrates the analyst caught the test data.
-- Subtle warning style when ON: switch area gets a faint amber background or the label changes to "Flagged NDCs included" in amber text — visual signal that the data includes test records
+- Warning style when ON: label text changes to **"Flagged NDCs included"** with `text-amber-600` — clear visual signal that the data includes test records
 - Calls `toggleFlaggedNdcs()` from FilterContext
 - Does NOT render as a chip pill (it's a mode toggle, not a filter dimension)
 - Does NOT count toward `activeFilterCount`
@@ -203,24 +204,33 @@ The `contexts/` and `hooks/` directories are new. Component split between `filte
 ## Acceptance Criteria
 
 1. `FilterProvider` context exists at `src/contexts/filter-context.tsx` and exports `useFilters()` hook
-2. `useFilters()` returns `filters`, `setFilter`, `removeFilter`, `toggleFilter`, `clearAll`, and `activeFilterCount`
+2. `useFilters()` returns `filters`, `setFilter`, `removeFilter`, `toggleFilter`, `toggleFlaggedNdcs`, `clearAll`, and `activeFilterCount`
 3. Calling `setFilter('state', 'CA')` updates `filters.state` to `'CA'` and the URL to include `?state=CA`
 4. Calling `removeFilter('state')` removes `filters.state` and removes `state=` from the URL
 5. Calling `toggleFilter('state', 'CA')` when `filters.state === 'CA'` removes the filter; when `filters.state !== 'CA'` sets it
-6. Calling `clearAll()` resets all filters (except `entityId`) and clears URL params
+6. Calling `clearAll()` resets all filters (except `entityId`), resets `includeFlaggedNdcs` to `false`, and clears all URL params including `?flagged=true`
 7. Loading a URL with `?state=CA&formulary=OPEN` hydrates the filter state on mount
-8. Browser back/forward navigates between filter states
+8. Browser back/forward navigates between filter states (each debounced URL update creates a history entry via `router.push()`)
 9. `<FilterBar view="overview" />` renders Formulary, State, MONY, and Date Range dropdowns
 10. `<FilterBar view="explorer" />` renders all overview dropdowns PLUS searchable Drug Name, Manufacturer, and Group ID comboboxes
 11. Searchable comboboxes load options from `/api/filters` on first render and filter client-side as the user types
 12. Active filters render as removable chip pills with dimension label and value
 13. "Clear All" button appears when any filter is active and resets all filters when clicked
 14. FilterBar is sticky (`sticky top-0`) and persists while scrolling page content
-15. URL updates are debounced (no history flooding during rapid filter changes)
+15. URL updates are debounced at >= 200ms — rapid filter changes within the window coalesce into a single history entry
 16. Flagged NDC toggle (`Switch`) renders on the right side of the filter bar on all views, default OFF
 17. Toggling the switch calls `toggleFlaggedNdcs()` and adds/removes `?flagged=true` in the URL
-18. When the toggle is ON, a subtle amber visual signal indicates test data is included
+18. When the toggle is ON, the switch label changes to **"Flagged NDCs included"** in amber text (`text-amber-600`) to signal that test data is active
 19. `clearAll()` resets the flagged toggle to OFF along with all other filters
+20. If `/api/filters` fetch fails, comboboxes render with empty option lists and a "Failed to load options" message. Retry on next mount or manual page refresh.
+
+### Prerequisites
+
+The following shadcn/ui components must be installed before implementation:
+```bash
+npx shadcn@latest add command popover switch skeleton
+```
+These are not currently in `src/components/ui/`. The `Command` component depends on the `cmdk` package (installed automatically by `shadcn add command`).
 
 ---
 
