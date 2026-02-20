@@ -220,10 +220,12 @@ function ExtensionMockupCard({ def }: { def: MockupDef }) {
   const Visual = def.visual;
 
   return (
-    <Card className="flex flex-col">
+    <Card className="flex flex-col shadow-sm transition-shadow hover:shadow-md">
       <CardHeader className="pb-3">
-        <div className="flex items-center gap-2">
-          <Icon className="text-muted-foreground h-5 w-5" />
+        <div className="flex items-center gap-2.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-50 text-teal-600">
+            <Icon className="h-4.5 w-4.5" />
+          </div>
           <CardTitle className="text-base">{def.title}</CardTitle>
           <Badge variant="outline" className="ml-auto text-[10px] tracking-wider uppercase">
             Future
@@ -233,8 +235,9 @@ function ExtensionMockupCard({ def }: { def: MockupDef }) {
       <CardContent className="flex flex-1 flex-col space-y-3">
         <Visual />
         <p className="text-sm leading-relaxed">{def.narrative}</p>
-        <div>
-          <p className="text-muted-foreground mb-1 text-xs font-semibold tracking-wide uppercase">
+        <div className="bg-muted/40 mt-auto rounded-md px-3.5 py-2.5">
+          <p className="text-muted-foreground mb-1.5 flex items-center gap-1.5 text-xs font-semibold tracking-wide uppercase">
+            <span className="inline-block h-1.5 w-1.5 rounded-full bg-teal-500" />
             Data Required
           </p>
           <ul className="text-muted-foreground list-disc space-y-0.5 pl-4 text-xs">
@@ -252,7 +255,10 @@ export const ExtensionMockups = memo(function ExtensionMockups() {
   return (
     <div className="space-y-4">
       <div>
-        <h2 className="text-xl font-semibold">Dashboard Extensions</h2>
+        <h2 className="flex items-center gap-2 text-xl font-semibold">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-teal-500" />
+          Dashboard Extensions
+        </h2>
         <p className="text-muted-foreground text-sm">
           Forward-looking features enabled by additional data sources
         </p>

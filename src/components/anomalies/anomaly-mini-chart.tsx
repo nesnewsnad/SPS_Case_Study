@@ -112,7 +112,7 @@ export const AnomalyMiniChart = memo(function AnomalyMiniChart({ chart }: Props)
               width={45}
             />
             <Tooltip
-              wrapperClassName="chart-tooltip-wrap"
+              wrapperClassName="chart-tooltip"
               contentStyle={{
                 fontSize: 12,
                 borderRadius: 12,

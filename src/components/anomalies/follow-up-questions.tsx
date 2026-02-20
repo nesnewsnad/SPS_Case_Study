@@ -92,13 +92,16 @@ function QuestionList({ items }: { items: { q: string; context: string }[] }) {
   return (
     <ol className="list-none space-y-4 pl-0">
       {items.map((item, i) => (
-        <li key={i} className="flex gap-3">
-          <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-teal-100 text-xs font-semibold text-teal-700">
+        <li
+          key={i}
+          className="group hover:border-border hover:bg-muted/30 flex gap-3.5 rounded-lg border border-transparent px-3 py-2.5 transition-colors"
+        >
+          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full border border-teal-200 bg-teal-50 text-xs font-bold text-teal-700 shadow-sm">
             {i + 1}
           </span>
-          <div>
+          <div className="min-w-0">
             <p className="text-sm leading-snug font-medium">{item.q}</p>
-            <p className="text-muted-foreground mt-1 text-xs leading-relaxed">{item.context}</p>
+            <p className="text-muted-foreground mt-1.5 text-xs leading-relaxed">{item.context}</p>
           </div>
         </li>
       ))}
@@ -108,16 +111,19 @@ function QuestionList({ items }: { items: { q: string; context: string }[] }) {
 
 export const FollowUpQuestions = memo(function FollowUpQuestions() {
   return (
-    <Card>
+    <Card className="shadow-sm">
       <CardHeader className="pb-3">
-        <CardTitle>Follow-Up Questions &amp; Next Steps</CardTitle>
+        <div className="flex items-center gap-2">
+          <span className="inline-block h-1.5 w-1.5 rounded-full bg-teal-500" />
+          <CardTitle>Follow-Up Questions &amp; Next Steps</CardTitle>
+        </div>
         <p className="text-muted-foreground text-sm">
           Structured questions derived from the data findings above
         </p>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="client">
-          <TabsList className="mb-4">
+          <TabsList className="mb-5">
             <TabsTrigger value="client">Client Questions</TabsTrigger>
             <TabsTrigger value="internal">Internal Team</TabsTrigger>
             <TabsTrigger value="data">Data Requests</TabsTrigger>

@@ -74,7 +74,7 @@ export const AnomalyPanel = memo(function AnomalyPanel({ panel }: Props) {
       <CardHeader className="pb-4">
         <div className="flex flex-wrap items-center gap-3">
           <span
-            className={`inline-flex items-center rounded-md border px-3 py-1.5 font-mono text-lg font-bold ${statColor}`}
+            className={`inline-flex items-center rounded-md border px-3 py-1.5 font-mono text-base font-bold md:text-lg ${statColor}`}
           >
             {panel.keyStat}
           </span>
@@ -136,7 +136,7 @@ export const AnomalyPanel = memo(function AnomalyPanel({ panel }: Props) {
         </div>
 
         {/* To Confirm */}
-        <div className="rounded-r border-l-4 border-amber-300 bg-amber-50/50 px-4 py-3">
+        <div className="rounded-r border-l-4 border-amber-300 bg-amber-50/50 px-5 py-3.5">
           <h4 className="mb-1 text-xs font-semibold tracking-wider text-amber-700 uppercase">
             To Confirm
           </h4>
@@ -144,7 +144,7 @@ export const AnomalyPanel = memo(function AnomalyPanel({ panel }: Props) {
         </div>
 
         {/* RFP Impact */}
-        <div className="rounded-r border-l-4 border-teal-300 bg-teal-50/50 px-4 py-3">
+        <div className="rounded-r border-l-4 border-teal-300 bg-teal-50/50 px-5 py-3.5">
           <h4 className="mb-1 text-xs font-semibold tracking-wider text-teal-700 uppercase">
             RFP Impact
           </h4>
@@ -160,12 +160,12 @@ export const AnomalyPanel = memo(function AnomalyPanel({ panel }: Props) {
 function SectionLabel({ children }: { children: React.ReactNode }) {
   return (
     <h4 className="text-muted-foreground mb-1.5 flex items-center gap-2 text-xs font-semibold tracking-wider uppercase">
-      <span className="inline-block h-1 w-1 rounded-full bg-teal-500" />
+      <span className="inline-block h-1.5 w-1.5 rounded-full bg-teal-500" />
       {children}
     </h4>
   );
 }
 
 function ChartContainer({ children }: { children: React.ReactNode }) {
-  return <div className="bg-muted/30 overflow-visible rounded-lg border p-3 pb-5">{children}</div>;
+  return <div className="bg-muted/30 overflow-visible rounded-lg border p-4">{children}</div>;
 }
