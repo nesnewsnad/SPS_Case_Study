@@ -130,7 +130,7 @@ export default function OverviewPage() {
     if (filters.dateStart) params.set('dateStart', filters.dateStart);
     if (filters.dateEnd) params.set('dateEnd', filters.dateEnd);
     if (filters.groupId) params.set('groupId', filters.groupId);
-    if (filters.includeFlaggedNdcs) params.set('includeFlaggedNdcs', 'true');
+    if (filters.includeFlaggedNdcs) params.set('flagged', 'true');
     return params.toString();
   }, [filters]);
 
