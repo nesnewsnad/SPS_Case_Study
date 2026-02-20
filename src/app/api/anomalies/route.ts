@@ -85,16 +85,40 @@ export async function GET(request: NextRequest) {
       id: 'kryptonite-xr',
       title: 'Kryptonite XR — Synthetic Test Drug',
       keyStat: '49,567 claims',
-      whatWeSee: "NDC 65862020190 ('KRYPTONITE XR' by LEX LUTHER INC.) accounts for 49,567 claims (8.3% of the dataset). 99.5% of these claims are concentrated in May, making May effectively a synthetic month.",
-      whyItMatters: 'This is almost certainly a test/dummy drug injected into the dataset. If not identified, it inflates May volume by ~20x and skews monthly trends, reversal rates, and drug mix analysis.',
-      toConfirm: 'Is this a known test record? Should it be permanently excluded from production reporting?',
-      rfpImpact: 'Demonstrates data quality detection capability. Any analytics vendor that reports May as a real peak month has failed a basic data integrity check.',
+      whatWeSee:
+        "NDC 65862020190 ('KRYPTONITE XR' by LEX LUTHER INC.) accounts for 49,567 claims (8.3% of the dataset). 99.5% of these claims are concentrated in May, making May effectively a synthetic month.",
+      whyItMatters:
+        'This is almost certainly a test/dummy drug injected into the dataset. If not identified, it inflates May volume by ~20x and skews monthly trends, reversal rates, and drug mix analysis.',
+      toConfirm:
+        'Is this a known test record? Should it be permanently excluded from production reporting?',
+      rfpImpact:
+        'Demonstrates data quality detection capability. Any analytics vendor that reports May as a real peak month has failed a basic data integrity check.',
       beforeAfter: [
-        { metric: 'Total Claims', withFlagged: fmt(Number(wf.total_claims)), withoutFlagged: fmt(Number(wof.total_claims)) },
-        { metric: 'May Volume', withFlagged: fmt(Number(mayWf.may_vol)), withoutFlagged: fmt(Number(mayWof.may_vol)) },
-        { metric: 'Net Claims', withFlagged: fmt(Number(wf.net_claims)), withoutFlagged: fmt(Number(wof.net_claims)) },
-        { metric: 'Reversal Rate', withFlagged: pct(Number(wf.reversal_rate)), withoutFlagged: pct(Number(wof.reversal_rate)) },
-        { metric: 'Unique Drugs', withFlagged: fmt(Number(wf.unique_drugs)), withoutFlagged: fmt(Number(wof.unique_drugs)) },
+        {
+          metric: 'Total Claims',
+          withFlagged: fmt(Number(wf.total_claims)),
+          withoutFlagged: fmt(Number(wof.total_claims)),
+        },
+        {
+          metric: 'May Volume',
+          withFlagged: fmt(Number(mayWf.may_vol)),
+          withoutFlagged: fmt(Number(mayWof.may_vol)),
+        },
+        {
+          metric: 'Net Claims',
+          withFlagged: fmt(Number(wf.net_claims)),
+          withoutFlagged: fmt(Number(wof.net_claims)),
+        },
+        {
+          metric: 'Reversal Rate',
+          withFlagged: pct(Number(wf.reversal_rate)),
+          withoutFlagged: pct(Number(wof.reversal_rate)),
+        },
+        {
+          metric: 'Unique Drugs',
+          withFlagged: fmt(Number(wf.unique_drugs)),
+          withoutFlagged: fmt(Number(wof.unique_drugs)),
+        },
       ],
       miniCharts: [
         {
@@ -188,13 +212,11 @@ export async function GET(request: NextRequest) {
     const normalAvg =
       normalMonths.reduce((sum, r) => sum + Number(r.total), 0) / normalMonths.length;
 
-    const septTotal =
-      monthlyRows.find((r) => String(r.month) === '2021-09');
+    const septTotal = monthlyRows.find((r) => String(r.month) === '2021-09');
     const septCount = septTotal ? Number(septTotal.total) : 0;
     const septPct = Math.round(((septCount - normalAvg) / normalAvg) * 100);
 
-    const novTotal =
-      monthlyRows.find((r) => String(r.month) === '2021-11');
+    const novTotal = monthlyRows.find((r) => String(r.month) === '2021-11');
     const novCount = novTotal ? Number(novTotal.total) : 0;
     const novPct = Math.round(((novCount - normalAvg) / normalAvg) * 100);
 
@@ -225,7 +247,7 @@ export async function GET(request: NextRequest) {
       whatWeSee:
         'September 2021 saw ~70,941 claims (excluding Kryptonite), approximately 57% above the normal monthly average. The spike is remarkably uniform — all 5 states increased 47-50%, all 3 formulary types increased 48-50%.',
       whyItMatters:
-        "A uniform spike across all dimensions suggests a systemic cause — not a single group, drug, or state driving the increase. The KS batch rebill (re-incurring ~2,700 claims) partially explains the spike, but ~23,000 excess claims remain unexplained.",
+        'A uniform spike across all dimensions suggests a systemic cause — not a single group, drug, or state driving the increase. The KS batch rebill (re-incurring ~2,700 claims) partially explains the spike, but ~23,000 excess claims remain unexplained.',
       toConfirm:
         'Was there a Q3-end processing catch-up, LTC facility re-enrollment cycle, or known system event in September 2021?',
       rfpImpact:

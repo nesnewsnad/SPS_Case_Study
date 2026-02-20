@@ -17,6 +17,15 @@
         "hooks": [
           {
             "type": "command",
+            "command": "/Users/danswensen/Desktop/SPS_Case_Study/.claude/hooks/post-edit-format.sh"
+          }
+        ]
+      },
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
             "command": "/Users/danswensen/Desktop/SPS_Case_Study/.claude/hooks/check-syntax.sh"
           }
         ]
@@ -28,7 +37,7 @@
           {
             "type": "command",
             "command": "/Users/danswensen/Desktop/SPS_Case_Study/.claude/hooks/verify-before-stop.sh",
-            "timeout": 120000
+            "timeout": 120
           }
         ]
       }

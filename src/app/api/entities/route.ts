@@ -7,7 +7,7 @@ export async function GET() {
   try {
     const rows = await db.select().from(entities);
     const response: EntitiesResponse = {
-      entities: rows.map(r => ({
+      entities: rows.map((r) => ({
         id: r.id,
         name: r.name,
         description: r.description,

@@ -14,7 +14,11 @@ export interface FilterParams {
 }
 
 export const FLAGGED_NDCS: { ndc: string; label: string; reason: string }[] = [
-  { ndc: '65862020190', label: 'KRYPTONITE XR (LEX LUTHER INC.)', reason: 'Synthetic test drug — 49,567 claims, 99.5% in May' }
+  {
+    ndc: '65862020190',
+    label: 'KRYPTONITE XR (LEX LUTHER INC.)',
+    reason: 'Synthetic test drug — 49,567 claims, 99.5% in May',
+  },
 ];
 
 export interface KpiSummary {
@@ -118,7 +122,7 @@ export interface AnomalyPanel {
 
 export interface AnomalyMiniChart {
   title: string;
-  type: "grouped-bar" | "stacked-bar" | "bar";
+  type: 'grouped-bar' | 'stacked-bar' | 'bar';
   data: Record<string, number | string>[];
 }
 

@@ -1,15 +1,13 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function ProcessPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">
-          AI Process Documentation
-        </h1>
+        <h1 className="text-2xl font-bold tracking-tight">AI Process Documentation</h1>
         <p className="text-muted-foreground">
-          How AI tools were used to build this analysis — methodology,
-          iterations, and lessons learned
+          How AI tools were used to build this analysis — methodology, iterations, and lessons
+          learned
         </p>
       </div>
 
@@ -18,7 +16,7 @@ export default function ProcessPage() {
           <CardHeader>
             <CardTitle>Tool Selection</CardTitle>
           </CardHeader>
-          <CardContent className="flex h-48 items-center justify-center text-muted-foreground">
+          <CardContent className="text-muted-foreground flex h-48 items-center justify-center">
             Which tools, why, and how they were combined — coming next
           </CardContent>
         </Card>
@@ -26,9 +24,8 @@ export default function ProcessPage() {
           <CardHeader>
             <CardTitle>Architecture Decisions</CardTitle>
           </CardHeader>
-          <CardContent className="flex h-48 items-center justify-center text-muted-foreground">
-            Why Next.js + Postgres, multi-entity design, API patterns — coming
-            next
+          <CardContent className="text-muted-foreground flex h-48 items-center justify-center">
+            Why Next.js + Postgres, multi-entity design, API patterns — coming next
           </CardContent>
         </Card>
       </div>
@@ -37,7 +34,7 @@ export default function ProcessPage() {
         <CardHeader>
           <CardTitle>Key Prompts & Iterations</CardTitle>
         </CardHeader>
-        <CardContent className="flex h-64 items-center justify-center text-muted-foreground">
+        <CardContent className="text-muted-foreground flex h-64 items-center justify-center">
           What worked first try vs. what needed iteration — coming next
         </CardContent>
       </Card>
@@ -46,7 +43,7 @@ export default function ProcessPage() {
         <CardHeader>
           <CardTitle>Limitations & Workarounds</CardTitle>
         </CardHeader>
-        <CardContent className="flex h-48 items-center justify-center text-muted-foreground">
+        <CardContent className="text-muted-foreground flex h-48 items-center justify-center">
           Where AI tools fell short and how we adapted — coming next
         </CardContent>
       </Card>

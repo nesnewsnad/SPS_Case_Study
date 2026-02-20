@@ -8,11 +8,14 @@ import type { FiltersResponse } from '@/lib/api-types';
 export async function GET(request: NextRequest) {
   try {
     const filters = parseFilters(request.nextUrl.searchParams);
-    const flaggedNdcs = FLAGGED_NDCS.map(f => f.ndc);
+    const flaggedNdcs = FLAGGED_NDCS.map((f) => f.ndc);
     const ndcExclusion = !filters.includeFlaggedNdcs && flaggedNdcs.length > 0;
 
     const claimsFilter = ndcExclusion
-      ? sql`entity_id = ${filters.entityId} AND ndc NOT IN (${sql.join(flaggedNdcs.map(n => sql`${n}`), sql`, `)})`
+      ? sql`entity_id = ${filters.entityId} AND ndc NOT IN (${sql.join(
+          flaggedNdcs.map((n) => sql`${n}`),
+          sql`, `,
+        )})`
       : sql`entity_id = ${filters.entityId}`;
 
     const drugsResult = await db.execute(sql`
@@ -32,7 +35,10 @@ export async function GET(request: NextRequest) {
     `);
 
     const groupsFilter = ndcExclusion
-      ? sql`entity_id = ${filters.entityId} AND ndc NOT IN (${sql.join(flaggedNdcs.map(n => sql`${n}`), sql`, `)})`
+      ? sql`entity_id = ${filters.entityId} AND ndc NOT IN (${sql.join(
+          flaggedNdcs.map((n) => sql`${n}`),
+          sql`, `,
+        )})`
       : sql`entity_id = ${filters.entityId}`;
 
     const groupsResult = await db.execute(sql`
@@ -45,7 +51,9 @@ export async function GET(request: NextRequest) {
 
     const response: FiltersResponse = {
       drugs: drugsResult.rows.map((r: Record<string, unknown>) => r.drug_name as string),
-      manufacturers: manufacturersResult.rows.map((r: Record<string, unknown>) => r.manufacturer_name as string),
+      manufacturers: manufacturersResult.rows.map(
+        (r: Record<string, unknown>) => r.manufacturer_name as string,
+      ),
       groups: groupsResult.rows.map((r: Record<string, unknown>) => r.group_id as string),
     };
 

@@ -37,8 +37,7 @@ function buildWhere(filters: FilterParams): SQL {
   if (filters.dateStart) parts.push(sql`c.date_filled >= ${filters.dateStart}`);
   if (filters.dateEnd) parts.push(sql`c.date_filled <= ${filters.dateEnd}`);
   if (filters.mony) parts.push(sql`d.mony = ${filters.mony}`);
-  if (filters.manufacturer)
-    parts.push(sql`d.manufacturer_name = ${filters.manufacturer}`);
+  if (filters.manufacturer) parts.push(sql`d.manufacturer_name = ${filters.manufacturer}`);
   if (filters.drug) parts.push(sql`d.drug_name = ${filters.drug}`);
 
   return sql.join(parts, sql` AND `);
@@ -198,11 +197,13 @@ export async function GET(request: NextRequest) {
       uniqueDrugs: Number(ufRow.unique_drugs) || 0,
     };
 
-    const monthly: MonthlyDataPoint[] = (monthlyResult.rows as Record<string, unknown>[]).map((r) => ({
-      month: String(r.month),
-      incurred: Number(r.incurred) || 0,
-      reversed: Number(r.reversed) || 0,
-    }));
+    const monthly: MonthlyDataPoint[] = (monthlyResult.rows as Record<string, unknown>[]).map(
+      (r) => ({
+        month: String(r.month),
+        incurred: Number(r.incurred) || 0,
+        reversed: Number(r.reversed) || 0,
+      }),
+    );
 
     const drugs: DrugRow[] = (drugsResult.rows as Record<string, unknown>[]).map((r) => ({
       drugName: (r.drug_name as string) ?? 'Unknown',
@@ -213,22 +214,28 @@ export async function GET(request: NextRequest) {
       topState: (r.top_state as string) ?? 'Unknown',
     }));
 
-    const daysSupply: DaysSupplyBin[] = (daysSupplyResult.rows as Record<string, unknown>[]).map((r) => ({
-      bin: r.bin as string,
-      count: Number(r.count) || 0,
-    }));
+    const daysSupply: DaysSupplyBin[] = (daysSupplyResult.rows as Record<string, unknown>[]).map(
+      (r) => ({
+        bin: r.bin as string,
+        count: Number(r.count) || 0,
+      }),
+    );
 
     const mony: MonyBreakdown[] = (monyResult.rows as Record<string, unknown>[]).map((r) => ({
       type: (r.type as string) ?? 'Unknown',
       netClaims: Number(r.net_claims) || 0,
     }));
 
-    const topGroups: GroupVolume[] = (topGroupsResult.rows as Record<string, unknown>[]).map((r) => ({
-      groupId: r.group_id as string,
-      netClaims: Number(r.net_claims) || 0,
-    }));
+    const topGroups: GroupVolume[] = (topGroupsResult.rows as Record<string, unknown>[]).map(
+      (r) => ({
+        groupId: r.group_id as string,
+        netClaims: Number(r.net_claims) || 0,
+      }),
+    );
 
-    const topManufacturers: ManufacturerVolume[] = (topManufacturersResult.rows as Record<string, unknown>[]).map((r) => ({
+    const topManufacturers: ManufacturerVolume[] = (
+      topManufacturersResult.rows as Record<string, unknown>[]
+    ).map((r) => ({
       manufacturer: (r.manufacturer_name as string) ?? 'Unknown',
       netClaims: Number(r.net_claims) || 0,
     }));

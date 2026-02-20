@@ -17,7 +17,12 @@ export function buildWhereClause(filters: FilterParams): WhereResult {
 
   // Flagged NDC exclusion (default: exclude)
   if (!filters.includeFlaggedNdcs && FLAGGED_NDCS.length > 0) {
-    conditions.push(notInArray(claims.ndc, FLAGGED_NDCS.map(f => f.ndc)));
+    conditions.push(
+      notInArray(
+        claims.ndc,
+        FLAGGED_NDCS.map((f) => f.ndc),
+      ),
+    );
   }
 
   // Claims-table filters
