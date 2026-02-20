@@ -84,8 +84,10 @@ function SearchableCombobox({
           aria-expanded={open}
           size="sm"
           className={cn(
-            'w-[180px] justify-between font-normal',
-            value && 'border-teal-300 bg-teal-50/50 text-teal-900',
+            'w-[180px] justify-between font-normal hover:border-teal-300',
+            value
+              ? 'border-teal-300 bg-teal-50/50 text-teal-900'
+              : 'focus-visible:border-teal-400 focus-visible:ring-teal-400/20',
           )}
         >
           <span className="truncate">{value ?? `All ${label}s`}</span>
