@@ -1,9 +1,19 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Search, AlertTriangle, Cpu, Building2 } from 'lucide-react';
+import {
+  LayoutDashboard,
+  Search,
+  AlertTriangle,
+  Cpu,
+  Building2,
+  PanelLeftClose,
+  PanelLeftOpen,
+} from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Tooltip, TooltipTrigger, TooltipContent } from '@/components/ui/tooltip';
 
 const navigation = [
   {
@@ -34,43 +44,56 @@ const navigation = [
 
 export function Sidebar() {
   const pathname = usePathname();
+  const [collapsed, setCollapsed] = useState(false);
 
   return (
-    <aside className="bg-card flex w-64 flex-col border-r">
+    <aside
+      className={cn(
+        'bg-card flex flex-col border-r transition-all duration-300',
+        collapsed ? 'w-16' : 'w-64',
+      )}
+    >
       {/* Logo / Header */}
-      <div className="border-b px-6 py-5">
-        <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-teal-600">
+      <div className="border-b px-3 py-5">
+        <div className={cn('flex items-center', collapsed ? 'justify-center' : 'gap-3 px-3')}>
+          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-teal-600">
             <Building2 className="h-5 w-5 text-white" />
           </div>
-          <div>
-            <h1 className="text-sm font-semibold tracking-tight">SPS Health</h1>
-            <p className="text-muted-foreground text-xs">Claims Analytics</p>
+          {!collapsed && (
+            <div className="min-w-0">
+              <h1 className="text-sm font-semibold tracking-tight">SPS Health</h1>
+              <p className="text-muted-foreground text-xs">Claims Analytics</p>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Entity Selector — hidden when collapsed */}
+      {!collapsed && (
+        <div className="border-b px-4 py-3">
+          <div className="bg-muted/50 rounded-md px-3 py-2">
+            <p className="text-muted-foreground text-xs font-medium">Active Entity</p>
+            <p className="text-sm font-semibold">Pharmacy A</p>
+            <p className="text-muted-foreground text-xs">2021 Claims Data</p>
           </div>
         </div>
-      </div>
-
-      {/* Entity Selector */}
-      <div className="border-b px-4 py-3">
-        <div className="bg-muted/50 rounded-md px-3 py-2">
-          <p className="text-muted-foreground text-xs font-medium">Active Entity</p>
-          <p className="text-sm font-semibold">Pharmacy A</p>
-          <p className="text-muted-foreground text-xs">2021 Claims Data</p>
-        </div>
-      </div>
+      )}
 
       {/* Navigation */}
-      <nav className="flex-1 space-y-1 px-3 py-4">
+      <nav className={cn('flex-1 space-y-1 py-4', collapsed ? 'px-2' : 'px-3')}>
         {navigation.map((item) => {
           const isActive =
             pathname === item.href || (item.href !== '/' && pathname.startsWith(item.href));
 
-          return (
+          const linkContent = (
             <Link
               key={item.href}
               href={item.href}
               className={cn(
-                'group flex items-start gap-3 rounded-lg px-3 py-2.5 text-sm transition-all duration-200',
+                'group flex items-center text-sm transition-all duration-200',
+                collapsed
+                  ? 'justify-center rounded-lg p-2.5'
+                  : 'items-start gap-3 rounded-lg px-3 py-2.5',
                 isActive
                   ? 'bg-teal-50 text-teal-900 shadow-sm'
                   : 'text-muted-foreground hover:bg-muted hover:text-foreground',
@@ -78,30 +101,76 @@ export function Sidebar() {
             >
               <item.icon
                 className={cn(
-                  'mt-0.5 h-4 w-4 shrink-0',
+                  'h-4 w-4 shrink-0',
+                  !collapsed && 'mt-0.5',
                   isActive ? 'text-teal-600' : 'text-muted-foreground group-hover:text-foreground',
                 )}
               />
-              <div>
-                <p className="leading-tight font-medium">{item.name}</p>
-                <p
-                  className={cn(
-                    'mt-0.5 text-xs leading-tight',
-                    isActive ? 'text-teal-600/70' : 'text-muted-foreground',
-                  )}
-                >
-                  {item.description}
-                </p>
-              </div>
+              {!collapsed && (
+                <div className="min-w-0">
+                  <p className="leading-tight font-medium">{item.name}</p>
+                  <p
+                    className={cn(
+                      'mt-0.5 text-xs leading-tight',
+                      isActive ? 'text-teal-600/70' : 'text-muted-foreground',
+                    )}
+                  >
+                    {item.description}
+                  </p>
+                </div>
+              )}
             </Link>
           );
+
+          if (collapsed) {
+            return (
+              <Tooltip key={item.href}>
+                <TooltipTrigger asChild>{linkContent}</TooltipTrigger>
+                <TooltipContent side="right" sideOffset={8}>
+                  {item.name}
+                </TooltipContent>
+              </Tooltip>
+            );
+          }
+
+          return linkContent;
         })}
       </nav>
 
-      {/* Footer */}
-      <div className="border-t px-4 py-3">
-        <p className="text-muted-foreground text-xs">Built with Claude Code</p>
-        <p className="text-muted-foreground text-xs">AI Implementation Case Study</p>
+      {/* Footer with collapse toggle */}
+      <div className={cn('border-t', collapsed ? 'px-2 py-3' : 'px-4 py-3')}>
+        {!collapsed && (
+          <div className="mb-2">
+            <p className="text-muted-foreground text-xs">Built with Claude Code</p>
+            <p className="text-muted-foreground text-xs">AI Implementation Case Study</p>
+          </div>
+        )}
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <button
+              onClick={() => setCollapsed(!collapsed)}
+              className={cn(
+                'text-muted-foreground hover:bg-muted hover:text-foreground flex items-center rounded-md transition-colors',
+                collapsed ? 'mx-auto p-2' : 'w-full gap-2 px-2 py-1.5 text-xs',
+              )}
+              aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+              {collapsed ? (
+                <PanelLeftOpen className="h-4 w-4" />
+              ) : (
+                <>
+                  <PanelLeftClose className="h-4 w-4" />
+                  <span>Collapse</span>
+                </>
+              )}
+            </button>
+          </TooltipTrigger>
+          {collapsed && (
+            <TooltipContent side="right" sideOffset={8}>
+              Expand sidebar
+            </TooltipContent>
+          )}
+        </Tooltip>
       </div>
     </aside>
   );

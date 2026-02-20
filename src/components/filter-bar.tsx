@@ -83,7 +83,10 @@ function SearchableCombobox({
           role="combobox"
           aria-expanded={open}
           size="sm"
-          className="w-[180px] justify-between font-normal"
+          className={cn(
+            'w-[180px] justify-between font-normal',
+            value && 'border-teal-300 bg-teal-50/50 text-teal-900',
+          )}
         >
           <span className="truncate">{value ?? `All ${label}s`}</span>
           <ChevronsUpDown className="ml-1 h-3.5 w-3.5 shrink-0 opacity-50" />
@@ -209,8 +212,12 @@ function FilterChips() {
   return (
     <div className="border-border/50 flex flex-wrap items-center gap-1.5 border-t px-6 py-2">
       {chips.map(({ key, label, display }) => (
-        <Badge key={key} variant="secondary" className="gap-1 pr-1 transition-all duration-150">
-          <span className="text-muted-foreground text-xs">{label}:</span>
+        <Badge
+          key={key}
+          variant="secondary"
+          className="gap-1 border border-teal-200 bg-teal-50 pr-1 text-teal-900 transition-all duration-150"
+        >
+          <span className="text-xs text-teal-600">{label}:</span>
           <span className="text-xs">{display}</span>
           <button
             onClick={() => {
@@ -220,7 +227,7 @@ function FilterChips() {
                 removeFilter('dateEnd');
               }
             }}
-            className="hover:bg-muted ml-0.5 rounded-full p-0.5"
+            className="ml-0.5 rounded-full p-0.5 hover:bg-teal-100"
             aria-label={`Remove ${label} filter`}
           >
             <X className="h-3 w-3" />
@@ -251,7 +258,10 @@ export function FilterBar({ view }: FilterBarProps) {
             val === '__all__' ? removeFilter('formulary') : setFilter('formulary', val)
           }
         >
-          <SelectTrigger className="w-[150px]" size="sm">
+          <SelectTrigger
+            className={cn('w-[150px]', filters.formulary && 'border-teal-300 bg-teal-50/50')}
+            size="sm"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -269,7 +279,10 @@ export function FilterBar({ view }: FilterBarProps) {
             val === '__all__' ? removeFilter('state') : setFilter('state', val)
           }
         >
-          <SelectTrigger className="w-[130px]" size="sm">
+          <SelectTrigger
+            className={cn('w-[130px]', filters.state && 'border-teal-300 bg-teal-50/50')}
+            size="sm"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -289,7 +302,10 @@ export function FilterBar({ view }: FilterBarProps) {
             val === '__all__' ? removeFilter('mony') : setFilter('mony', val)
           }
         >
-          <SelectTrigger className="w-[200px]" size="sm">
+          <SelectTrigger
+            className={cn('w-[200px]', filters.mony && 'border-teal-300 bg-teal-50/50')}
+            size="sm"
+          >
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -342,6 +358,7 @@ export function FilterBar({ view }: FilterBarProps) {
             onCheckedChange={toggleFlaggedNdcs}
             id="flagged-toggle"
             size="sm"
+            className="data-[state=checked]:bg-amber-500"
           />
           <label
             htmlFor="flagged-toggle"
