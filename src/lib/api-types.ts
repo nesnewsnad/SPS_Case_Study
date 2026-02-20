@@ -59,6 +59,7 @@ export interface OverviewResponse {
   monthly: MonthlyDataPoint[];
   formulary: FormularyBreakdown[];
   states: StateBreakdown[];
+  allStates: StateBreakdown[];
   adjudication: AdjudicationSummary;
 }
 

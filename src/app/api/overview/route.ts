@@ -64,17 +64,50 @@ function buildBaselineWhere(filters: FilterParams): SQL {
   return sql.join(parts, sql` AND `);
 }
 
+// All filters EXCEPT state — used to always show all 5 states
+function buildNoStateWhere(filters: FilterParams): { where: SQL; needsJoin: boolean } {
+  const parts: SQL[] = [sql`c.entity_id = ${filters.entityId}`];
+  let needsJoin = false;
+
+  if (!filters.includeFlaggedNdcs && FLAGGED_NDCS.length > 0) {
+    parts.push(
+      sql`c.ndc NOT IN (${sql.join(
+        FLAGGED_NDCS.map((f) => sql`${f.ndc}`),
+        sql`, `,
+      )})`,
+    );
+  }
+
+  if (filters.formulary) parts.push(sql`c.formulary = ${filters.formulary}`);
+  // state deliberately omitted
+  if (filters.groupId) parts.push(sql`c.group_id = ${filters.groupId}`);
+  if (filters.ndc) parts.push(sql`c.ndc = ${filters.ndc}`);
+  if (filters.dateStart) parts.push(sql`c.date_filled >= ${filters.dateStart}`);
+  if (filters.dateEnd) parts.push(sql`c.date_filled <= ${filters.dateEnd}`);
+
+  if (filters.mony) { needsJoin = true; parts.push(sql`d.mony = ${filters.mony}`); }
+  if (filters.manufacturer) { needsJoin = true; parts.push(sql`d.manufacturer_name = ${filters.manufacturer}`); }
+  if (filters.drug) { needsJoin = true; parts.push(sql`d.drug_name = ${filters.drug}`); }
+
+  return { where: sql.join(parts, sql` AND `), needsJoin };
+}
+
 export async function GET(request: NextRequest) {
   try {
     const filters = parseFilters(request.nextUrl.searchParams);
     const { where, needsJoin } = buildRawWhere(filters);
     const baselineWhere = buildBaselineWhere(filters);
+    const { where: noStateWhere, needsJoin: noStateJoin } = buildNoStateWhere(filters);
 
     const fromClause = needsJoin
       ? sql`FROM claims c LEFT JOIN drug_info d ON c.ndc = d.ndc`
       : sql`FROM claims c`;
 
-    const [kpiResult, unfilteredResult, monthlyResult, formularyResult, statesResult, adjResult] =
+    const noStateFrom = noStateJoin
+      ? sql`FROM claims c LEFT JOIN drug_info d ON c.ndc = d.ndc`
+      : sql`FROM claims c`;
+
+    const [kpiResult, unfilteredResult, monthlyResult, formularyResult, statesResult, allStatesResult, adjResult] =
       await Promise.all([
         db.execute(sql`
           SELECT
@@ -130,6 +163,19 @@ export async function GET(request: NextRequest) {
           ORDER BY net_claims DESC
         `),
 
+        // All states (ignoring state filter) — for highlight-style bar chart
+        db.execute(sql`
+          SELECT
+            c.pharmacy_state AS state,
+            COALESCE(SUM(c.net_claim_count), 0)::int AS net_claims,
+            COUNT(*)::int AS total_claims,
+            ROUND(COUNT(*) FILTER (WHERE c.net_claim_count = -1)::numeric / NULLIF(COUNT(*), 0) * 100, 2) AS reversal_rate
+          ${noStateFrom}
+          WHERE ${noStateWhere}
+          GROUP BY c.pharmacy_state
+          ORDER BY net_claims DESC
+        `),
+
         db.execute(sql`
           SELECT
             COUNT(*) FILTER (WHERE c.adjudicated = true)::int AS adjudicated,
@@ -179,6 +225,13 @@ export async function GET(request: NextRequest) {
       reversalRate: Number(r.reversal_rate) || 0,
     }));
 
+    const allStates: StateBreakdown[] = (allStatesResult.rows as Record<string, unknown>[]).map((r) => ({
+      state: String(r.state),
+      netClaims: Number(r.net_claims) || 0,
+      totalClaims: Number(r.total_claims) || 0,
+      reversalRate: Number(r.reversal_rate) || 0,
+    }));
+
     const adjRow = adjResult.rows[0] as Record<string, unknown>;
     const adjudication: AdjudicationSummary = {
       adjudicated: Number(adjRow.adjudicated) || 0,
@@ -192,6 +245,7 @@ export async function GET(request: NextRequest) {
       monthly,
       formulary,
       states,
+      allStates,
       adjudication,
     };
 

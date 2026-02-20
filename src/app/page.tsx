@@ -328,7 +328,8 @@ export default function OverviewPage() {
             </CardHeader>
             <CardContent className="h-64">
               <StateBars
-                data={data.states}
+                data={data.allStates}
+                activeState={filters.state}
                 onBarClick={handleStateClick}
               />
             </CardContent>
