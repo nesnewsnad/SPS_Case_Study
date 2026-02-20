@@ -88,9 +88,12 @@ export const AnomalyMiniChart = memo(function AnomalyMiniChart({ chart }: Props)
   return (
     <div className="space-y-2">
       <p className="text-muted-foreground text-sm font-medium">{chart.title}</p>
-      <div className={needsRotation ? 'h-56' : 'h-48'}>
+      <div className={needsRotation ? 'h-64' : 'h-48'}>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={formattedData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
+          <BarChart
+            data={formattedData}
+            margin={{ top: 5, right: 5, left: 0, bottom: needsRotation ? 20 : 5 }}
+          >
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" vertical={false} />
             <XAxis
               dataKey={categoryKey}
@@ -99,7 +102,7 @@ export const AnomalyMiniChart = memo(function AnomalyMiniChart({ chart }: Props)
               interval={0}
               angle={needsRotation ? -45 : 0}
               textAnchor={needsRotation ? 'end' : 'middle'}
-              height={needsRotation ? 65 : 30}
+              height={needsRotation ? 80 : 30}
             />
             <YAxis
               tick={{ fontSize: 11 }}
