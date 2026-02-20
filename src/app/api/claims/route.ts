@@ -116,6 +116,7 @@ export async function GET(request: NextRequest) {
       db.execute(sql`
         SELECT
           d.drug_name AS drug_name,
+          d.label_name AS label_name,
           c.ndc AS ndc,
           SUM(c.net_claim_count)::int AS net_claims,
           ROUND(COUNT(*) FILTER (WHERE c.net_claim_count = -1)::numeric / NULLIF(COUNT(*), 0) * 100, 2) AS reversal_rate,
@@ -207,6 +208,7 @@ export async function GET(request: NextRequest) {
 
     const drugs: DrugRow[] = (drugsResult.rows as Record<string, unknown>[]).map((r) => ({
       drugName: (r.drug_name as string) ?? 'Unknown',
+      labelName: (r.label_name as string) ?? null,
       ndc: r.ndc as string,
       netClaims: Number(r.net_claims) || 0,
       reversalRate: Number(r.reversal_rate) || 0,

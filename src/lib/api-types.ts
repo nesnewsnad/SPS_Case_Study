@@ -64,6 +64,7 @@ export interface OverviewResponse {
 
 export interface DrugRow {
   drugName: string;
+  labelName: string | null;
   ndc: string;
   netClaims: number;
   reversalRate: number;
