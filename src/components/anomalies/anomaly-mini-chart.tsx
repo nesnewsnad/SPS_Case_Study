@@ -83,11 +83,12 @@ export const AnomalyMiniChart = memo(function AnomalyMiniChart({ chart }: Props)
   });
 
   const isStacked = chart.type === 'stacked-bar';
+  const needsRotation = numericKeys.length > 1 || formattedData.length > 8;
 
   return (
     <div className="space-y-2">
       <p className="text-muted-foreground text-sm font-medium">{chart.title}</p>
-      <div className="h-48">
+      <div className={needsRotation ? 'h-56' : 'h-48'}>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart data={formattedData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
             <CartesianGrid strokeDasharray="3 3" className="stroke-muted" vertical={false} />
@@ -96,9 +97,9 @@ export const AnomalyMiniChart = memo(function AnomalyMiniChart({ chart }: Props)
               tick={{ fontSize: 11 }}
               className="text-muted-foreground"
               interval={0}
-              angle={numericKeys.length > 1 || formattedData.length > 8 ? -45 : 0}
-              textAnchor={numericKeys.length > 1 || formattedData.length > 8 ? 'end' : 'middle'}
-              height={numericKeys.length > 1 || formattedData.length > 8 ? 50 : 30}
+              angle={needsRotation ? -45 : 0}
+              textAnchor={needsRotation ? 'end' : 'middle'}
+              height={needsRotation ? 65 : 30}
             />
             <YAxis
               tick={{ fontSize: 11 }}
