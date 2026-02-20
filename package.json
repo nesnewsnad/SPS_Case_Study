@@ -17,6 +17,7 @@
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.46",
+    "@ai-sdk/react": "^3.0.97",
     "@neondatabase/serverless": "^1.0.2",
     "@tanstack/react-table": "^8.21.3",
     "ai": "^6.0.94",

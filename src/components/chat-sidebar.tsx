@@ -1,0 +1,280 @@
+'use client';
+
+import { useState, useRef, useEffect, useMemo, type FormEvent } from 'react';
+import { DefaultChatTransport } from 'ai';
+import { useChat } from '@ai-sdk/react';
+import { usePathname } from 'next/navigation';
+import { MessageSquare, Send, X, Sparkles } from 'lucide-react';
+import { useFilters } from '@/contexts/filter-context';
+import { cn } from '@/lib/utils';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+
+const SUGGESTIONS: Record<string, string[]> = {
+  '/': [
+    "What's driving the monthly volume swings?",
+    'Why is adjudication so low?',
+    'How does our generic rate compare to industry?',
+  ],
+  '/explorer': [
+    'Which drugs have the highest reversal rates?',
+    'Why are days supply so short?',
+    'What do the top manufacturers tell us?',
+  ],
+  '/anomalies': [
+    'Explain the Kryptonite test drug',
+    'What caused the Kansas August event?',
+    'Is the September spike real?',
+  ],
+  '/process': [
+    'How did you validate the anomalies?',
+    'What would you do differently?',
+    'How was the data cleaned?',
+  ],
+};
+
+function getSuggestions(pathname: string): string[] {
+  return SUGGESTIONS[pathname] || SUGGESTIONS['/'];
+}
+
+/** Extract plain text from a UIMessage's parts array. */
+function getMessageText(message: { parts: Array<{ type: string; text?: string }> }): string {
+  return message.parts
+    .filter((p): p is { type: 'text'; text: string } => p.type === 'text')
+    .map((p) => p.text)
+    .join('');
+}
+
+export function ChatSidebar() {
+  const [open, setOpen] = useState(false);
+  const [input, setInput] = useState('');
+  const pathname = usePathname();
+  const { filters } = useFilters();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Stable transport — dynamic filter data is sent per-request via sendMessage options
+  const transport = useMemo(() => new DefaultChatTransport({ api: '/api/chat' }), []);
+
+  const { messages, sendMessage, status } = useChat({ transport });
+
+  const isBusy = status === 'submitted' || status === 'streaming';
+
+  // Auto-scroll to bottom on new messages
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  // Focus input when sheet opens
+  useEffect(() => {
+    if (open) {
+      setTimeout(() => inputRef.current?.focus(), 300);
+    }
+  }, [open]);
+
+  const handleSend = (text: string) => {
+    if (!text.trim() || isBusy) return;
+    setInput('');
+    sendMessage(
+      { text },
+      {
+        body: {
+          data: {
+            filters: {
+              state: filters.state,
+              formulary: filters.formulary,
+              mony: filters.mony,
+              manufacturer: filters.manufacturer,
+              drug: filters.drug,
+              groupId: filters.groupId,
+              dateStart: filters.dateStart,
+              dateEnd: filters.dateEnd,
+              includeFlaggedNdcs: filters.includeFlaggedNdcs,
+            },
+            pathname,
+          },
+        },
+      },
+    );
+  };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    handleSend(input);
+  };
+
+  const suggestions = getSuggestions(pathname);
+  const hasMessages = messages.length > 0;
+
+  return (
+    <>
+      {/* Floating Action Button */}
+      {!open && (
+        <button
+          onClick={() => setOpen(true)}
+          className={cn(
+            'fixed right-6 bottom-6 z-40 flex h-14 w-14 items-center justify-center rounded-full shadow-lg transition-all hover:scale-105',
+            'bg-primary text-primary-foreground hover:bg-primary/90',
+            !hasMessages && 'animate-pulse',
+          )}
+          aria-label="Open chat"
+        >
+          <MessageSquare className="h-6 w-6" />
+        </button>
+      )}
+
+      {/* Chat Sheet */}
+      <Sheet open={open} onOpenChange={setOpen}>
+        <SheetContent
+          side="right"
+          showCloseButton={false}
+          className="flex w-full flex-col gap-0 p-0 sm:max-w-md"
+        >
+          {/* Header */}
+          <SheetHeader className="border-b px-4 py-3">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Sparkles className="text-primary h-4 w-4" />
+                <SheetTitle className="text-base">Ask the Data</SheetTitle>
+                <Badge variant="secondary" className="text-[10px]">
+                  Powered by Claude
+                </Badge>
+              </div>
+              <button
+                onClick={() => setOpen(false)}
+                className="text-muted-foreground hover:text-foreground rounded-sm p-1 transition-colors"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+          </SheetHeader>
+
+          {/* Messages Area */}
+          <div className="flex-1 overflow-y-auto px-4 py-4">
+            {!hasMessages ? (
+              /* Welcome State */
+              <div className="space-y-4">
+                <div className="bg-muted/50 rounded-lg p-4">
+                  <p className="text-sm font-medium">
+                    Ask me anything about Pharmacy A&apos;s 2021 claims data.
+                  </p>
+                  <p className="text-muted-foreground mt-1 text-xs">
+                    I know the anomalies, drug mix, reversal patterns, and seasonal trends.
+                  </p>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-muted-foreground text-xs font-medium">Try asking:</p>
+                  {suggestions.map((suggestion) => (
+                    <button
+                      key={suggestion}
+                      onClick={() => handleSend(suggestion)}
+                      disabled={isBusy}
+                      className="text-muted-foreground hover:bg-muted hover:text-foreground block w-full rounded-md border px-3 py-2 text-left text-sm transition-colors disabled:opacity-50"
+                    >
+                      {suggestion}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            ) : (
+              /* Message Thread */
+              <div className="space-y-4">
+                {messages.map((message) => {
+                  const text = getMessageText(message);
+                  if (!text) return null;
+                  return (
+                    <div
+                      key={message.id}
+                      className={cn(
+                        'flex',
+                        message.role === 'user' ? 'justify-end' : 'justify-start',
+                      )}
+                    >
+                      <div
+                        className={cn(
+                          'max-w-[85%] rounded-lg px-3 py-2 text-sm',
+                          message.role === 'user'
+                            ? 'bg-primary text-primary-foreground'
+                            : 'bg-muted',
+                        )}
+                      >
+                        {message.role === 'assistant' ? (
+                          <div className="prose prose-sm dark:prose-invert max-w-none [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                            {text.split('\n').map((line: string, i: number) => {
+                              if (!line.trim()) return <br key={i} />;
+                              const formatted = line.replace(
+                                /\*\*(.*?)\*\*/g,
+                                '<strong>$1</strong>',
+                              );
+                              if (line.trim().startsWith('- ')) {
+                                return (
+                                  <div key={i} className="flex gap-1.5 py-0.5">
+                                    <span className="text-muted-foreground mt-0.5 shrink-0">
+                                      &bull;
+                                    </span>
+                                    <span
+                                      dangerouslySetInnerHTML={{
+                                        __html: formatted.replace(/^- /, ''),
+                                      }}
+                                    />
+                                  </div>
+                                );
+                              }
+                              return (
+                                <p
+                                  key={i}
+                                  className="py-0.5"
+                                  dangerouslySetInnerHTML={{
+                                    __html: formatted,
+                                  }}
+                                />
+                              );
+                            })}
+                          </div>
+                        ) : (
+                          <p>{text}</p>
+                        )}
+                      </div>
+                    </div>
+                  );
+                })}
+                {status === 'submitted' && (
+                  <div className="flex justify-start">
+                    <div className="bg-muted rounded-lg px-3 py-2 text-sm">
+                      <span className="text-muted-foreground animate-pulse">Thinking...</span>
+                    </div>
+                  </div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
+            )}
+          </div>
+
+          {/* Input Area */}
+          <div className="border-t px-4 py-3">
+            <form onSubmit={handleSubmit} className="flex items-center gap-2">
+              <input
+                ref={inputRef}
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Ask about claims, drugs, anomalies..."
+                disabled={isBusy}
+                className="bg-muted flex-1 rounded-md px-3 py-2 text-sm outline-none placeholder:text-xs disabled:opacity-50"
+              />
+              <Button
+                type="submit"
+                size="sm"
+                disabled={isBusy || !input.trim()}
+                className="h-9 w-9 shrink-0 p-0"
+              >
+                <Send className="h-4 w-4" />
+              </Button>
+            </form>
+          </div>
+        </SheetContent>
+      </Sheet>
+    </>
+  );
+}

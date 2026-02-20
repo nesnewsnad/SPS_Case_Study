@@ -3,6 +3,7 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { Sidebar } from '@/components/sidebar';
+import { ChatSidebar } from '@/components/chat-sidebar';
 import { FilterProvider } from '@/contexts/filter-context';
 import './globals.css';
 
@@ -36,6 +37,7 @@ export default function RootLayout({
             <Suspense>
               <FilterProvider>
                 <main className="bg-muted/30 flex-1 overflow-y-auto">{children}</main>
+                <ChatSidebar />
               </FilterProvider>
             </Suspense>
           </div>
