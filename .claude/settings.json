@@ -6,7 +6,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/danswensen/Desktop/SPS_Case_Study/.claude/hooks/block-destructive.sh"
+            "command": "/home/danswensen/SPS_Case_Study/.claude/hooks/block-destructive.sh"
           }
         ]
       }
@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/danswensen/Desktop/SPS_Case_Study/.claude/hooks/post-edit-format.sh"
+            "command": "/home/danswensen/SPS_Case_Study/.claude/hooks/post-edit-format.sh"
           }
         ]
       },
@@ -26,7 +26,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/danswensen/Desktop/SPS_Case_Study/.claude/hooks/check-syntax.sh"
+            "command": "/home/danswensen/SPS_Case_Study/.claude/hooks/check-syntax.sh"
           }
         ]
       }
@@ -36,8 +36,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "/Users/danswensen/Desktop/SPS_Case_Study/.claude/hooks/verify-before-stop.sh",
-            "timeout": 120
+            "command": "/home/danswensen/SPS_Case_Study/.claude/hooks/verify-before-stop.sh",
+            "timeout": 120000
           }
         ]
       }
