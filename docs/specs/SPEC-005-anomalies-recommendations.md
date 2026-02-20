@@ -292,6 +292,24 @@ Component organization at implementor's discretion.
 
 ---
 
+## Implementor Notes
+
+1. **Severity badge mapping** — `AnomalyPanel` has no `severity` field. Map `panel.id` on the frontend:
+   - `kryptonite-xr` → "Data Quality" (amber)
+   - `sept-spike` → "Volume Anomaly" (red)
+   - `nov-dip` → "Volume Anomaly" (red)
+   - `ks-aug-batch-reversal` → "Operational" (amber)
+
+2. **Mini chart key detection** — `AnomalyMiniChart.data` is `Record<string, number | string>[]`. To render dynamically: inspect `data[0]` — the first string-typed value key is the category axis (X or Y), all number-typed value keys become bar series. Example: `{ state: "CA", september: 12000, average: 10000 }` → category axis = `state`, bars = `september` + `average`.
+
+3. **`ChartSkeleton` is not shared** — It's defined locally in `page.tsx` and `explorer/page.tsx`. Copy the pattern or extract to a shared component.
+
+4. **No `generateInsights()` on this page** — The investigation panels themselves ARE the insights. No dynamic insight cards needed.
+
+5. **Follow-up question text lives inline** — The 15 questions are static content, defined directly in the component JSX. No separate data file needed.
+
+---
+
 ## Acceptance Criteria
 
 1. Anomalies page at `/anomalies` fetches `GET /api/anomalies?entityId=1` and renders all three sections
@@ -304,7 +322,7 @@ Component organization at implementor's discretion.
 8. Each tab contains 5 numbered, substantive questions with explanatory context
 9. Four dashboard extension mock-up cards render in a 2×2 grid
 10. Each mock-up card has: icon, title, "FUTURE" badge, visual mock-up area (not an empty gray box), written narrative, and data requirements list
-11. Mock-up visuals are intentionally designed (skeleton-with-structure, stylized wireframe, or concept illustration) — not blank placeholders
+11. Each mock-up visual contains at least one visual element (chart wireframe, CSS shape, or structured layout) beyond plain text — not a solid-color empty div
 12. Skeleton loading states for all sections while data loads
 13. Error state with retry button if API fails
 14. Page is scrollable, no horizontal overflow, all text is readable without truncation
