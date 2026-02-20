@@ -1,5 +1,5 @@
 import type { FilterState } from '@/contexts/filter-context';
-import type { OverviewResponse } from '@/lib/api-types';
+import type { OverviewResponse, ClaimsResponse } from '@/lib/api-types';
 import { formatNumber, formatPercent, abbreviateNumber } from '@/lib/format';
 
 export interface InsightCard {
@@ -9,11 +9,21 @@ export interface InsightCard {
   body: string;
 }
 
+type InsightData = OverviewResponse | ClaimsResponse;
+
 interface InsightTemplate {
   id: string;
   priority: number; // lower = higher priority
-  match: (filters: FilterState, data: OverviewResponse, view: string) => boolean;
-  generate: (filters: FilterState, data: OverviewResponse) => InsightCard;
+  match: (filters: FilterState, data: InsightData, view: string) => boolean;
+  generate: (filters: FilterState, data: InsightData) => InsightCard;
+}
+
+// Type guard helpers — safe access to view-specific fields
+function asOverview(d: InsightData): OverviewResponse {
+  return d as OverviewResponse;
+}
+function asClaims(d: InsightData): ClaimsResponse {
+  return d as ClaimsResponse;
 }
 
 const STATE_NAMES: Record<string, string> = {
@@ -32,6 +42,10 @@ function ordinal(n: number): string {
 }
 
 const templates: InsightTemplate[] = [
+  // ═══════════════════════════════════════════════════════════════════════
+  // OVERVIEW TEMPLATES
+  // ═══════════════════════════════════════════════════════════════════════
+
   // --- Unfiltered insights (show when no filters active) ---
   {
     id: 'portfolio-summary',
@@ -42,7 +56,7 @@ const templates: InsightTemplate[] = [
       id: 'portfolio-summary',
       severity: 'info',
       title: 'Portfolio Summary',
-      body: `${abbreviateNumber(d.kpis.netClaims)} net claims across ${d.allStates.length} states and ${d.formulary.length} formulary types. Overall reversal rate: ${formatPercent(d.kpis.reversalRate)}.`,
+      body: `${abbreviateNumber(d.kpis.netClaims)} net claims across ${asOverview(d).allStates.length} states and ${asOverview(d).formulary.length} formulary types. Overall reversal rate: ${formatPercent(d.kpis.reversalRate)}.`,
     }),
   },
   {
@@ -72,7 +86,7 @@ const templates: InsightTemplate[] = [
   {
     id: 'state-ks-warning',
     priority: 19,
-    match: (f) => f.state === 'KS',
+    match: (f, _d, v) => v === 'overview' && f.state === 'KS',
     generate: () => ({
       id: 'state-ks-warning',
       severity: 'warning',
@@ -81,13 +95,13 @@ const templates: InsightTemplate[] = [
     }),
   },
 
-  // --- Per-state: rank + share (any state) ---
+  // --- Per-state: rank + share (any state, Overview) ---
   {
     id: 'state-rank',
     priority: 20,
-    match: (f) => !!f.state,
+    match: (f, _d, v) => v === 'overview' && !!f.state,
     generate: (f, d) => {
-      const sorted = [...d.allStates].sort((a, b) => b.netClaims - a.netClaims);
+      const sorted = [...asOverview(d).allStates].sort((a, b) => b.netClaims - a.netClaims);
       const rank = sorted.findIndex((s) => s.state === f.state) + 1;
       const total = sorted.reduce((sum, s) => sum + s.netClaims, 0);
       const stateData = sorted.find((s) => s.state === f.state);
@@ -102,17 +116,20 @@ const templates: InsightTemplate[] = [
     },
   },
 
-  // --- Per-state: group density ---
+  // --- Per-state: group density (Overview) ---
   {
     id: 'state-groups',
     priority: 21,
-    match: (f, d) => !!f.state && d.allStates.some((s) => s.state === f.state && s.groupCount > 0),
+    match: (f, d, v) =>
+      v === 'overview' &&
+      !!f.state &&
+      asOverview(d).allStates.some((s) => s.state === f.state && s.groupCount > 0),
     generate: (f, d) => {
-      const stateData = d.allStates.find((s) => s.state === f.state);
+      const stateData = asOverview(d).allStates.find((s) => s.state === f.state);
       const groups = stateData?.groupCount ?? 0;
       const net = stateData?.netClaims ?? 0;
       const avg = groups > 0 ? Math.round(net / groups) : 0;
-      const totalGroups = d.allStates.reduce((sum, s) => sum + s.groupCount, 0);
+      const totalGroups = asOverview(d).allStates.reduce((sum, s) => sum + s.groupCount, 0);
       return {
         id: 'state-groups',
         severity: 'info',
@@ -122,7 +139,7 @@ const templates: InsightTemplate[] = [
     },
   },
 
-  // --- Per-month insights ---
+  // --- Per-month insights (both views — d.monthly exists on both) ---
   {
     id: 'month-sep',
     priority: 15,
@@ -165,13 +182,13 @@ const templates: InsightTemplate[] = [
     }),
   },
 
-  // --- Per-formulary ---
+  // --- Per-formulary (Overview only) ---
   {
     id: 'formulary-active',
     priority: 25,
-    match: (f) => !!f.formulary,
+    match: (f, _d, v) => v === 'overview' && !!f.formulary,
     generate: (f, d) => {
-      const match = d.formulary.find((x) => x.type === f.formulary);
+      const match = asOverview(d).formulary.find((x) => x.type === f.formulary);
       return {
         id: 'formulary-active',
         severity: 'info',
@@ -183,11 +200,11 @@ const templates: InsightTemplate[] = [
     },
   },
 
-  // --- Per-MONY ---
+  // --- Per-MONY (Overview) ---
   {
     id: 'mony-y',
     priority: 24,
-    match: (f) => f.mony === 'Y',
+    match: (f, _d, v) => v === 'overview' && f.mony === 'Y',
     generate: (_f, d) => ({
       id: 'mony-y',
       severity: 'positive',
@@ -198,7 +215,7 @@ const templates: InsightTemplate[] = [
   {
     id: 'mony-n',
     priority: 24,
-    match: (f) => f.mony === 'N',
+    match: (f, _d, v) => v === 'overview' && f.mony === 'N',
     generate: (_f, d) => ({
       id: 'mony-n',
       severity: 'info',
@@ -207,16 +224,278 @@ const templates: InsightTemplate[] = [
     }),
   },
 
-  // --- Group filter ---
+  // --- Multi-filter (Overview) ---
+  {
+    id: 'state-formulary-combo',
+    priority: 30,
+    match: (f, _d, v) => v === 'overview' && !!f.state && !!f.formulary,
+    generate: (f, d) => ({
+      id: 'state-formulary-combo',
+      severity: 'info',
+      title: `${f.state} × ${f.formulary}`,
+      body: `Viewing ${f.state} claims under ${f.formulary} formulary: ${formatNumber(d.kpis.netClaims)} net claims, ${formatPercent(d.kpis.reversalRate)} reversal rate.`,
+    }),
+  },
   {
     id: 'group-filter',
     priority: 28,
-    match: (f) => !!f.groupId,
+    match: (f, _d, v) => v === 'overview' && !!f.groupId,
     generate: (f, d) => ({
       id: 'group-filter',
       severity: 'info',
       title: `Group ${f.groupId}`,
       body: `Group ${f.groupId}: ${formatNumber(d.kpis.netClaims)} net claims, ${formatPercent(d.kpis.reversalRate)} reversal rate. All groups are state-specific — no group spans multiple states.`,
+    }),
+  },
+
+  // --- Fallback (Overview) ---
+  {
+    id: 'overview-fallback',
+    priority: 100,
+    match: (_f, _d, v) => v === 'overview',
+    generate: (_f, d) => ({
+      id: 'overview-fallback',
+      severity: 'info',
+      title: 'Filtered View',
+      body: `Showing ${formatNumber(d.kpis.netClaims)} net claims (${formatPercent(d.kpis.reversalRate)} reversal rate) for the current filter selection. ${formatNumber(d.kpis.uniqueDrugs)} unique drugs in this view.`,
+    }),
+  },
+
+  // ═══════════════════════════════════════════════════════════════════════
+  // EXPLORER TEMPLATES
+  // ═══════════════════════════════════════════════════════════════════════
+
+  // --- Unfiltered Explorer insights ---
+  {
+    id: 'exp-generic-mix',
+    priority: 10,
+    match: (f, _d, v) =>
+      v === 'explorer' && !f.mony && !f.drug && !f.manufacturer && !f.groupId && !f.state,
+    generate: (_f, d) => {
+      const cd = asClaims(d);
+      const genY = cd.mony.find((m) => m.type === 'Y');
+      const genO = cd.mony.find((m) => m.type === 'O');
+      const total = cd.mony.reduce((s, m) => s + m.netClaims, 0);
+      const genericPct =
+        total > 0
+          ? ((((genY?.netClaims ?? 0) + (genO?.netClaims ?? 0)) / total) * 100).toFixed(0)
+          : '0';
+      return {
+        id: 'exp-generic-mix',
+        severity: 'positive',
+        title: 'Heavy Generic Utilization',
+        body: `Generics (MONY Y+O) account for ~${genericPct}% of claims — consistent with aggressive LTC formulary management and generic utilization targets.`,
+      };
+    },
+  },
+  {
+    id: 'exp-supply-cycles',
+    priority: 11,
+    match: (f, _d, v) => v === 'explorer' && !f.drug && !f.manufacturer && !f.groupId,
+    generate: (_f, d) => {
+      const cd = asClaims(d);
+      const totalCount = cd.daysSupply.reduce((s, b) => s + b.count, 0);
+      const short = cd.daysSupply
+        .filter((b) => {
+          const n = parseInt(b.bin);
+          return !isNaN(n) && n <= 14;
+        })
+        .reduce((s, b) => s + b.count, 0);
+      const shortPct = totalCount > 0 ? ((short / totalCount) * 100).toFixed(0) : '0';
+      return {
+        id: 'exp-supply-cycles',
+        severity: 'info',
+        title: 'Short-Cycle Dispensing',
+        body: `${shortPct}% of fills are 14 days or fewer, reflecting LTC dispensing cycles where medications are reviewed and adjusted frequently. This is typical for skilled nursing and long-term care facilities.`,
+      };
+    },
+  },
+  {
+    id: 'exp-top-drug-profile',
+    priority: 12,
+    match: (f, _d, v) => v === 'explorer' && !f.drug && !f.manufacturer && !f.groupId,
+    generate: (_f, d) => {
+      const cd = asClaims(d);
+      if (cd.drugs.length === 0)
+        return {
+          id: 'exp-top-drug-profile',
+          severity: 'info' as const,
+          title: 'No Drugs',
+          body: 'No drugs match the current filters.',
+        };
+      const top = cd.drugs[0];
+      return {
+        id: 'exp-top-drug-profile',
+        severity: 'info',
+        title: 'Top Drug Profile',
+        body: `${top.drugName} leads with ${formatNumber(top.netClaims)} net claims (${formatPercent(top.reversalRate)} reversal rate). The top drug mix spans statins, GI medications, pain management, and anticoagulants — consistent with an elderly LTC population.`,
+      };
+    },
+  },
+
+  // --- Per-drug (Explorer) ---
+  {
+    id: 'exp-drug-detail',
+    priority: 18,
+    match: (f, _d, v) => v === 'explorer' && !!f.drug,
+    generate: (f, d) => {
+      const cd = asClaims(d);
+      const drug = cd.drugs.find((dr) => dr.drugName === f.drug);
+      if (!drug)
+        return {
+          id: 'exp-drug-detail',
+          severity: 'info' as const,
+          title: `${f.drug}`,
+          body: `Viewing claims for ${f.drug}.`,
+        };
+      const severity = drug.reversalRate > 15 ? ('warning' as const) : ('info' as const);
+      return {
+        id: 'exp-drug-detail',
+        severity,
+        title: drug.drugName,
+        body: `${drug.drugName} accounts for ${formatNumber(drug.netClaims)} net claims with a ${formatPercent(drug.reversalRate)} reversal rate. Primarily dispensed under ${drug.formulary} formulary in ${drug.topState}.${drug.reversalRate > 15 ? ' Elevated reversal rate warrants review.' : ''}`,
+      };
+    },
+  },
+
+  // --- Per-manufacturer (Explorer) ---
+  {
+    id: 'exp-manufacturer-detail',
+    priority: 20,
+    match: (f, _d, v) => v === 'explorer' && !!f.manufacturer,
+    generate: (f, d) => {
+      const cd = asClaims(d);
+      const mfr = cd.topManufacturers.find((m) => m.manufacturer === f.manufacturer);
+      const drugCount = cd.drugs.length;
+      return {
+        id: 'exp-manufacturer-detail',
+        severity: 'info',
+        title: f.manufacturer ?? 'Manufacturer',
+        body: mfr
+          ? `${f.manufacturer} supplies ${drugCount} drug${drugCount !== 1 ? 's' : ''} representing ${formatNumber(mfr.netClaims)} net claims. Top generic manufacturers (Aurobindo, Ascend, Amneal, Apotex) dominate volume in this LTC portfolio.`
+          : `${f.manufacturer} supplies ${drugCount} drug${drugCount !== 1 ? 's' : ''} in the current view. ${formatNumber(d.kpis.netClaims)} total net claims.`,
+      };
+    },
+  },
+
+  // --- Per-MONY (Explorer) ---
+  {
+    id: 'exp-mony-y',
+    priority: 22,
+    match: (f, _d, v) => v === 'explorer' && f.mony === 'Y',
+    generate: (_f, d) => ({
+      id: 'exp-mony-y',
+      severity: 'positive',
+      title: 'Single-Source Generics (Y)',
+      body: `Single-source generics represent the largest category at ${formatNumber(d.kpis.netClaims)} net claims — the dominant drug type, consistent with LTC generic-first dispensing. These are the most cost-effective options available.`,
+    }),
+  },
+  {
+    id: 'exp-mony-n',
+    priority: 22,
+    match: (f, _d, v) => v === 'explorer' && f.mony === 'N',
+    generate: (_f, d) => {
+      const cd = asClaims(d);
+      const topBrand = cd.drugs.length > 0 ? cd.drugs[0].drugName : 'N/A';
+      return {
+        id: 'exp-mony-n',
+        severity: 'info',
+        title: 'Single-Source Brands (N)',
+        body: `Single-source brands account for ${formatNumber(d.kpis.netClaims)} net claims — drugs with no generic alternative, typically carrying higher costs. ${topBrand} is the top brand by volume in this view.`,
+      };
+    },
+  },
+  {
+    id: 'exp-mony-o',
+    priority: 22,
+    match: (f, _d, v) => v === 'explorer' && f.mony === 'O',
+    generate: (_f, d) => ({
+      id: 'exp-mony-o',
+      severity: 'info',
+      title: 'Multi-Source Generics (O)',
+      body: `Multi-source generics show ${formatNumber(d.kpis.netClaims)} net claims. These drugs have multiple generic manufacturers competing, often driving the lowest per-unit costs.`,
+    }),
+  },
+  {
+    id: 'exp-mony-m',
+    priority: 22,
+    match: (f, _d, v) => v === 'explorer' && f.mony === 'M',
+    generate: (_f, d) => ({
+      id: 'exp-mony-m',
+      severity: 'info',
+      title: 'Multi-Source Brands (M)',
+      body: `Multi-source brands represent ${formatNumber(d.kpis.netClaims)} net claims — brand-name drugs where generic alternatives exist. Formulary optimization could shift these to lower-cost generics.`,
+    }),
+  },
+
+  // --- Per-group (Explorer) ---
+  {
+    id: 'exp-group-detail',
+    priority: 25,
+    match: (f, _d, v) => v === 'explorer' && !!f.groupId,
+    generate: (f, d) => {
+      const severity = d.kpis.reversalRate > 15 ? ('warning' as const) : ('info' as const);
+      return {
+        id: 'exp-group-detail',
+        severity,
+        title: `Group ${f.groupId}`,
+        body: `Group ${f.groupId}: ${formatNumber(d.kpis.netClaims)} net claims across ${formatNumber(d.kpis.uniqueDrugs)} unique drugs. Reversal rate is ${formatPercent(d.kpis.reversalRate)}, ${d.kpis.reversalRate > 12 ? 'above' : d.kpis.reversalRate < 9 ? 'below' : 'in line with'} the 10.8% overall average. Note: all groups are state-specific.`,
+      };
+    },
+  },
+
+  // --- Per-state (Explorer) ---
+  {
+    id: 'exp-state-detail',
+    priority: 24,
+    match: (f, _d, v) => v === 'explorer' && !!f.state && !f.groupId && !f.drug,
+    generate: (f, d) => {
+      const cd = asClaims(d);
+      const groupCount = cd.topGroups.length;
+      const drugCount = d.kpis.uniqueDrugs;
+      return {
+        id: 'exp-state-detail',
+        severity: f.state === 'KS' ? ('warning' as const) : ('info' as const),
+        title: `${f.state} Explorer`,
+        body: `${f.state} accounts for ${formatNumber(d.kpis.netClaims)} net claims with ${formatNumber(drugCount)} unique drugs across ${groupCount}+ groups.${f.state === 'KS' ? ' KS groups with "400xxx" prefix had a batch reversal event in August — see Anomalies page for details.' : ''}`,
+      };
+    },
+  },
+
+  // --- Combination insights (Explorer) ---
+  {
+    id: 'exp-state-mony-combo',
+    priority: 28,
+    match: (f, _d, v) => v === 'explorer' && !!f.state && !!f.mony,
+    generate: (f, d) => ({
+      id: 'exp-state-mony-combo',
+      severity: 'info',
+      title: `${f.state} × MONY ${f.mony}`,
+      body: `Viewing ${f.state} claims for MONY type ${f.mony}: ${formatNumber(d.kpis.netClaims)} net claims, ${formatPercent(d.kpis.reversalRate)} reversal rate. MONY distribution remains consistent across states.`,
+    }),
+  },
+  {
+    id: 'exp-drug-state-combo',
+    priority: 27,
+    match: (f, _d, v) => v === 'explorer' && !!f.drug && !!f.state,
+    generate: (f, d) => ({
+      id: 'exp-drug-state-combo',
+      severity: 'info',
+      title: `${f.drug} in ${f.state}`,
+      body: `${f.drug} in ${f.state}: ${formatNumber(d.kpis.netClaims)} net claims, ${formatPercent(d.kpis.reversalRate)} reversal rate.`,
+    }),
+  },
+
+  // --- Explorer fallback ---
+  {
+    id: 'exp-fallback',
+    priority: 100,
+    match: (_f, _d, v) => v === 'explorer',
+    generate: (_f, d) => ({
+      id: 'exp-fallback',
+      severity: 'info',
+      title: 'Explorer View',
+      body: `Showing ${formatNumber(d.kpis.netClaims)} net claims (${formatPercent(d.kpis.reversalRate)} reversal rate) across ${formatNumber(d.kpis.uniqueDrugs)} unique drugs for the current filter selection.`,
     }),
   },
 ];
@@ -227,7 +506,7 @@ const templates: InsightTemplate[] = [
  */
 export function generateInsights(
   filters: FilterState,
-  data: OverviewResponse,
+  data: InsightData,
   view: string = 'overview',
   max: number = 3,
 ): InsightCard[] {

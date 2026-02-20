@@ -328,7 +328,7 @@ export async function GET(request: NextRequest) {
       db.execute(sql`
         SELECT
           TO_CHAR(c.date_filled, 'YYYY-MM') AS month,
-          ROUND(COUNT(*) FILTER (WHERE c.net_claim_count = -1)::numeric / NULLIF(COUNT(*), 0) * 100, 1) AS reversal_rate
+          ROUND(COUNT(*) FILTER (WHERE c.net_claim_count = -1)::numeric / NULLIF(COUNT(*), 0) * 100, 2) AS reversal_rate
         FROM claims c
         WHERE c.entity_id = ${entityId} AND c.ndc != ${flaggedNdc}
           AND c.pharmacy_state = 'KS'
