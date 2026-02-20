@@ -7,7 +7,7 @@ export async function POST(req: Request) {
   const { messages, data } = body;
 
   const result = streamText({
-    model: anthropic('claude-3-5-haiku-latest'),
+    model: anthropic('claude-haiku-4-5-20251001'),
     system: buildSystemPrompt(data),
     messages,
     maxOutputTokens: 1024,
