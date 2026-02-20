@@ -46,7 +46,7 @@ export const TopManufacturersChart = memo(function TopManufacturersChart({
     const item = data[0];
     return (
       <div className="flex h-full flex-col items-center justify-center text-center">
-        <p className="text-muted-foreground text-sm">Filtered to</p>
+        <p className="text-muted-foreground text-xs tracking-wide uppercase">Only Manufacturer</p>
         <p className="mt-1 text-lg font-semibold" title={item?.manufacturer}>
           {item?.manufacturer ?? 'No data'}
         </p>

@@ -46,8 +46,8 @@ export const TopGroupsChart = memo(function TopGroupsChart({
     const item = data[0];
     return (
       <div className="flex h-full flex-col items-center justify-center text-center">
-        <p className="text-muted-foreground text-sm">Filtered to</p>
-        <p className="mt-1 text-lg font-semibold">Group {item?.groupId ?? 'N/A'}</p>
+        <p className="text-muted-foreground text-xs tracking-wide uppercase">Only Group</p>
+        <p className="mt-1 text-lg font-semibold">{item?.groupId ?? 'N/A'}</p>
         {item && (
           <p className="mt-2 font-mono text-2xl font-bold" style={{ color: BAR_COLOR }}>
             {formatNumber(item.netClaims)}
