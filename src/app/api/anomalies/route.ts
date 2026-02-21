@@ -568,7 +568,11 @@ export async function GET(request: NextRequest) {
       ],
     };
 
-    return NextResponse.json(response);
+    return NextResponse.json(response, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      },
+    });
   } catch (err) {
     console.error('GET /api/anomalies error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });

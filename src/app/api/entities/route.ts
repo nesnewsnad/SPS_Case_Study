@@ -13,7 +13,11 @@ export async function GET() {
         description: r.description,
       })),
     };
-    return NextResponse.json(response);
+    return NextResponse.json(response, {
+      headers: {
+        'Cache-Control': 'public, s-maxage=300, stale-while-revalidate=600',
+      },
+    });
   } catch (err) {
     console.error('GET /api/entities error:', err);
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
