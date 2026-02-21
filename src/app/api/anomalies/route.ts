@@ -243,11 +243,26 @@ export async function GET(request: NextRequest) {
     // Panel 2: September Spike
     // ----------------------------------------------------------------
 
+    // Compute September state/formulary pct ranges dynamically
+    const septStateRanges = (septByState.rows as Record<string, unknown>[]).map((r) => {
+      const avg = stateAvgMap.get(String(r.state)) ?? 1;
+      return Math.round(((Number(r.september) - avg) / avg) * 100);
+    });
+    const septStateMin = Math.min(...septStateRanges);
+    const septStateMax = Math.max(...septStateRanges);
+
+    const septFormularyRanges = (septByFormulary.rows as Record<string, unknown>[]).map((r) => {
+      const avg = formularyAvgMap.get(String(r.formulary)) ?? 1;
+      return Math.round(((Number(r.september) - avg) / avg) * 100);
+    });
+    const septFormMin = Math.min(...septFormularyRanges);
+    const septFormMax = Math.max(...septFormularyRanges);
+
     const septSpikePanel: AnomalyPanel = {
       id: 'sept-spike',
       title: 'September Volume Spike',
       keyStat: `+${septPct}%`,
-      whatWeSee: `September 2021 saw ~70,941 claims (excluding Kryptonite), approximately ${septPct}% above the normal monthly average. The spike is remarkably uniform — all 5 states increased 47-50%, all 3 formulary types increased 48-50%.`,
+      whatWeSee: `September 2021 saw ~${fmt(septCount)} claims (excluding Kryptonite), approximately ${septPct}% above the normal monthly average. The spike is remarkably uniform — all 5 states increased ${septStateMin}-${septStateMax}%, all 3 formulary types increased ${septFormMin}-${septFormMax}%.`,
       whyItMatters:
         'A uniform spike across all dimensions suggests a systemic cause — not a single group, drug, or state driving the increase. The KS batch rebill (re-incurring ~2,700 claims) partially explains the spike, but ~23,000 excess claims remain unexplained.',
       toConfirm:
@@ -292,9 +307,16 @@ export async function GET(request: NextRequest) {
       id: 'nov-dip',
       title: 'November Volume Dip',
       keyStat: `${novPct}%`,
-      whatWeSee: `November 2021 had only ~23,337 claims (excluding Kryptonite), approximately ${Math.abs(novPct)}% below the normal monthly average. All 30 days are present, and all 183 active groups are present — this is not a data gap.`,
-      whyItMatters:
-        'The dip is perfectly uniform across all states (54-56% below normal) and all groups. This rules out a single facility closure or regional event as the cause.',
+      whatWeSee: `November 2021 had only ~${fmt(novCount)} claims (excluding Kryptonite), approximately ${Math.abs(novPct)}% below the normal monthly average. All 30 days are present, and all ~183 active groups are present — this is not a data gap.`,
+      whyItMatters: (() => {
+        const novStateRanges = (novByState.rows as Record<string, unknown>[]).map((r) => {
+          const avg = stateAvgMap.get(String(r.state)) ?? 1;
+          return Math.round(Math.abs(((Number(r.november) - avg) / avg) * 100));
+        });
+        const novStateMin = Math.min(...novStateRanges);
+        const novStateMax = Math.max(...novStateRanges);
+        return `The dip is perfectly uniform across all states (${novStateMin}-${novStateMax}% below normal) and all groups. This rules out a single facility closure or regional event as the cause.`;
+      })(),
       toConfirm:
         'Was there a known reduction in LTC admissions, a data extract issue, or a processing delay affecting November 2021?',
       rfpImpact:

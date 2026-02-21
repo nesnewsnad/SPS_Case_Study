@@ -18,7 +18,7 @@ const CLIENT_QUESTIONS = [
   {
     q: 'Was there a known operational event in September 2021 that would explain a 41% uniform volume increase?',
     context:
-      'The spike is perfectly uniform across all states (47-50% increase) and formulary types — suggesting a systemic cause rather than a single group or drug.',
+      'The spike is perfectly uniform across all states (40-42% increase) and formulary types — suggesting a systemic cause rather than a single group or drug.',
   },
   {
     q: 'Is the November volume dip (~54% below normal) expected, or does it indicate a data extract issue?',

@@ -78,7 +78,7 @@ const templates: InsightTemplate[] = [
       id: 'ltc-pattern',
       severity: 'info',
       title: 'LTC Cycle-Fill Pattern',
-      body: 'Day-1-of-month volume is 7–8× the daily average — a strong indicator of long-term care batch dispensing. Days supply clusters at 7 and 14 days.',
+      body: 'Day-1-of-month volume is ~7× the daily average — a strong indicator of long-term care batch dispensing. Days supply clusters at 7 and 14 days.',
     }),
   },
 

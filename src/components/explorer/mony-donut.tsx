@@ -6,10 +6,10 @@ import type { MonyBreakdown } from '@/lib/api-types';
 import { formatNumber, abbreviateNumber } from '@/lib/format';
 
 const MONY_COLORS: Record<string, string> = {
-  Y: '#0d9488', // teal — single-source generic (77%)
-  N: '#8b5cf6', // violet — single-source brand (21%)
-  O: '#1e3a5f', // navy — multi-source generic (1.4%)
-  M: '#d97706', // amber — multi-source brand (1%)
+  Y: '#0d9488', // teal — single-source generic (84%)
+  N: '#8b5cf6', // violet — single-source brand (14%)
+  O: '#1e3a5f', // navy — multi-source generic (1.5%)
+  M: '#d97706', // amber — multi-source brand (1.1%)
 };
 
 const MONY_LABELS: Record<string, string> = {

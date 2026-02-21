@@ -46,29 +46,29 @@ NDC 65862020190 = "KRYPTONITE XR" / "KINGSLAYER 2.0 1000mg" by "LEX LUTHER INC."
 KS August: 6,029 rows, 81.6% reversal rate (4,921 reversed, net = -3,813). Root cause: 18 KS-only groups (all "400xxx" prefix) have 100% reversal / zero incurred in August. Pattern: normal claims in July (~10% reversal) → 100% reversal in August (zero new incurred) → re-incur in September at ~1.4x normal volume. Classic batch reversal + rebill event. KS in every other month has ~9.3-10.4% reversal rate — indistinguishable from other states.
 
 ### Anomaly 3: September Spike (+41%)
-70,941 real claims vs. ~50,249 avg for normal months. The spike is perfectly uniform: all 5 states up 47-50%, all 3 formularies up 48-50%. Partially explained by KS rebill groups adding ~2,700 extra claims. Remaining ~23,000 excess is unexplained.
+70,941 real claims vs. ~50,249 avg for normal months. The spike is perfectly uniform: all 5 states up 40-42%, all 3 formularies up 41-42%. Partially explained by KS rebill groups adding ~2,700 extra claims. Remaining ~23,000 excess is unexplained.
 
 ### Anomaly 4: November Dip (-54%)
-23,337 real claims vs. ~50,249 normal avg. All 30 days present, all 183 active groups present. The dip is perfectly uniform: all states down 54-56%. Not driven by missing groups or days. Possibly a data extract issue or reduced LTC admissions.
+23,337 real claims vs. ~50,249 normal avg. All 30 days present, all 183 active groups present. The dip is perfectly uniform: all states down 53-55%. Not driven by missing groups or days. Possibly a data extract issue or reduced LTC admissions.
 
 ### Baseline Rates (remarkably uniform)
 - Reversal rate: 10.81% overall. By state: CA 10.0%, IN 10.0%, KS 10.0% (excl. Aug batch), MN 10.0%, PA 10.2%.
 - Adjudication rate: 25.1% overall. ~75% not adjudicated at POS — typical for LTC.
-- First-of-month cycle fills: Day 1 of every month has 7-8x the volume of an average day. Strong LTC signal.
+- First-of-month cycle fills: Day 1 of every month has ~7x the volume of an average day (6.8-7.8x range). Strong LTC signal.
 
 ### Drug Mix
-- MONY by claims: Y (generic single-source) 76.8%, N (brand single-source) 20.8%, O (generic multi-source) 1.4%, M (brand multi-source) 1.0%.
-- Top drugs: Atorvastatin 40mg (10,154), Tamsulosin 0.4mg (8,617), Pantoprazole 40mg (7,833), Hydrocodone-APAP 5-325mg (7,625), Eliquis 5mg (7,466).
+- MONY by claims: Y (generic single-source) 83.8%, N (brand single-source) 13.6%, O (generic multi-source) 1.5%, M (brand multi-source) 1.1%.
+- Top drugs: Atorvastatin 40mg (10,193), Pantoprazole 40mg (9,820), Tamsulosin 0.4mg (8,786), Hydrocodone-APAP 5-325mg (7,716), Eliquis 5mg (7,466).
 - Top manufacturers: Aurobindo (43K), Ascend (35K), Amneal (34K), Apotex (31K), Zydus (26K) — generic manufacturers dominate.
 
 ### Days Supply
-- Top values: 14 days (113K, 19%), 7 days (80K, 13%), 30 days (39K, 7%), 1 day (32K, 5%).
+- Top values: 14 days (104K, 19%), 7 days (73K, 13%), 30 days (36K, 7%), 1 day (29K, 5%).
 - Mean: 13.0 days, Median: 12 days, Max: 120 days.
 - 72% of claims are 14 days or shorter — confirms LTC short-cycle dispensing.
 
 ### Groups
 - 189 total, all state-specific.
-- Top by volume: 6P6002 (18,568), 101320 (15,680), 400127 (14,804), 400132 (14,072), 6P6000 (13,833).
+- Top by volume: 6P6002 (17,016), 101320 (14,301), 400127 (13,558), 400132 (12,873), 6P6000 (12,681).
 - Groups 400127 and 400132 have elevated annual reversal rates (17.3%) — entirely due to August batch event.`;
 }
 
