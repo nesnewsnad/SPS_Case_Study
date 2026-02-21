@@ -90,7 +90,7 @@ export const StateBars = memo(function StateBars({
         />
         <Tooltip content={<CustomTooltip />} />
         <Bar
-          dataKey="netClaims"
+          dataKey="totalClaims"
           radius={[0, 4, 4, 0]}
           maxBarSize={40}
           className="cursor-pointer"
