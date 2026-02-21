@@ -91,11 +91,11 @@ export async function GET(request: NextRequest) {
       whatWeSee:
         "NDC 65862020190 ('KRYPTONITE XR' by LEX LUTHER INC.) accounts for 49,567 claims (8.3% of the dataset). 99.5% of these claims are concentrated in May, making May effectively a synthetic month.",
       whyItMatters:
-        'This is almost certainly a test/dummy drug injected into the dataset. If not identified, it inflates May volume by ~20x and skews monthly trends, reversal rates, and drug mix analysis.',
+        "This is a deliberate test injection — a fictional drug with a fictional manufacturer whose statistical fingerprint perfectly mirrors the real data's distributions. If not caught, it inflates May volume by ~20x, artificially raises brand (MONY N) share from 13.6% to 20.8%, and makes monthly trend analysis unreliable. For a PBM evaluating vendor analytics capability, this is a litmus test: any platform that reports May as a legitimate peak month or inflated brand share has failed basic data integrity validation.",
       toConfirm:
         'Is this a known test record? Should it be permanently excluded from production reporting?',
       rfpImpact:
-        'Demonstrates data quality detection capability. Any analytics vendor that reports May as a real peak month has failed a basic data integrity check.',
+        "This finding is the first thing an evaluator will look for. It tests whether a vendor blindly charts data or interrogates it. We identified the injection, quantified its distortion across five dimensions (volume, brand mix, reversal rate, drug count, monthly trend), and built a toggle to show the data both ways — because the right answer isn't just 'exclude it,' it's 'show what changes when you do.'",
       beforeAfter: [
         {
           metric: 'Total Claims',
@@ -270,12 +270,10 @@ export async function GET(request: NextRequest) {
       title: 'September Volume Spike',
       keyStat: `+${septPct}%`,
       whatWeSee: `September 2021 saw ~${fmt(septCount)} claims (excluding Kryptonite), approximately ${septPct}% above the normal monthly average. The spike is remarkably uniform — all 5 states increased ${septStateMin}-${septStateMax}%, all 3 formulary types increased ${septFormMin}-${septFormMax}%.`,
-      whyItMatters:
-        'A uniform spike across all dimensions suggests a systemic cause — not a single group, drug, or state driving the increase. The KS batch rebill (re-incurring ~2,700 claims) partially explains the spike, but ~23,000 excess claims remain unexplained.',
+      whyItMatters: `September 2021 was the peak of the Delta variant surge — over 100,000 COVID hospitalizations and 172,000 daily cases nationally. Nursing home cases surged from 319/week in late June to 2,700+/week by August. In a real LTC pharmacy portfolio, a September spike is consistent with multiple converging factors: catch-up claims processing after the Delta summer disruption, the start of COVID booster campaigns for LTC residents (September 20), Q3-end Medicare reconciliation, and the Kansas rebill groups re-incurring ~2,700 claims. However, the perfect uniformity of the spike (all states +${septStateMin}-${septStateMax}%) is atypical of real operational disruptions, which tend to vary by geography — consistent with the semi-synthetic data characteristics noted in Panel 6.`,
       toConfirm:
-        'Was there a Q3-end processing catch-up, LTC facility re-enrollment cycle, or known system event in September 2021?',
-      rfpImpact:
-        'Highlights the need for seasonal normalization in trend analysis and capacity planning.',
+        'Was September volume affected by Delta-wave catch-up processing, the booster rollout (Sep 20), or Q3-end Medicare reconciliation? Separating operational volume changes from claims-processing timing is critical for accurate forecasting.',
+      rfpImpact: `This finding demonstrates the difference between reporting a number and interpreting it. A +${septPct}% spike has multiple plausible explanations — pandemic recovery, fiscal-year processing, batch rebills — and the correct response is to enumerate them, quantify what each explains, and flag the residual. That's the analytical depth a PBM client is paying for.`,
       miniCharts: [
         {
           title: 'Monthly Claims Volume (excl. Kryptonite)',
@@ -322,12 +320,12 @@ export async function GET(request: NextRequest) {
         });
         const novStateMin = Math.min(...novStateRanges);
         const novStateMax = Math.max(...novStateRanges);
-        return `The dip is perfectly uniform across all states (${novStateMin}-${novStateMax}% below normal) and all groups. This rules out a single facility closure or regional event as the cause.`;
+        return `November 2021 was a perfect storm for LTC operations. The Great Resignation peaked nationally with 4.5 million workers quitting — nursing homes had lost 234,000 employees (15% of their workforce) by this point. CMS published its vaccine mandate on November 5, requiring all nursing home staff to receive at least one dose by December 5, creating administrative chaos and fears of further workforce exodus. Omicron was reported to the WHO on November 24, triggering anticipatory facility lockdowns. The dip is uniform across all states (${novStateMin}-${novStateMax}% below normal), which could reflect either a real industry-wide contraction or the semi-synthetic data scaling noted in Panel 6. In real-world data, we would expect some geographic variation driven by state-level vaccine mandate responses.`;
       })(),
       toConfirm:
-        'Was there a known reduction in LTC admissions, a data extract issue, or a processing delay affecting November 2021?',
+        "Was the November dip driven by the CMS vaccine mandate (Nov 5), the Great Resignation's peak impact on LTC staffing, anticipatory Omicron lockdowns, or a data extract timing issue? The answer determines whether this is a recurring seasonal risk or a one-time artifact.",
       rfpImpact:
-        'Understanding this dip is critical for accurate year-over-year comparisons and forecasting.',
+        "A 54% volume dip isn't just a data curiosity — it's a capacity planning input, a staffing model variable, and a revenue forecasting risk. Knowing whether this is operational (and likely to recur during future disruptions) or a data artifact determines whether the client needs to build contingency into their models.",
       miniCharts: [
         {
           title: 'Monthly Claims Volume (excl. Kryptonite)',
@@ -412,11 +410,11 @@ export async function GET(request: NextRequest) {
       whatWeSee:
         "Kansas August shows 6,029 total rows with an 81.6% reversal rate. Root cause: 18 KS-only groups (all with '400xxx' prefix) have 100% reversal and zero incurred claims in August (4,790 rows). These groups show normal activity in July (~10% reversal), full reversal in August, then re-incur in September at ~1.4x normal volume.",
       whyItMatters:
-        "This is a classic batch reversal and rebill pattern — July claims were reversed in August and re-submitted in September. Kansas's elevated annual reversal rate (15.8%) is entirely an artifact of this single August event. Excluding August, KS has a normal ~10% reversal rate.",
+        "This is a classic batch reversal and rebill pattern — July claims reversed in August, re-submitted in September. In 2021, PBMs were actively auditing COVID-era claims and not honoring pandemic waivers, triggering bulk reversals and rebilling across managed care plans. The 18 affected groups all share a '400xxx' prefix consistent with a single MCO or plan sponsor — suggesting a contract-level event (pricing correction, plan migration, or audit recoupment) rather than individual pharmacy errors. Without this decomposition, Kansas appears to have a 15.8% annual reversal rate — 50% worse than peer states. The real rate is ~10%, indistinguishable from every other state.",
       toConfirm:
-        'Was there a known system migration, billing correction, or contract renegotiation affecting these 18 Kansas groups in August 2021?',
+        "Was there a KanCare MCO contract change, PBM audit, or MAC pricing correction affecting these 18 '400xxx' groups in August 2021? The rebill pattern is consistent with a plan-level event — confirming the cause determines whether this is a one-time correction or a recurring risk.",
       rfpImpact:
-        "Proper identification of batch reversal events prevents mischaracterizing an entire state's claims performance.",
+        'A naive analysis would flag Kansas as a high-reversal outlier and recommend operational intervention. The correct analysis identifies a one-time batch event, normalizes the data, and asks the right follow-up: what triggered the rebill? The difference is between a false alarm and actionable intelligence.',
       miniCharts: [
         {
           title: 'Kansas Monthly Reversal Rate',
@@ -501,7 +499,7 @@ export async function GET(request: NextRequest) {
       keyStat: `~${day1Multiple}× Day-1 Peak`,
       whatWeSee: `Day 1 of each month shows ~${day1Multiple}x average daily volume — the primary LTC cycle-fill peak. Day 26 shows a secondary peak at ~${day26Multiple}x average, likely a second cohort of facilities on an offset dispensing schedule. Together these two days account for a disproportionate share of monthly volume.`,
       whyItMatters:
-        'Identifying dispensing cycles enables capacity planning, staffing optimization, and predictive ordering. The day-26 secondary peak suggests at least two distinct facility dispensing schedules within the network.',
+        'In LTC pharmacy, dispensing cycles drive everything — staffing schedules, inventory ordering, delivery logistics, and claims processing capacity. The day-1 primary peak is consistent with standard 28-30 day cycle fills for skilled nursing facilities. The day-26 secondary peak suggests a second cohort of facilities (possibly ALF or different SNF operators) on an offset schedule. During COVID, disrupted staffing made these peak days even more operationally critical — a facility short-staffed on day 1 could delay hundreds of fills.',
       toConfirm:
         'Do specific facility groups drive the day-26 secondary peak? Is this a known alternate dispensing schedule?',
       rfpImpact:
@@ -550,7 +548,7 @@ export async function GET(request: NextRequest) {
       toConfirm:
         'Is this a known property of the test dataset? Were categorical flags randomized to anonymize the data?',
       rfpImpact:
-        "Demonstrates deep data integrity analysis — catching that the data 'looks real but isn't quite' shows a level of scrutiny that goes beyond surface-level dashboarding.",
+        "This is arguably the most important finding for interpretation: it establishes the boundaries of what this data can and cannot tell us. Utilization patterns (which drugs, which groups, which states, when) are real and analytically valuable. But formulary strategy conclusions, adjudication rate optimization, and state-level regulatory analysis should be flagged as unreliable until confirmed against production data. Knowing what you can't conclude is as valuable as knowing what you can.",
       miniCharts: [
         {
           title: 'Formulary Distribution by State (%)',
