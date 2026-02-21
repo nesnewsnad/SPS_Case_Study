@@ -10,11 +10,13 @@ import './globals.css';
 const outfit = Outfit({
   variable: '--font-outfit',
   subsets: ['latin'],
+  display: 'swap',
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: '--font-jetbrains-mono',
   subsets: ['latin'],
+  display: 'swap',
 });
 
 export const metadata: Metadata = {
@@ -38,12 +40,21 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${outfit.variable} ${jetbrainsMono.variable} font-sans antialiased`}>
+        <a
+          href="#main-content"
+          className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:rounded-lg focus:bg-white focus:px-4 focus:py-2 focus:text-teal-900 focus:shadow-lg focus:ring-2 focus:ring-teal-500"
+        >
+          Skip to content
+        </a>
         <TooltipProvider>
           <div className="flex h-screen overflow-hidden">
             <Sidebar />
             <Suspense>
               <FilterProvider>
-                <main className="dashboard-bg flex-1 overflow-y-auto pt-14 md:pt-0">
+                <main
+                  id="main-content"
+                  className="dashboard-bg flex-1 overflow-y-auto pt-14 md:pt-0"
+                >
                   {children}
                 </main>
                 <ChatSidebar />
