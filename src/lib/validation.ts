@@ -21,10 +21,12 @@ export type ValidatedFilters = z.infer<typeof filterSchema>;
 
 const chatMessageSchema = z.object({
   role: z.enum(['user', 'assistant', 'system']),
-  content: z.union([
-    z.string().max(4096),
-    z.array(z.any()), // AI SDK uses content parts
-  ]),
+  content: z
+    .union([
+      z.string().max(4096),
+      z.array(z.any()), // AI SDK uses content parts
+    ])
+    .optional(),
   parts: z.array(z.any()).optional(),
   id: z.string().optional(),
 });
