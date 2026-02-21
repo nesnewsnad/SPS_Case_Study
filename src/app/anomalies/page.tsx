@@ -178,6 +178,79 @@ export default function AnomaliesPage() {
         ))}
       </section>
 
+      {/* Section: Recommendation */}
+      <section className="space-y-4 border-t pt-6">
+        <h2 className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
+          Recommendation
+        </h2>
+        <Card className="border-l-4 border-l-teal-400 shadow-sm">
+          <CardContent className="space-y-5 pt-6">
+            {/* Green */}
+            <div>
+              <div className="mb-2 flex items-center gap-2">
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-emerald-100 text-xs font-bold text-emerald-700">
+                  &#10003;
+                </span>
+                <h3 className="text-sm font-semibold">Sound Fundamentals — No Action Needed</h3>
+              </div>
+              <p className="text-muted-foreground pl-8 text-sm leading-relaxed">
+                Pharmacy A&apos;s drug mix is 84% generic (MONY Y) — strong cost discipline for LTC.
+                Reversal rates are uniform at ~10% across all five states and all formulary types —
+                no outlier groups, no systematic billing issues. Dispensing patterns (7-14 day
+                cycles, 1st-of-month fills) are textbook LTC operations. These are the fundamentals
+                of a clean book of business.
+              </p>
+            </div>
+
+            {/* Yellow */}
+            <div>
+              <div className="mb-2 flex items-center gap-2">
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-amber-100 text-xs font-bold text-amber-700">
+                  ?
+                </span>
+                <h3 className="text-sm font-semibold">Needs a Conversation — Not a Concern</h3>
+              </div>
+              <p className="text-muted-foreground pl-8 text-sm leading-relaxed">
+                The Kansas batch reversal is traceable and clean (reverse → rebill → resume), but
+                the root cause matters for ongoing claims management: was it a pricing correction, a
+                plan migration, or an audit recoupment? September and November volume swings of +41%
+                / -54% — whether COVID-driven or seasonal — affect rate-setting and should be
+                modeled into projections. These aren&apos;t red flags. They&apos;re the right
+                questions to ask before contract finalization.
+              </p>
+            </div>
+
+            {/* Red */}
+            <div>
+              <div className="mb-2 flex items-center gap-2">
+                <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-red-100 text-xs font-bold text-red-700">
+                  !
+                </span>
+                <h3 className="text-sm font-semibold">
+                  Analytical Boundary — Requires Production Data
+                </h3>
+              </div>
+              <p className="text-muted-foreground pl-8 text-sm leading-relaxed">
+                Formulary-tier optimization — the highest-value PBM lever — cannot be validated with
+                this dataset. Categorical flags (formulary, adjudication) appear randomized across
+                all dimensions, meaning any formulary strategy recommendation would be unreliable.
+                This is the most important next step: production data with real adjudication
+                outcomes unlocks the analysis that moves Pharmacy A from &quot;clean book&quot; to
+                &quot;optimized book.&quot;
+              </p>
+            </div>
+
+            {/* Closer */}
+            <div className="rounded-r border-l-4 border-teal-300 bg-teal-50/50 px-5 py-3.5">
+              <p className="text-sm leading-relaxed font-medium text-teal-900">
+                Pharmacy A&apos;s fundamentals don&apos;t raise concerns — they raise opportunities.
+                The data supports onboarding; the next dataset unlocks optimization.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </section>
+
       {/* Section 2: Follow-Up Questions */}
       <section className="space-y-4 border-t pt-6">
         <h2 className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
