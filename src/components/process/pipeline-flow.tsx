@@ -5,7 +5,7 @@ const stages = [
     number: 1,
     name: 'Research',
     description:
-      'EDA, data profiling, discovery. 69 pytest data contracts codifying findings. Feed everything into CLAUDE.md.',
+      'Data profiling, EDA, 69 pytest contracts. Codify every finding into CLAUDE.md before writing a single spec.',
     bg: 'bg-teal-50',
     border: 'border-teal-200',
     circle: 'bg-teal-100 text-teal-700',
@@ -13,42 +13,62 @@ const stages = [
   },
   {
     number: 2,
-    name: 'Spec',
+    name: 'Discuss',
     description:
-      'Problem statement, behavior definition, measurable acceptance criteria. Every feature starts as a written spec before code exists.',
-    bg: 'bg-teal-100/60',
-    border: 'border-teal-300',
+      'Lock design decisions before specs exist. Narrow the solution space so AI can\u2019t wander into arbitrary choices.',
+    bg: 'bg-teal-50',
+    border: 'border-teal-200',
     circle: 'bg-teal-200 text-teal-800',
-    arrow: 'text-teal-400',
+    arrow: 'text-teal-300',
   },
   {
     number: 3,
-    name: 'Spec-Check',
+    name: 'Spec',
     description:
-      'Readiness review. Tighten subjective ACs into testable ones. Add implementor notes for ambiguous areas. Gate: nothing proceeds to code until the spec passes.',
-    bg: 'bg-teal-100',
+      'Behavior contracts with measurable acceptance criteria. Every feature starts as a written spec before code exists.',
+    bg: 'bg-teal-100/60',
     border: 'border-teal-300',
     circle: 'bg-teal-300 text-teal-900',
     arrow: 'text-teal-400',
   },
   {
     number: 4,
-    name: 'Implement',
+    name: 'Spec-Check',
     description:
-      'Dual-machine architecture. The machine that writes the code is separate from the machine that wrote the spec. Writer never verifies their own work.',
-    bg: 'bg-teal-200/60',
-    border: 'border-teal-400',
+      'Readiness gate. Tighten subjective ACs into testable ones. Nothing proceeds to code until the spec passes.',
+    bg: 'bg-teal-100',
+    border: 'border-teal-300',
     circle: 'bg-teal-400 text-white',
-    arrow: 'text-teal-500',
+    arrow: 'text-teal-400',
   },
   {
     number: 5,
+    name: 'Implement',
+    description:
+      'Dual-machine build. The machine that writes code is separate from the machine that wrote the spec.',
+    bg: 'bg-teal-200/60',
+    border: 'border-teal-400',
+    circle: 'bg-teal-500 text-white',
+    arrow: 'text-teal-500',
+  },
+  {
+    number: 6,
     name: 'Verify',
     description:
-      'Goal-backward verification. Every AC tested individually with evidence. "PASS 17/17" means 17 individual checks, not "it looks right."',
+      'Goal-backward testing. Every AC checked individually with evidence. Fresh context window, no familiarity bias.',
     bg: 'bg-teal-200',
     border: 'border-teal-400',
     circle: 'bg-teal-600 text-white',
+    arrow: 'text-teal-500',
+  },
+  {
+    number: 7,
+    name: 'Ship',
+    description:
+      'Session log, checkpoint, context persists. Every session\u2019s output becomes the next session\u2019s input.',
+    bg: 'bg-teal-300/60',
+    border: 'border-teal-500',
+    circle: 'bg-teal-700 text-white',
     arrow: '',
   },
 ];
@@ -59,7 +79,7 @@ export function PipelineFlow() {
       {stages.map((stage, i) => (
         <div key={stage.number} className="flex shrink-0 snap-start items-stretch md:shrink">
           <div
-            className={`${stage.bg} ${stage.border} flex min-w-[200px] flex-1 flex-col rounded-lg border p-4 shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] transition-shadow duration-200 hover:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)] md:min-w-[180px]`}
+            className={`${stage.bg} ${stage.border} flex min-w-[160px] flex-1 flex-col rounded-lg border p-4 shadow-[0_1px_2px_0_rgba(0,0,0,0.03)] transition-shadow duration-200 hover:shadow-[0_2px_8px_-2px_rgba(0,0,0,0.08)] md:min-w-[140px]`}
           >
             <div className="mb-2 flex items-center gap-2.5">
               <span
