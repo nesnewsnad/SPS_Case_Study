@@ -52,6 +52,41 @@ function abbreviateValue(v: number): string {
   return String(v);
 }
 
+function CustomTooltip({
+  active,
+  payload,
+  label,
+}: {
+  active?: boolean;
+  payload?: Array<{ value: number; dataKey: string; color: string }>;
+  label?: string;
+}) {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="chart-tooltip">
+      <p className="text-muted-foreground text-xs font-semibold tracking-wide uppercase">
+        {String(label)}
+      </p>
+      <div className="mt-1.5 space-y-1">
+        {payload.map((entry) => (
+          <div key={entry.dataKey} className="flex items-center justify-between gap-6">
+            <span className="flex items-center gap-1.5 text-sm">
+              <span
+                className="inline-block h-2 w-2 rounded-full"
+                style={{ background: entry.color }}
+              />
+              {String(entry.dataKey)}
+            </span>
+            <span className="font-mono text-sm font-semibold">
+              {abbreviateValue(Number(entry.value))}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 interface Props {
   chart: MiniChartData;
 }
@@ -111,20 +146,7 @@ export const AnomalyMiniChart = memo(function AnomalyMiniChart({ chart }: Props)
               tickFormatter={abbreviateValue}
               width={45}
             />
-            <Tooltip
-              wrapperClassName="chart-tooltip"
-              contentStyle={{
-                fontSize: 12,
-                borderRadius: 12,
-                border: 'none',
-                background: 'transparent',
-                padding: 0,
-                boxShadow: 'none',
-              }}
-              itemStyle={{ padding: '1px 0' }}
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              formatter={(value: any, name: any) => [abbreviateValue(Number(value)), String(name)]}
-            />
+            <Tooltip content={<CustomTooltip />} />
             {numericKeys.map((key, i) => (
               <Bar
                 key={key}
