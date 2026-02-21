@@ -18,12 +18,12 @@ const CLIENT_QUESTIONS = [
   {
     q: 'Was there a known operational event in September 2021 that would explain a 41% uniform volume increase?',
     context:
-      'The spike is perfectly uniform across all states (40-42% increase) and formulary types — suggesting a systemic cause rather than a single group or drug.',
+      'The spike is perfectly uniform across all states (40-42% increase) and formulary types — suggesting a systemic cause rather than a single group or drug. September 2021 coincided with the Delta variant peak and the start of COVID booster campaigns for LTC residents.',
   },
   {
     q: 'Is the November volume dip (~54% below normal) expected, or does it indicate a data extract issue?',
     context:
-      'All 30 days are present and all 183 active groups are present. The volume reduction is uniform across every dimension.',
+      'All 30 days are present and all 183 active groups are present. The volume reduction is uniform across every dimension. November 2021 saw the CMS vaccine mandate publication (Nov 5), peak Great Resignation impact on healthcare, and the emergence of the Omicron variant (Nov 24).',
   },
   {
     q: 'Are there additional data dimensions (cost, patient demographics, diagnosis codes) that could enrich this analysis?',
