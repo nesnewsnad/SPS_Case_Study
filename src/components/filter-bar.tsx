@@ -243,14 +243,18 @@ function FilterChips() {
   );
 }
 
-// ── Inline Group Label ───────────────────────────────────────────────────
+// ── Group Label + Divider ────────────────────────────────────────────────
 
 function GroupLabel({ children }: { children: React.ReactNode }) {
   return (
-    <span className="text-muted-foreground hidden text-[10px] font-semibold tracking-[0.08em] uppercase md:inline-block">
+    <span className="text-muted-foreground/70 text-[10px] font-semibold tracking-[0.08em] uppercase">
       {children}
     </span>
   );
+}
+
+function GroupDivider() {
+  return <div className="bg-border/60 hidden h-10 w-px md:block" />;
 }
 
 // ── Main FilterBar ──────────────────────────────────────────────────────
@@ -262,143 +266,149 @@ export function FilterBar({ view }: FilterBarProps) {
   return (
     <div className="glass-header border-border/40 sticky top-0 z-10 border-b">
       {/* Dropdowns Row */}
-      <div className="flex flex-wrap items-center gap-2 px-4 py-3 md:px-6">
-        {/* ── Dimension Filters ──────────────────────────────── */}
-        <div className="contents md:flex md:items-center md:gap-2">
+      <div className="flex flex-wrap items-end gap-6 px-4 py-4 md:px-6">
+        {/* DIMENSIONS group */}
+        <div className="flex flex-col gap-1.5">
           <GroupLabel>Dimensions</GroupLabel>
-
-          {/* Formulary */}
-          <Select
-            value={filters.formulary ?? '__all__'}
-            onValueChange={(val) =>
-              val === '__all__' ? removeFilter('formulary') : setFilter('formulary', val)
-            }
-          >
-            <SelectTrigger
-              className={cn(
-                'w-[calc(50%-0.25rem)] md:w-[150px]',
-                filters.formulary && 'border-teal-300 bg-teal-50/50',
-              )}
-              size="sm"
+          <div className="flex flex-wrap gap-2">
+            {/* Formulary */}
+            <Select
+              value={filters.formulary ?? '__all__'}
+              onValueChange={(val) =>
+                val === '__all__' ? removeFilter('formulary') : setFilter('formulary', val)
+              }
             >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__all__">All Formularies</SelectItem>
-              <SelectItem value="OPEN">OPEN</SelectItem>
-              <SelectItem value="MANAGED">MANAGED</SelectItem>
-              <SelectItem value="HMF">HMF</SelectItem>
-            </SelectContent>
-          </Select>
+              <SelectTrigger
+                className={cn(
+                  'w-[calc(50%-0.25rem)] md:w-[150px]',
+                  filters.formulary && 'border-teal-300 bg-teal-50/50',
+                )}
+                size="sm"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__all__">All Formularies</SelectItem>
+                <SelectItem value="OPEN">OPEN</SelectItem>
+                <SelectItem value="MANAGED">MANAGED</SelectItem>
+                <SelectItem value="HMF">HMF</SelectItem>
+              </SelectContent>
+            </Select>
 
-          {/* State */}
-          <Select
-            value={filters.state ?? '__all__'}
-            onValueChange={(val) =>
-              val === '__all__' ? removeFilter('state') : setFilter('state', val)
-            }
-          >
-            <SelectTrigger
-              className={cn(
-                'w-[calc(50%-0.25rem)] md:w-[130px]',
-                filters.state && 'border-teal-300 bg-teal-50/50',
-              )}
-              size="sm"
+            {/* State */}
+            <Select
+              value={filters.state ?? '__all__'}
+              onValueChange={(val) =>
+                val === '__all__' ? removeFilter('state') : setFilter('state', val)
+              }
             >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__all__">All States</SelectItem>
-              <SelectItem value="CA">CA</SelectItem>
-              <SelectItem value="IN">IN</SelectItem>
-              <SelectItem value="KS">KS</SelectItem>
-              <SelectItem value="MN">MN</SelectItem>
-              <SelectItem value="PA">PA</SelectItem>
-            </SelectContent>
-          </Select>
+              <SelectTrigger
+                className={cn(
+                  'w-[calc(50%-0.25rem)] md:w-[130px]',
+                  filters.state && 'border-teal-300 bg-teal-50/50',
+                )}
+                size="sm"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__all__">All States</SelectItem>
+                <SelectItem value="CA">CA</SelectItem>
+                <SelectItem value="IN">IN</SelectItem>
+                <SelectItem value="KS">KS</SelectItem>
+                <SelectItem value="MN">MN</SelectItem>
+                <SelectItem value="PA">PA</SelectItem>
+              </SelectContent>
+            </Select>
 
-          {/* MONY */}
-          <Select
-            value={filters.mony ?? '__all__'}
-            onValueChange={(val) =>
-              val === '__all__' ? removeFilter('mony') : setFilter('mony', val)
-            }
-          >
-            <SelectTrigger
-              className={cn('w-full md:w-[200px]', filters.mony && 'border-teal-300 bg-teal-50/50')}
-              size="sm"
+            {/* MONY */}
+            <Select
+              value={filters.mony ?? '__all__'}
+              onValueChange={(val) =>
+                val === '__all__' ? removeFilter('mony') : setFilter('mony', val)
+              }
             >
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="__all__">All MONY</SelectItem>
-              {Object.entries(MONY_LABELS).map(([code, label]) => (
-                <SelectItem key={code} value={code}>
-                  {code} — {label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
+              <SelectTrigger
+                className={cn(
+                  'w-full md:w-[200px]',
+                  filters.mony && 'border-teal-300 bg-teal-50/50',
+                )}
+                size="sm"
+              >
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="__all__">All MONY</SelectItem>
+                {Object.entries(MONY_LABELS).map(([code, label]) => (
+                  <SelectItem key={code} value={code}>
+                    {code} — {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
         </div>
 
-        {/* ── Drill-Down Filters (Explorer only) ────────────── */}
+        {/* Explorer-only: SEARCH group */}
         {view === 'explorer' ? (
-          <div className="md:border-border/60 contents md:flex md:items-center md:gap-2 md:border-l md:pl-3">
-            <GroupLabel>Drill Down</GroupLabel>
-            <SearchableCombobox
-              label="Drug"
-              options={filterOptions.drugs}
-              value={filters.drug}
-              onSelect={(val) => (val ? setFilter('drug', val) : removeFilter('drug'))}
-              loading={filterOptions.loading}
-              error={filterOptions.error}
-            />
-            <SearchableCombobox
-              label="Manufacturer"
-              options={filterOptions.manufacturers}
-              value={filters.manufacturer}
-              onSelect={(val) =>
-                val ? setFilter('manufacturer', val) : removeFilter('manufacturer')
-              }
-              loading={filterOptions.loading}
-              error={filterOptions.error}
-            />
-            <SearchableCombobox
-              label="Group"
-              options={filterOptions.groups}
-              value={filters.groupId}
-              onSelect={(val) => (val ? setFilter('groupId', val) : removeFilter('groupId'))}
-              loading={filterOptions.loading}
-              error={filterOptions.error}
-            />
-          </div>
+          <>
+            <GroupDivider />
+            <div className="flex flex-col gap-1.5">
+              <GroupLabel>Search</GroupLabel>
+              <div className="flex flex-wrap gap-2">
+                <SearchableCombobox
+                  label="Drug"
+                  options={filterOptions.drugs}
+                  value={filters.drug}
+                  onSelect={(val) => (val ? setFilter('drug', val) : removeFilter('drug'))}
+                  loading={filterOptions.loading}
+                  error={filterOptions.error}
+                />
+                <SearchableCombobox
+                  label="Manufacturer"
+                  options={filterOptions.manufacturers}
+                  value={filters.manufacturer}
+                  onSelect={(val) =>
+                    val ? setFilter('manufacturer', val) : removeFilter('manufacturer')
+                  }
+                  loading={filterOptions.loading}
+                  error={filterOptions.error}
+                />
+                <SearchableCombobox
+                  label="Group"
+                  options={filterOptions.groups}
+                  value={filters.groupId}
+                  onSelect={(val) => (val ? setFilter('groupId', val) : removeFilter('groupId'))}
+                  loading={filterOptions.loading}
+                  error={filterOptions.error}
+                />
+              </div>
+            </div>
+          </>
         ) : null}
 
-        {/* ── Flagged NDC Toggle ─────────────────────────────── */}
-        <div
-          className={cn(
-            'flex w-full items-center gap-2 rounded-md border px-2.5 py-1.5 transition-colors md:ml-auto md:w-auto',
-            filters.includeFlaggedNdcs
-              ? 'border-amber-200 bg-amber-50/60'
-              : 'border-transparent bg-transparent',
-          )}
-        >
-          <Switch
-            checked={filters.includeFlaggedNdcs}
-            onCheckedChange={toggleFlaggedNdcs}
-            id="flagged-toggle"
-            size="sm"
-            className="data-[state=checked]:bg-amber-500"
-          />
-          <label
-            htmlFor="flagged-toggle"
-            className={cn(
-              'cursor-pointer text-xs whitespace-nowrap',
-              filters.includeFlaggedNdcs ? 'font-medium text-amber-600' : 'text-muted-foreground',
-            )}
-          >
-            {filters.includeFlaggedNdcs ? 'Flagged NDCs included' : 'Include flagged NDCs'}
-          </label>
+        {/* DATA QUALITY group — right-aligned */}
+        <GroupDivider />
+        <div className="flex flex-col gap-1.5 md:ml-auto">
+          <GroupLabel>Data Quality</GroupLabel>
+          <div className="flex items-center gap-2">
+            <Switch
+              checked={filters.includeFlaggedNdcs}
+              onCheckedChange={toggleFlaggedNdcs}
+              id="flagged-toggle"
+              size="sm"
+              className="data-[state=checked]:bg-amber-500"
+            />
+            <label
+              htmlFor="flagged-toggle"
+              className={cn(
+                'cursor-pointer text-xs whitespace-nowrap',
+                filters.includeFlaggedNdcs ? 'font-medium text-amber-600' : 'text-muted-foreground',
+              )}
+            >
+              {filters.includeFlaggedNdcs ? 'Flagged NDCs included' : 'Include flagged NDCs'}
+            </label>
+          </div>
         </div>
       </div>
 

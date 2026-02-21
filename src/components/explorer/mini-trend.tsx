@@ -1,7 +1,15 @@
 'use client';
 
 import { memo, useCallback } from 'react';
-import { AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
+import {
+  AreaChart,
+  Area,
+  XAxis,
+  YAxis,
+  Tooltip,
+  ResponsiveContainer,
+  ReferenceLine,
+} from 'recharts';
 import type { MonthlyDataPoint } from '@/lib/api-types';
 import { formatMonthLabel, formatMonthFull, formatNumber, formatAxisTick } from '@/lib/format';
 
@@ -64,6 +72,41 @@ function CustomTooltip({
   );
 }
 
+// ── Mini-trend annotations ────────────────────────────────────────────
+
+interface MiniAnnotation {
+  month: string;
+  label: string;
+  color: string;
+}
+
+const MINI_ANNOTATIONS: MiniAnnotation[] = [
+  { month: '2021-09', label: '+41%', color: '#d97706' },
+  { month: '2021-11', label: '\u221254%', color: '#64748b' },
+];
+
+function MiniAnnotationLabel({
+  viewBox,
+  annotation,
+}: {
+  viewBox?: { x?: number };
+  annotation: MiniAnnotation;
+}) {
+  if (!viewBox?.x) return null;
+  return (
+    <text
+      x={viewBox.x}
+      y={6}
+      textAnchor="middle"
+      fontSize={9}
+      fontWeight={700}
+      fill={annotation.color}
+    >
+      {annotation.label}
+    </text>
+  );
+}
+
 export const MiniTrend = memo(function MiniTrend({ data, onMonthClick }: MiniTrendProps) {
   const handleClick = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -80,7 +123,8 @@ export const MiniTrend = memo(function MiniTrend({ data, onMonthClick }: MiniTre
       <AreaChart
         data={data}
         onClick={handleClick}
-        margin={{ top: 5, right: 10, left: 0, bottom: 0 }}
+        className="cursor-pointer"
+        margin={{ top: 16, right: 10, left: 0, bottom: 0 }}
       >
         <XAxis
           dataKey="month"
@@ -95,6 +139,16 @@ export const MiniTrend = memo(function MiniTrend({ data, onMonthClick }: MiniTre
           width={40}
         />
         <Tooltip content={<CustomTooltip />} />
+        {MINI_ANNOTATIONS.map((ann) => (
+          <ReferenceLine
+            key={ann.month}
+            x={ann.month}
+            stroke={ann.color}
+            strokeDasharray="4 4"
+            strokeOpacity={0.6}
+            label={<MiniAnnotationLabel annotation={ann} />}
+          />
+        ))}
         <Area
           type="monotone"
           dataKey="incurred"

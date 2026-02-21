@@ -193,6 +193,7 @@ export const MonthlyAreaChart = memo(function MonthlyAreaChart({
       <AreaChart
         data={data}
         onClick={handleClick}
+        className="cursor-pointer"
         margin={{ top: 34, right: 10, left: 0, bottom: 0 }}
       >
         <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />

@@ -1,7 +1,7 @@
 'use client';
 
-import { memo, useCallback } from 'react';
-import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Label } from 'recharts';
+import { memo, useCallback, useMemo } from 'react';
+import { PieChart, Pie, Cell, Tooltip, ResponsiveContainer, Label, Legend } from 'recharts';
 import type { FormularyBreakdown } from '@/lib/api-types';
 import { formatNumber, formatPercent, abbreviateNumber } from '@/lib/format';
 
@@ -12,6 +12,12 @@ const COLORS: Record<string, string> = {
 };
 
 const DEFAULT_COLOR = '#94a3b8';
+
+const FORMULARY_LABELS: Record<string, string> = {
+  OPEN: 'Open Formulary',
+  MANAGED: 'Managed Formulary',
+  HMF: 'High Managed Formulary',
+};
 
 interface FormularyDonutProps {
   data: FormularyBreakdown[];
@@ -63,6 +69,29 @@ export const FormularyDonut = memo(function FormularyDonut({
     [onSliceClick, data],
   );
 
+  const renderLegend = useMemo(
+    () =>
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      (props: any) => {
+        const { payload } = props;
+        return (
+          <ul className="flex flex-wrap justify-center gap-x-3 gap-y-1 text-xs">
+            {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+            {payload?.map((entry: any) => (
+              <li key={entry.value} className="flex items-center gap-1">
+                <span
+                  className="inline-block h-2.5 w-2.5 rounded-full"
+                  style={{ backgroundColor: entry.color }}
+                />
+                {FORMULARY_LABELS[entry.value] ?? entry.value}
+              </li>
+            ))}
+          </ul>
+        );
+      },
+    [],
+  );
+
   return (
     <ResponsiveContainer width="100%" height="100%">
       <PieChart>
@@ -71,8 +100,8 @@ export const FormularyDonut = memo(function FormularyDonut({
           dataKey="netClaims"
           nameKey="type"
           cx="50%"
-          cy="50%"
-          innerRadius="60%"
+          cy="45%"
+          innerRadius="55%"
           outerRadius="80%"
           onClick={handleClick}
           className="cursor-pointer"
@@ -87,6 +116,7 @@ export const FormularyDonut = memo(function FormularyDonut({
           />
         </Pie>
         <Tooltip content={<CustomTooltip />} />
+        <Legend content={renderLegend} />
       </PieChart>
     </ResponsiveContainer>
   );

@@ -363,7 +363,12 @@ export default function OverviewPage() {
         <div className="grid gap-4 lg:grid-cols-7">
           <Card className="lg:col-span-4">
             <CardHeader>
-              <CardTitle>{ctx ? `Monthly Volume — ${ctx}` : 'Monthly Claims Volume'}</CardTitle>
+              <CardTitle>
+                {ctx ? `Monthly Volume — ${ctx}` : 'Monthly Claims Volume'}
+                <span className="text-muted-foreground/60 ml-2 hidden text-[10px] font-normal tracking-wide md:inline">
+                  click chart to filter
+                </span>
+              </CardTitle>
               <p className="text-muted-foreground text-sm">Incurred vs. Reversed</p>
             </CardHeader>
             <CardContent className="h-80">
@@ -376,7 +381,12 @@ export default function OverviewPage() {
           </Card>
           <Card className="lg:col-span-3">
             <CardHeader>
-              <CardTitle>{ctx ? `Formulary Mix — ${ctx}` : 'Formulary Mix'}</CardTitle>
+              <CardTitle>
+                {ctx ? `Formulary Mix — ${ctx}` : 'Formulary Mix'}
+                <span className="text-muted-foreground/60 ml-2 hidden text-[10px] font-normal tracking-wide md:inline">
+                  click chart to filter
+                </span>
+              </CardTitle>
             </CardHeader>
             <CardContent className="h-80">
               <FormularyDonut data={data.formulary} onSliceClick={handleFormularyClick} />
@@ -388,7 +398,12 @@ export default function OverviewPage() {
         <div className="grid gap-4 lg:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>{ctx ? `Claims by State — ${ctx}` : 'Claims by State'}</CardTitle>
+              <CardTitle>
+                {ctx ? `Claims by State — ${ctx}` : 'Claims by State'}
+                <span className="text-muted-foreground/60 ml-2 hidden text-[10px] font-normal tracking-wide md:inline">
+                  click chart to filter
+                </span>
+              </CardTitle>
             </CardHeader>
             <CardContent className="h-64">
               <StateBars

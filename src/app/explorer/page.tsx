@@ -303,7 +303,12 @@ export default function ExplorerPage() {
         {/* Mini Monthly Trend */}
         <Card>
           <CardHeader className="pb-2">
-            <CardTitle className="text-muted-foreground text-sm">Monthly Trend</CardTitle>
+            <CardTitle className="text-muted-foreground text-sm">
+              Monthly Trend
+              <span className="text-muted-foreground/60 ml-2 hidden text-[10px] font-normal tracking-wide md:inline">
+                click chart to filter
+              </span>
+            </CardTitle>
           </CardHeader>
           <CardContent className="h-36">
             <MiniTrend data={fillAllMonths(data.monthly)} onMonthClick={handleMonthClick} />
@@ -314,7 +319,12 @@ export default function ExplorerPage() {
         <div className="grid gap-4 lg:grid-cols-5">
           <Card className="lg:col-span-3">
             <CardHeader className="flex flex-row items-center justify-between space-y-0">
-              <CardTitle>{ctx ? `Top Drugs — ${ctx}` : 'Top Drugs by Volume'}</CardTitle>
+              <CardTitle>
+                {ctx ? `Top Drugs — ${ctx}` : 'Top Drugs by Volume'}
+                <span className="text-muted-foreground/60 ml-2 hidden text-[10px] font-normal tracking-wide md:inline">
+                  click row to filter
+                </span>
+              </CardTitle>
             </CardHeader>
             <CardContent>
               <DrugsTable
@@ -338,7 +348,12 @@ export default function ExplorerPage() {
             </Card>
             <Card>
               <CardHeader>
-                <CardTitle>Brand vs. Generic Mix (MONY)</CardTitle>
+                <CardTitle>
+                  Brand vs. Generic Mix (MONY)
+                  <span className="text-muted-foreground/60 ml-2 hidden text-[10px] font-normal tracking-wide md:inline">
+                    click chart to filter
+                  </span>
+                </CardTitle>
               </CardHeader>
               <CardContent className="h-72">
                 <MonyDonut data={data.mony} onSliceClick={handleMonyClick} />
@@ -351,7 +366,12 @@ export default function ExplorerPage() {
         <div className="grid gap-4 lg:grid-cols-2">
           <Card>
             <CardHeader>
-              <CardTitle>{ctx ? `Groups — ${ctx}` : 'Group Volume'}</CardTitle>
+              <CardTitle>
+                {ctx ? `Groups — ${ctx}` : 'Group Volume'}
+                <span className="text-muted-foreground/60 ml-2 hidden text-[10px] font-normal tracking-wide md:inline">
+                  click chart to filter
+                </span>
+              </CardTitle>
             </CardHeader>
             <CardContent className="h-72">
               <TopGroupsChart data={data.topGroups} onBarClick={handleGroupClick} />
@@ -359,7 +379,12 @@ export default function ExplorerPage() {
           </Card>
           <Card>
             <CardHeader>
-              <CardTitle>{ctx ? `Manufacturers — ${ctx}` : 'Manufacturer Volume'}</CardTitle>
+              <CardTitle>
+                {ctx ? `Manufacturers — ${ctx}` : 'Manufacturer Volume'}
+                <span className="text-muted-foreground/60 ml-2 hidden text-[10px] font-normal tracking-wide md:inline">
+                  click chart to filter
+                </span>
+              </CardTitle>
             </CardHeader>
             <CardContent className="h-72">
               <TopManufacturersChart
