@@ -89,18 +89,6 @@ export default function ProcessPage() {
         </p>
         <Limitations />
       </section>
-
-      {/* Section 6: Closing */}
-      <section className="border-t pt-8">
-        <p className="text-muted-foreground max-w-prose text-sm leading-relaxed">
-          This system transfers. Pricing analysis, network adequacy reviews, clinical utilization
-          audits, client onboarding analytics &mdash; every domain where SPS Health needs to move
-          from raw data to defensible insight follows the same pipeline. Structured research,
-          measurable specs, gated implementation, goal-backward verification. The dashboard you just
-          explored is what one cycle produces. The process on this page is what makes the next cycle
-          faster.
-        </p>
-      </section>
     </div>
   );
 }
