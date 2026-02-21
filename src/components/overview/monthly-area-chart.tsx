@@ -1,9 +1,10 @@
 'use client';
 
-import { memo, useCallback } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import {
-  AreaChart,
+  ComposedChart,
   Area,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -188,9 +189,16 @@ export const MonthlyAreaChart = memo(function MonthlyAreaChart({
     ? [...ALWAYS_ANNOTATIONS, FLAGGED_ANNOTATION]
     : ALWAYS_ANNOTATIONS;
 
+  // Switch to bars when few months have data (e.g. single-month drill-down)
+  const activeMonths = useMemo(
+    () => data.filter((d) => d.incurred > 0 || d.reversed > 0).length,
+    [data],
+  );
+  const useBars = activeMonths <= 3;
+
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <AreaChart
+      <ComposedChart
         data={data}
         onClick={handleClick}
         className="cursor-pointer"
@@ -220,23 +228,32 @@ export const MonthlyAreaChart = memo(function MonthlyAreaChart({
             label={<AnnotationLabel annotation={ann} />}
           />
         ))}
-        <Area
-          type="monotone"
-          dataKey="incurred"
-          stackId="1"
-          stroke={COLORS.incurred}
-          fill={COLORS.incurred}
-          fillOpacity={0.3}
-        />
-        <Area
-          type="monotone"
-          dataKey="reversed"
-          stackId="1"
-          stroke={COLORS.reversed}
-          fill={COLORS.reversed}
-          fillOpacity={0.3}
-        />
-      </AreaChart>
+        {useBars ? (
+          <>
+            <Bar dataKey="incurred" stackId="1" fill={COLORS.incurred} fillOpacity={0.8} />
+            <Bar dataKey="reversed" stackId="1" fill={COLORS.reversed} fillOpacity={0.8} />
+          </>
+        ) : (
+          <>
+            <Area
+              type="monotone"
+              dataKey="incurred"
+              stackId="1"
+              stroke={COLORS.incurred}
+              fill={COLORS.incurred}
+              fillOpacity={0.3}
+            />
+            <Area
+              type="monotone"
+              dataKey="reversed"
+              stackId="1"
+              stroke={COLORS.reversed}
+              fill={COLORS.reversed}
+              fillOpacity={0.3}
+            />
+          </>
+        )}
+      </ComposedChart>
     </ResponsiveContainer>
   );
 });
