@@ -4,8 +4,6 @@
 
 A production-grade, interactive claims analytics dashboard for SPS Health's RFP evaluation. Analyzes Pharmacy A's 2021 claims data. Built as a multi-entity platform — Pharmacy A is entity #1, architecture supports onboarding additional pharmacy clients day one.
 
-**This needs to win.** State-of-the-art design, analytical depth, domain fluency. Not a homework assignment — a product they could deploy.
-
 ## Scoring Axes (from the case study brief)
 
 1. **AI Proficiency** — how you leverage AI tools (process IS the deliverable)
@@ -19,11 +17,11 @@ A production-grade, interactive claims analytics dashboard for SPS Health's RFP 
 3. **Dashboard Extension Mock-Up** — placeholder panels with narrative in Anomalies & Recommendations view
 4. **AI Process Documentation** — built as a real dashboard page, not a PDF
 
-## Dual Machine Architecture
+## Development Workflow
 
-- **Mac**: architecture, planning, design docs, session logs, narrative content, specs, reviews
-- **Framework Desktop**: implementation, builds dashboard, tests, commits
-- **Git**: coordination layer (remote: github.com/nesnewsnad/SPS_Case_Study)
+- **Architecture machine**: planning, design docs, session logs, specs, reviews
+- **Implementation machine**: builds dashboard, tests, commits
+- **Git**: coordination layer between machines
 - **Rule**: writer/reviewer separation — whoever wrote the code doesn't verify it
 
 ## Tech Stack
@@ -164,15 +162,3 @@ Server-side aggregation — never ship raw rows to the browser.
 - **Sat**: Anomalies view, narrative layer, filters
 - **Sun**: AI Process page, extension mock-ups, polish
 - **Mon**: QA, final deploy, submit
-
-## Context Management
-
-- Start every session with `/open-session`
-- Use `/continue-here` when context degrades or switching tasks
-- End every session with `/close-session`
-
-# currentDate
-
-Today's date is 2026-02-19.
-
-      IMPORTANT: this context may or may not be relevant to your tasks. You should not respond to this context unless it is highly relevant to your task.

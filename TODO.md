@@ -1,10 +1,6 @@
 # TODO — SPS Health Case Study
 
-## Up Next
-
-- [ ] Final Vercel deploy + submit
-
-## Done
+## Completed
 
 - [x] Scaffold Next.js 14 + Tailwind + TypeScript
 - [x] Set up Drizzle ORM + database schema (entities, claims, drug_info)
@@ -13,7 +9,7 @@
 - [x] Create basic app shell (sidebar nav, 4 view placeholders)
 - [x] Push to remote (github.com/nesnewsnad/SPS_Case_Study)
 - [x] Brainstorm design — 12 decisions locked, SOTA validated, design doc written
-- [x] `/discuss` — 6 gray areas locked, horizontal slice architecture (DISCUSS-001)
+- [x] Design discussion — 6 gray areas locked, horizontal slice architecture (DISCUSS-001)
 - [x] Write SPEC-001: API routes + shared TypeScript types (6 endpoints, unified filters)
 - [x] Write SPEC-002: FilterContext + FilterBar + URL sync
 - [x] Write SPEC-003: Executive Overview page
