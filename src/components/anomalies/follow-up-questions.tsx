@@ -6,24 +6,24 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
 const CLIENT_QUESTIONS = [
   {
-    q: 'Is Kryptonite XR (NDC 65862020190) a known test record? Should it be permanently excluded?',
+    q: 'Can you confirm Kryptonite XR (NDC 65862020190) is a QA test record? We\u2019ve excluded it from all reporting \u2014 are there additional test NDCs we should flag?',
     context:
-      'This fictional drug accounts for 8.3% of all claims and makes May an entirely synthetic month. Confirming its status determines whether we filter it from all standard reporting.',
+      'This fictional drug accounts for 8.3% of all claims, inflates brand share by 7 percentage points, and makes May an entirely synthetic month. We\u2019ve already isolated it with a toggle in the dashboard.',
   },
   {
-    q: 'What caused the Kansas batch reversal event in August 2021? Was there a system migration or billing correction?',
+    q: 'The 18 Kansas \u201C400xxx\u201D groups show a clean July\u2192August\u2192September reversal-and-rebill cycle \u2014 was this a system migration, billing platform switch, or MCO contract change?',
     context:
-      '18 Kansas groups with "400xxx" prefix show 100% reversal in August, then re-incur in September — a classic batch reversal and rebill pattern.',
+      '100% reversal in August with zero new incurred, then re-incur in September at ~1.4x normal volume. The pattern is isolated to these 18 groups \u2014 all other KS groups have normal ~10% reversal rates.',
   },
   {
-    q: 'Was there a known operational event in September 2021 that would explain a 41% uniform volume increase?',
+    q: 'The September spike is perfectly uniform across all states and formularies, which rules out any single group or drug as the driver \u2014 what systemic event produced it?',
     context:
-      'The spike is perfectly uniform across all states (40-42% increase) and formulary types — suggesting a systemic cause rather than a single group or drug. September 2021 coincided with the Delta variant peak and the start of COVID booster campaigns for LTC residents.',
+      'All 5 states up 40-42%, all 3 formularies up 41-42%. KS rebill groups explain ~2,700 claims, but ~23,000 excess remain. September 2021 coincided with the Delta variant peak and the start of COVID booster campaigns for LTC residents.',
   },
   {
-    q: 'Is the November volume dip (~54% below normal) expected, or does it indicate a data extract issue?',
+    q: 'November is uniformly half-volume across every dimension \u2014 is this a data extract boundary, or did an operational disruption (CMS mandate, staffing) reduce real volume?',
     context:
-      'All 30 days are present and all 183 active groups are present. The volume reduction is uniform across every dimension. November 2021 saw the CMS vaccine mandate publication (Nov 5), peak Great Resignation impact on healthcare, and the emergence of the Omicron variant (Nov 24).',
+      'All 30 days are present and all 183 active groups are present. The distinction matters: a data issue means our baseline is wrong, a real disruption means November is a valid data point. November 2021 saw the CMS vaccine mandate publication (Nov 5), peak Great Resignation impact, and the emergence of the Omicron variant (Nov 24).',
   },
   {
     q: 'Are there additional data dimensions (cost, patient demographics, diagnosis codes) that could enrich this analysis?',
@@ -34,9 +34,9 @@ const CLIENT_QUESTIONS = [
 
 const INTERNAL_QUESTIONS = [
   {
-    q: 'Should flagged/test NDCs be automatically excluded from all standard reporting, or configurable per client?',
+    q: 'Given that Kryptonite inflates brand share by 7 points and creates a fake month, should test NDC exclusion be automatic with per-client override, or fully configurable?',
     context:
-      'A global exclusion is simpler but less flexible. Per-client configuration adds complexity but supports different data quality scenarios.',
+      'A global exclusion is simpler and prevents downstream errors. Per-client configuration adds complexity but supports different data quality scenarios across the book of business.',
   },
   {
     q: 'How should batch reversal events be normalized for trend analysis — exclude the reversal month, or spread the volume adjustment across the rebill window?',
@@ -49,9 +49,9 @@ const INTERNAL_QUESTIONS = [
       'With only one year of data, same-month-prior-year is impossible. Rolling averages are sensitive to within-year anomalies.',
   },
   {
-    q: 'Should the September spike be flagged as a data quality issue or accepted as legitimate volume variation?',
+    q: 'The September spike\u2019s uniformity points to a real operational driver rather than data corruption \u2014 should we classify it as legitimate variation pending client confirmation?',
     context:
-      'The spike is partially explained by KS rebill groups, but ~23,000 excess claims remain unexplained. The answer affects trend normalization strategy.',
+      'KS rebill groups explain ~2,700 claims, but ~23,000 excess remain uniformly distributed. The classification determines whether September becomes part of the trend baseline or gets normalized out.',
   },
   {
     q: 'What threshold should trigger automatic anomaly alerts (e.g., >2\u03C3 deviation from rolling average)?',

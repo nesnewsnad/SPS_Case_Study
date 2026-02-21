@@ -23,8 +23,8 @@ export default function ProcessPage() {
           How One Person With a System Built This in Four Days
         </h1>
         <p className="text-muted-foreground text-sm">
-          Not lucky prompts. An engineering discipline that makes AI output reliable, verifiable,
-          and repeatable.
+          The same system that found four anomalies in this dataset is ready to deploy across SPS
+          Health&rsquo;s analytics practice &mdash; claims, pricing, network, clinical.
         </p>
         <div className="mt-2 h-0.5 w-12 rounded-full bg-gradient-to-r from-teal-400 to-teal-600" />
       </div>
@@ -33,13 +33,14 @@ export default function ProcessPage() {
       <section className="space-y-4">
         <StatBar />
         <p className="text-muted-foreground max-w-prose text-sm leading-relaxed">
-          Four anomalies in 596,000 rows of claims data. One was an easter egg &mdash; a test drug
-          called Kryptonite&nbsp;XR injected by whoever built this dataset. Three required
-          cross-dimensional analysis: an entire state&rsquo;s claims batch-reversed in a single
-          month, a 41% volume spike with no identifiable cause, and a month with half the expected
-          volume. The dashboard on the other three pages visualizes those findings. This page
-          documents the system that made finding them inevitable &mdash; not lucky, not manual, but
-          engineered.
+          SPS Health doesn&rsquo;t need an analyst who can build one dashboard. It needs someone who
+          can bring a repeatable AI implementation process to every department that touches data.
+          This case study is the proof of concept: four anomalies surfaced from 596,000 rows of
+          claims data &mdash; an easter egg test drug that inflates brand share by 7 points, an
+          entire state&rsquo;s claims batch-reversed in a single month, a 41% volume spike aligned
+          with the Delta variant surge, and a month at half volume coinciding with the Omicron
+          emergence and CMS vaccine mandate. The system that found them is documented below.
+          It&rsquo;s the same system I&rsquo;d bring to SPS on day one.
         </p>
       </section>
 
@@ -92,10 +93,12 @@ export default function ProcessPage() {
       {/* Section 6: Closing */}
       <section className="border-t pt-8">
         <p className="text-muted-foreground max-w-prose text-sm leading-relaxed">
-          This system isn&rsquo;t specific to claims data or pharmacy analytics. It&rsquo;s a
-          framework for making AI output reliable in any analytical domain &mdash; structured
-          research, measurable specs, gated implementation, goal-backward verification, and
-          persistent context across sessions. The process is the product.
+          This system transfers. Pricing analysis, network adequacy reviews, clinical utilization
+          audits, client onboarding analytics &mdash; every domain where SPS Health needs to move
+          from raw data to defensible insight follows the same pipeline. Structured research,
+          measurable specs, gated implementation, goal-backward verification. The dashboard you just
+          explored is what one cycle produces. The process on this page is what makes the next cycle
+          faster.
         </p>
       </section>
     </div>
