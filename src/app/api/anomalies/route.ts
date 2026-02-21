@@ -499,7 +499,7 @@ export async function GET(request: NextRequest) {
           title: 'Claims by Day of Month',
           type: 'bar' as const,
           data: dayRows.map((r) => ({
-            day: Number(r.day_of_month),
+            day: String(Number(r.day_of_month)),
             total: Number(r.total),
           })),
         },
