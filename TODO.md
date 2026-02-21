@@ -2,17 +2,6 @@
 
 ## Up Next
 
-- [ ] ANTHROPIC_API_KEY in Vercel env vars (needed for chat to work in production)
-- [ ] Enterprise polish pass
-- [ ] Final QA + submit
-
-## Polish & Ship
-
-- [ ] Enterprise polish pass (colors, spacing, typography, hover states, transitions)
-- [ ] Entity selector in sidebar (locked to Pharmacy A, shows multi-entity pattern)
-- [ ] Final QA — all views, all filters, all narratives
-- [ ] Brief compliance audit (every bullet covered)
-- [ ] Browser testing (Chrome, Safari, Firefox)
 - [ ] Final Vercel deploy + submit
 
 ## Done
@@ -49,3 +38,9 @@
 - [x] Verify SPEC-005: PASS (14/14 ACs) + fix rotated chart label clipping
 - [x] Verify SPEC-006: PASS (14/14 ACs) — fully static server component, zero stubs
 - [x] "Ask the Data" chat sidebar — FAB + Sheet overlay, Haiku streaming, EDA context-stuffed, filter-aware, page-aware suggestions
+- [x] Enterprise polish pass (responsive, dynamic titles, annotations, favicon, chat error state, anomaly styling)
+- [x] ANTHROPIC_API_KEY in Vercel env vars
+- [x] Entity selector in sidebar (locked to Pharmacy A, shows multi-entity pattern)
+- [x] Final QA — all views, all filters, all narratives (12/12 pass)
+- [x] Brief compliance audit (all 7 deliverable items confirmed)
+- [x] Browser testing
