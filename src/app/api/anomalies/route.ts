@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { sql } from 'drizzle-orm';
 import { db } from '@/db';
 import { parseFilters } from '@/lib/parse-filters';
+import { withRetry } from '@/lib/db-utils';
 import { FLAGGED_NDCS } from '@/lib/api-types';
 import type { AnomaliesResponse, AnomalyPanel } from '@/lib/api-types';
 
@@ -29,9 +30,10 @@ export async function GET(request: NextRequest) {
       metricsWithoutFlagged,
       mayWithFlagged,
       mayWithoutFlagged,
-    ] = await Promise.all([
-      // Monthly Kryptonite-only claims
-      db.execute(sql`
+    ] = await withRetry(() =>
+      Promise.all([
+        // Monthly Kryptonite-only claims
+        db.execute(sql`
         SELECT
           TO_CHAR(c.date_filled, 'YYYY-MM') AS month,
           COUNT(*)::int AS claims
@@ -40,8 +42,8 @@ export async function GET(request: NextRequest) {
         GROUP BY TO_CHAR(c.date_filled, 'YYYY-MM')
         ORDER BY month
       `),
-      // Metrics WITH flagged
-      db.execute(sql`
+        // Metrics WITH flagged
+        db.execute(sql`
         SELECT
           COUNT(*)::int AS total_claims,
           COALESCE(SUM(c.net_claim_count), 0)::int AS net_claims,
@@ -50,8 +52,8 @@ export async function GET(request: NextRequest) {
         FROM claims c
         WHERE c.entity_id = ${entityId}
       `),
-      // Metrics WITHOUT flagged
-      db.execute(sql`
+        // Metrics WITHOUT flagged
+        db.execute(sql`
         SELECT
           COUNT(*)::int AS total_claims,
           COALESCE(SUM(c.net_claim_count), 0)::int AS net_claims,
@@ -60,21 +62,22 @@ export async function GET(request: NextRequest) {
         FROM claims c
         WHERE c.entity_id = ${entityId} AND c.ndc != ${flaggedNdc}
       `),
-      // May volume WITH flagged
-      db.execute(sql`
+        // May volume WITH flagged
+        db.execute(sql`
         SELECT COUNT(*)::int AS may_vol
         FROM claims c
         WHERE c.entity_id = ${entityId}
           AND c.date_filled >= '2021-05-01' AND c.date_filled < '2021-06-01'
       `),
-      // May volume WITHOUT flagged
-      db.execute(sql`
+        // May volume WITHOUT flagged
+        db.execute(sql`
         SELECT COUNT(*)::int AS may_vol
         FROM claims c
         WHERE c.entity_id = ${entityId} AND c.ndc != ${flaggedNdc}
           AND c.date_filled >= '2021-05-01' AND c.date_filled < '2021-06-01'
       `),
-    ]);
+      ]),
+    );
 
     const wf = metricsWithFlagged.rows[0] as Record<string, unknown>;
     const wof = metricsWithoutFlagged.rows[0] as Record<string, unknown>;
@@ -136,8 +139,9 @@ export async function GET(request: NextRequest) {
     // Shared data for Sept/Nov panels: monthly totals excl Kryptonite
     // ----------------------------------------------------------------
 
-    const [monthlyTotals, septByState, septByFormulary, novByState] = await Promise.all([
-      db.execute(sql`
+    const [monthlyTotals, septByState, septByFormulary, novByState] = await withRetry(() =>
+      Promise.all([
+        db.execute(sql`
         SELECT
           TO_CHAR(c.date_filled, 'YYYY-MM') AS month,
           COUNT(*)::int AS total
@@ -146,8 +150,8 @@ export async function GET(request: NextRequest) {
         GROUP BY TO_CHAR(c.date_filled, 'YYYY-MM')
         ORDER BY month
       `),
-      // September claims by state
-      db.execute(sql`
+        // September claims by state
+        db.execute(sql`
         SELECT
           c.pharmacy_state AS state,
           COUNT(*)::int AS september
@@ -157,8 +161,8 @@ export async function GET(request: NextRequest) {
         GROUP BY c.pharmacy_state
         ORDER BY c.pharmacy_state
       `),
-      // September claims by formulary
-      db.execute(sql`
+        // September claims by formulary
+        db.execute(sql`
         SELECT
           c.formulary AS formulary,
           COUNT(*)::int AS september
@@ -168,8 +172,8 @@ export async function GET(request: NextRequest) {
         GROUP BY c.formulary
         ORDER BY c.formulary
       `),
-      // November claims by state
-      db.execute(sql`
+        // November claims by state
+        db.execute(sql`
         SELECT
           c.pharmacy_state AS state,
           COUNT(*)::int AS november
@@ -179,11 +183,13 @@ export async function GET(request: NextRequest) {
         GROUP BY c.pharmacy_state
         ORDER BY c.pharmacy_state
       `),
-    ]);
+      ]),
+    );
 
     // Compute averages by state and formulary (excl Kryptonite, all months)
-    const [avgByState, avgByFormulary] = await Promise.all([
-      db.execute(sql`
+    const [avgByState, avgByFormulary] = await withRetry(() =>
+      Promise.all([
+        db.execute(sql`
         SELECT
           c.pharmacy_state AS state,
           ROUND(COUNT(*)::numeric / 12, 0)::int AS average
@@ -192,7 +198,7 @@ export async function GET(request: NextRequest) {
         GROUP BY c.pharmacy_state
         ORDER BY c.pharmacy_state
       `),
-      db.execute(sql`
+        db.execute(sql`
         SELECT
           c.formulary AS formulary,
           ROUND(COUNT(*)::numeric / 12, 0)::int AS average
@@ -201,7 +207,8 @@ export async function GET(request: NextRequest) {
         GROUP BY c.formulary
         ORDER BY c.formulary
       `),
-    ]);
+      ]),
+    );
 
     const monthlyRows = monthlyTotals.rows as Record<string, unknown>[];
 
@@ -346,9 +353,10 @@ export async function GET(request: NextRequest) {
     // Panel 4: Kansas August Batch Reversal
     // ----------------------------------------------------------------
 
-    const [ksMonthlyReversals, batchReversalGroups] = await Promise.all([
-      // KS monthly reversal rates
-      db.execute(sql`
+    const [ksMonthlyReversals, batchReversalGroups] = await withRetry(() =>
+      Promise.all([
+        // KS monthly reversal rates
+        db.execute(sql`
         SELECT
           TO_CHAR(c.date_filled, 'YYYY-MM') AS month,
           ROUND(COUNT(*) FILTER (WHERE c.net_claim_count = -1)::numeric / NULLIF(COUNT(*), 0) * 100, 2) AS reversal_rate
@@ -358,8 +366,8 @@ export async function GET(request: NextRequest) {
         GROUP BY TO_CHAR(c.date_filled, 'YYYY-MM')
         ORDER BY month
       `),
-      // Top 5 batch-reversal groups: KS groups with 0 incurred in August
-      db.execute(sql`
+        // Top 5 batch-reversal groups: KS groups with 0 incurred in August
+        db.execute(sql`
         WITH aug_groups AS (
           SELECT c.group_id
           FROM claims c
@@ -382,7 +390,8 @@ export async function GET(request: NextRequest) {
         GROUP BY c.group_id, TO_CHAR(c.date_filled, 'YYYY-MM')
         ORDER BY c.group_id, month
       `),
-    ]);
+      ]),
+    );
 
     // Pivot batch reversal group data into {group, jul, aug, sep}
     const groupMap = new Map<string, { jul: number; aug: number; sep: number }>();
@@ -435,9 +444,11 @@ export async function GET(request: NextRequest) {
     // Panel 6: Semi-Synthetic Data Characteristics
     // ----------------------------------------------------------------
 
-    const [dayOfMonthVolume, formularyByState, adjByFormulary, revByFormulary] = await Promise.all([
-      // Day-of-month volume (excl Kryptonite, May, November)
-      db.execute(sql`
+    const [dayOfMonthVolume, formularyByState, adjByFormulary, revByFormulary] = await withRetry(
+      () =>
+        Promise.all([
+          // Day-of-month volume (excl Kryptonite, May, November)
+          db.execute(sql`
         SELECT
           EXTRACT(DAY FROM c.date_filled)::int AS day_of_month,
           COUNT(*)::int AS total
@@ -447,8 +458,8 @@ export async function GET(request: NextRequest) {
         GROUP BY EXTRACT(DAY FROM c.date_filled)::int
         ORDER BY day_of_month
       `),
-      // Formulary distribution by state
-      db.execute(sql`
+          // Formulary distribution by state
+          db.execute(sql`
         SELECT c.pharmacy_state AS state, c.formulary,
           ROUND(COUNT(*)::numeric / SUM(COUNT(*)) OVER (PARTITION BY c.pharmacy_state) * 100, 1) AS pct
         FROM claims c
@@ -456,23 +467,24 @@ export async function GET(request: NextRequest) {
         GROUP BY c.pharmacy_state, c.formulary
         ORDER BY c.pharmacy_state, c.formulary
       `),
-      // Adjudication rate by formulary
-      db.execute(sql`
+          // Adjudication rate by formulary
+          db.execute(sql`
         SELECT c.formulary,
           ROUND(COUNT(*) FILTER (WHERE c.adjudicated = true)::numeric / COUNT(*) * 100, 1) AS adj_rate
         FROM claims c
         WHERE c.entity_id = ${entityId} AND c.ndc != ${flaggedNdc}
         GROUP BY c.formulary
       `),
-      // Reversal rate by formulary
-      db.execute(sql`
+          // Reversal rate by formulary
+          db.execute(sql`
         SELECT c.formulary,
           ROUND(COUNT(*) FILTER (WHERE c.net_claim_count = -1)::numeric / COUNT(*) * 100, 1) AS rev_rate
         FROM claims c
         WHERE c.entity_id = ${entityId} AND c.ndc != ${flaggedNdc}
         GROUP BY c.formulary
       `),
-    ]);
+        ]),
+    );
 
     // Cycle fill: compute day-1 and day-26 multiples
     const dayRows = dayOfMonthVolume.rows as Record<string, unknown>[];
