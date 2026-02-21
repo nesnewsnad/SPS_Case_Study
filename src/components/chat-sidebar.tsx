@@ -6,6 +6,7 @@ import { useChat } from '@ai-sdk/react';
 import { usePathname } from 'next/navigation';
 import { MessageSquare, Send, X, Sparkles } from 'lucide-react';
 import { useFilters } from '@/contexts/filter-context';
+import DOMPurify from 'isomorphic-dompurify';
 import { cn } from '@/lib/utils';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Button } from '@/components/ui/button';
@@ -183,7 +184,7 @@ export function ChatSidebar() {
               </div>
             ) : (
               /* Message Thread */
-              <div className="space-y-4">
+              <div className="space-y-4" aria-live="polite">
                 {messages.map((message) => {
                   const text = getMessageText(message);
                   if (!text) return null;
@@ -219,7 +220,7 @@ export function ChatSidebar() {
                                     </span>
                                     <span
                                       dangerouslySetInnerHTML={{
-                                        __html: formatted.replace(/^- /, ''),
+                                        __html: DOMPurify.sanitize(formatted.replace(/^- /, '')),
                                       }}
                                     />
                                   </div>
@@ -230,7 +231,7 @@ export function ChatSidebar() {
                                   key={i}
                                   className="py-0.5"
                                   dangerouslySetInnerHTML={{
-                                    __html: formatted,
+                                    __html: DOMPurify.sanitize(formatted),
                                   }}
                                 />
                               );
