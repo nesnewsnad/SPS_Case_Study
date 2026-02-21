@@ -43,6 +43,18 @@ const SEVERITY_MAP: Record<
     border: 'border-l-amber-400',
     accent: 'amber',
   },
+  'cycle-fill-pattern': {
+    label: 'Operational Pattern',
+    color: 'bg-teal-100 text-teal-800',
+    border: 'border-l-teal-400',
+    accent: 'teal',
+  },
+  'semi-synthetic-flags': {
+    label: 'Data Integrity',
+    color: 'bg-violet-100 text-violet-800',
+    border: 'border-l-violet-400',
+    accent: 'violet',
+  },
 };
 
 // Key stat badge colors
@@ -51,6 +63,8 @@ const STAT_COLORS: Record<string, string> = {
   'sept-spike': 'bg-red-100 text-red-900 border-red-200',
   'nov-dip': 'bg-red-100 text-red-900 border-red-200',
   'ks-aug-batch-reversal': 'bg-amber-100 text-amber-900 border-amber-200',
+  'cycle-fill-pattern': 'bg-teal-100 text-teal-900 border-teal-200',
+  'semi-synthetic-flags': 'bg-violet-100 text-violet-900 border-violet-200',
 };
 
 interface Props {

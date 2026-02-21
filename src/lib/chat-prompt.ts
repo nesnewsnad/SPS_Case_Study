@@ -69,7 +69,17 @@ KS August: 6,029 rows, 81.6% reversal rate (4,921 reversed, net = -3,813). Root 
 ### Groups
 - 189 total, all state-specific.
 - Top by volume: 6P6002 (17,016), 101320 (14,301), 400127 (13,558), 400132 (12,873), 6P6000 (12,681).
-- Groups 400127 and 400132 have elevated annual reversal rates (17.3%) — entirely due to August batch event.`;
+- Groups 400127 and 400132 have elevated annual reversal rates (17.3%) — entirely due to August batch event.
+
+### Cycle-Fill Pattern
+- Day 1 of each month has ~7x average daily volume (6.8-7.8x range) — primary LTC cycle fill.
+- Day 26 shows a secondary peak at ~2.0-2.7x average — likely facilities on an offset dispensing schedule.
+- Together, these two peaks account for a disproportionate share of monthly volume.
+
+### Semi-Synthetic Data Note
+- Formulary, adjudication, and reversal flags appear randomly assigned — distributions are perfectly uniform across all dimensions (state, drug, group).
+- Real PBM data would show correlations (e.g., certain drugs always on MANAGED formulary). This dataset preserves real utilization patterns but randomizes categorical flags.
+- This means formulary-specific and adjudication-specific analyses reflect the random assignment, not real clinical or operational differences.`;
 }
 
 function filterLayer(context?: ChatContext): string {
