@@ -150,7 +150,7 @@ export const MiniTrend = memo(function MiniTrend({ data, onMonthClick }: MiniTre
           />
         ))}
         <Area
-          type="linear"
+          type="monotone"
           dataKey="incurred"
           stackId="1"
           stroke={COLORS.incurred}
@@ -158,7 +158,7 @@ export const MiniTrend = memo(function MiniTrend({ data, onMonthClick }: MiniTre
           fillOpacity={0.3}
         />
         <Area
-          type="linear"
+          type="monotone"
           dataKey="reversed"
           stackId="1"
           stroke={COLORS.reversed}

@@ -221,7 +221,7 @@ export const MonthlyAreaChart = memo(function MonthlyAreaChart({
           />
         ))}
         <Area
-          type="linear"
+          type="monotone"
           dataKey="incurred"
           stackId="1"
           stroke={COLORS.incurred}
@@ -229,7 +229,7 @@ export const MonthlyAreaChart = memo(function MonthlyAreaChart({
           fillOpacity={0.3}
         />
         <Area
-          type="linear"
+          type="monotone"
           dataKey="reversed"
           stackId="1"
           stroke={COLORS.reversed}
