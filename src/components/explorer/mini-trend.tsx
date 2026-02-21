@@ -1,15 +1,7 @@
 'use client';
 
 import { memo, useCallback } from 'react';
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  ReferenceLine,
-} from 'recharts';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import type { MonthlyDataPoint } from '@/lib/api-types';
 import { formatMonthLabel, formatMonthFull, formatNumber, formatAxisTick } from '@/lib/format';
 
@@ -120,7 +112,7 @@ export const MiniTrend = memo(function MiniTrend({ data, onMonthClick }: MiniTre
 
   return (
     <ResponsiveContainer width="100%" height="100%">
-      <AreaChart
+      <BarChart
         data={data}
         onClick={handleClick}
         className="cursor-pointer"
@@ -149,23 +141,9 @@ export const MiniTrend = memo(function MiniTrend({ data, onMonthClick }: MiniTre
             label={<MiniAnnotationLabel annotation={ann} />}
           />
         ))}
-        <Area
-          type="monotone"
-          dataKey="incurred"
-          stackId="1"
-          stroke={COLORS.incurred}
-          fill={COLORS.incurred}
-          fillOpacity={0.3}
-        />
-        <Area
-          type="monotone"
-          dataKey="reversed"
-          stackId="1"
-          stroke={COLORS.reversed}
-          fill={COLORS.reversed}
-          fillOpacity={0.3}
-        />
-      </AreaChart>
+        <Bar dataKey="incurred" stackId="1" fill={COLORS.incurred} fillOpacity={0.8} />
+        <Bar dataKey="reversed" stackId="1" fill={COLORS.reversed} fillOpacity={0.8} />
+      </BarChart>
     </ResponsiveContainer>
   );
 });
