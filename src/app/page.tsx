@@ -344,7 +344,7 @@ export default function OverviewPage() {
           />
           <KpiCard
             label="Net Claims"
-            value={abbreviateNumber(data.kpis.netClaims)}
+            value={formatNumber(data.kpis.netClaims)}
             subtitle={kpiSubtitles.netClaims}
           />
           <KpiCard
