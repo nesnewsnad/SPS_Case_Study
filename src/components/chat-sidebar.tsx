@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useMemo, type FormEvent } from 'react';
 import { DefaultChatTransport } from 'ai';
 import { useChat } from '@ai-sdk/react';
 import { usePathname } from 'next/navigation';
-import { MessageSquare, Send, X, Sparkles, RotateCcw } from 'lucide-react';
+import { MessageSquare, Send, ChevronRight, Sparkles, RotateCcw } from 'lucide-react';
 import { useFilters } from '@/contexts/filter-context';
 import DOMPurify from 'isomorphic-dompurify';
 import { cn } from '@/lib/utils';
@@ -227,7 +227,7 @@ export function ChatSidebar() {
           overlay={false}
           onInteractOutside={(e) => e.preventDefault()}
           onPointerDownOutside={(e) => e.preventDefault()}
-          className="border-border/40 flex w-full flex-col gap-0 border-l p-0 shadow-[-4px_0_24px_-6px_rgba(0,0,0,0.1)] sm:max-w-md"
+          className="border-border/40 !inset-y-auto !right-0 !bottom-0 flex !h-[calc(100vh-5rem)] w-full flex-col gap-0 rounded-tl-xl border-t border-l p-0 shadow-[-4px_-4px_24px_-6px_rgba(0,0,0,0.1)] sm:max-w-md"
         >
           {/* Header */}
           <SheetHeader className="border-b px-4 py-3">
@@ -253,8 +253,10 @@ export function ChatSidebar() {
                 <button
                   onClick={() => setOpen(false)}
                   className="text-muted-foreground hover:text-foreground rounded-sm p-1 transition-colors"
+                  aria-label="Collapse chat"
+                  title="Collapse"
                 >
-                  <X className="h-4 w-4" />
+                  <ChevronRight className="h-4 w-4" />
                 </button>
               </div>
             </div>
