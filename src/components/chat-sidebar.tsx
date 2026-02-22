@@ -212,6 +212,30 @@ export function ChatSidebar() {
                                 /\*\*(.*?)\*\*/g,
                                 '<strong>$1</strong>',
                               );
+                              // Markdown headers → bold text with appropriate size
+                              const headerMatch = line.match(/^(#{1,3})\s+(.*)/);
+                              if (headerMatch) {
+                                const level = headerMatch[1].length;
+                                const headerText = headerMatch[2].replace(
+                                  /\*\*(.*?)\*\*/g,
+                                  '<strong>$1</strong>',
+                                );
+                                const cls =
+                                  level === 1
+                                    ? 'font-semibold text-sm pt-2'
+                                    : level === 2
+                                      ? 'font-semibold text-sm pt-1.5'
+                                      : 'font-medium text-sm pt-1';
+                                return (
+                                  <p
+                                    key={i}
+                                    className={cls}
+                                    dangerouslySetInnerHTML={{
+                                      __html: DOMPurify.sanitize(headerText),
+                                    }}
+                                  />
+                                );
+                              }
                               if (line.trim().startsWith('- ')) {
                                 return (
                                   <div key={i} className="flex gap-1.5 py-0.5">
