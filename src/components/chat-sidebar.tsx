@@ -227,10 +227,19 @@ export function ChatSidebar() {
           overlay={false}
           onInteractOutside={(e) => e.preventDefault()}
           onPointerDownOutside={(e) => e.preventDefault()}
-          className="border-border/40 !inset-y-auto !right-0 !bottom-0 flex !h-[calc(100vh-5rem)] w-full flex-col gap-0 rounded-tl-xl border-t border-l p-0 shadow-[-4px_-4px_24px_-6px_rgba(0,0,0,0.1)] sm:max-w-md"
+          className="border-border/40 !inset-y-auto !right-0 !bottom-0 flex !h-[calc(100dvh-3.5rem)] w-full flex-col gap-0 rounded-tl-xl border-t border-l p-0 shadow-[-4px_-4px_24px_-6px_rgba(0,0,0,0.1)] sm:!h-[calc(100dvh-5rem)] sm:max-w-md"
         >
+          {/* Mobile drag handle — tap to collapse */}
+          <button
+            onClick={() => setOpen(false)}
+            className="flex w-full items-center justify-center py-2 sm:hidden"
+            aria-label="Collapse chat"
+          >
+            <div className="bg-muted-foreground/30 h-1 w-10 rounded-full" />
+          </button>
+
           {/* Header */}
-          <SheetHeader className="border-b px-4 py-3">
+          <SheetHeader className="border-b px-4 py-3 pt-0 sm:pt-3">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Sparkles className="text-primary h-4 w-4" />
@@ -243,16 +252,16 @@ export function ChatSidebar() {
                 {hasMessages && (
                   <button
                     onClick={() => setMessages([])}
-                    className="text-muted-foreground hover:text-foreground rounded-sm p-1 transition-colors"
+                    className="text-muted-foreground hover:text-foreground rounded-md p-2 transition-colors"
                     aria-label="New conversation"
                     title="New conversation"
                   >
-                    <RotateCcw className="h-3.5 w-3.5" />
+                    <RotateCcw className="h-4 w-4" />
                   </button>
                 )}
                 <button
                   onClick={() => setOpen(false)}
-                  className="text-muted-foreground hover:text-foreground rounded-sm p-1 transition-colors"
+                  className="text-muted-foreground hover:text-foreground rounded-md p-2 transition-colors"
                   aria-label="Collapse chat"
                   title="Collapse"
                 >
