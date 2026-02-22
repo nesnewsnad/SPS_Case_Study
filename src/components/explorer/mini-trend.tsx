@@ -73,6 +73,7 @@ interface MiniAnnotation {
 }
 
 const MINI_ANNOTATIONS: MiniAnnotation[] = [
+  { month: '2021-05', label: 'Test Drug Excl.', color: '#94a3b8' },
   { month: '2021-09', label: '+41%', color: '#d97706' },
   { month: '2021-11', label: '\u221254%', color: '#64748b' },
 ];
