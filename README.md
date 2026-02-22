@@ -96,10 +96,10 @@ tests/                      # Python data validation tests (69 tests)
 ## Testing
 
 ```bash
-# TypeScript unit tests (Vitest)
+# TypeScript unit tests (112 tests across 7 suites)
 npm test
 
-# Python data validation tests
+# Python data validation tests (69 tests)
 python -m pytest tests/ -v
 ```
 
