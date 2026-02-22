@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Check, ChevronsUpDown, X } from 'lucide-react';
+import { Check, ChevronDown, ChevronsUpDown, SlidersHorizontal, X } from 'lucide-react';
 import { useFilters, type FilterKey } from '@/contexts/filter-context';
 import { useFilterOptions } from '@/hooks/use-filter-options';
 import { cn } from '@/lib/utils';
@@ -260,13 +260,44 @@ function GroupDivider() {
 // ── Main FilterBar ──────────────────────────────────────────────────────
 
 export function FilterBar({ view }: FilterBarProps) {
-  const { filters, setFilter, removeFilter, toggleFlaggedNdcs } = useFilters();
+  const { filters, setFilter, removeFilter, toggleFlaggedNdcs, activeFilterCount } = useFilters();
   const filterOptions = useFilterOptions();
+  const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <div className="glass-header border-border/40 sticky top-0 z-10 border-b">
-      {/* Dropdowns Row */}
-      <div className="flex flex-wrap items-end gap-6 px-4 py-4 md:px-6">
+      {/* Mobile toggle — hidden on md+ */}
+      <button
+        onClick={() => setMobileOpen((v) => !v)}
+        className="flex w-full items-center justify-between px-4 py-2.5 md:hidden"
+      >
+        <span className="flex items-center gap-2 text-sm font-medium">
+          <SlidersHorizontal className="h-4 w-4" />
+          Filters
+          {activeFilterCount > 0 && (
+            <Badge
+              variant="secondary"
+              className="border-teal-200 bg-teal-50 px-1.5 py-0 text-[10px] text-teal-700"
+            >
+              {activeFilterCount}
+            </Badge>
+          )}
+        </span>
+        <ChevronDown
+          className={cn(
+            'text-muted-foreground h-4 w-4 transition-transform duration-200',
+            mobileOpen && 'rotate-180',
+          )}
+        />
+      </button>
+
+      {/* Dropdowns Row — always visible on md+, collapsible on mobile */}
+      <div
+        className={cn(
+          'flex flex-wrap items-end gap-6 px-4 py-4 md:flex md:px-6',
+          mobileOpen ? 'flex' : 'hidden md:flex',
+        )}
+      >
         {/* DIMENSIONS group */}
         <div className="flex flex-col gap-1.5">
           <GroupLabel>Dimensions</GroupLabel>
