@@ -194,20 +194,23 @@ export function ChatSidebar() {
 
   return (
     <>
-      {/* Floating Action Button */}
-      {!open && (
-        <button
-          onClick={() => setOpen(true)}
-          className={cn(
-            'fixed right-6 bottom-6 z-40 flex h-14 w-14 items-center justify-center rounded-full transition-all duration-300 hover:scale-105',
-            'bg-gradient-to-br from-teal-500 to-teal-700 text-white shadow-[0_4px_14px_-3px_rgba(13,148,136,0.5)] hover:shadow-[0_6px_20px_-3px_rgba(13,148,136,0.6)]',
-            !hasMessages && 'animate-pulse',
-          )}
-          aria-label="Open chat"
-        >
-          <MessageSquare className="h-6 w-6" />
-        </button>
-      )}
+      {/* Floating Action Button — always mounted, animated in/out */}
+      <button
+        onClick={() => setOpen(true)}
+        aria-hidden={open}
+        tabIndex={open ? -1 : 0}
+        className={cn(
+          'fixed right-6 bottom-6 z-40 flex h-14 w-14 items-center justify-center rounded-full transition-all duration-300',
+          'bg-gradient-to-br from-teal-500 to-teal-700 text-white shadow-[0_4px_14px_-3px_rgba(13,148,136,0.5)]',
+          open
+            ? 'pointer-events-none scale-75 opacity-0'
+            : 'scale-100 opacity-100 hover:scale-105 hover:shadow-[0_6px_20px_-3px_rgba(13,148,136,0.6)]',
+          !hasMessages && !open && 'animate-pulse',
+        )}
+        aria-label="Open chat"
+      >
+        <MessageSquare className="h-6 w-6" />
+      </button>
 
       {/* Chat Sheet */}
       <Sheet open={open} onOpenChange={setOpen}>
