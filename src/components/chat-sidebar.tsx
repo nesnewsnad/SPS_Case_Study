@@ -158,6 +158,13 @@ export function ChatSidebar() {
     }
   }, [open]);
 
+  // Re-focus input after AI finishes responding
+  useEffect(() => {
+    if (!isBusy && open) {
+      inputRef.current?.focus();
+    }
+  }, [isBusy, open]);
+
   const handleSend = (text: string) => {
     if (!text.trim() || isBusy) return;
     setInput('');
@@ -212,12 +219,13 @@ export function ChatSidebar() {
         <MessageSquare className="h-6 w-6" />
       </button>
 
-      {/* Chat Sheet */}
-      <Sheet open={open} onOpenChange={setOpen}>
+      {/* Chat Sheet — non-modal so dashboard stays interactive */}
+      <Sheet open={open} onOpenChange={setOpen} modal={false}>
         <SheetContent
           side="right"
           showCloseButton={false}
-          className="flex w-full flex-col gap-0 p-0 sm:max-w-md"
+          overlay={false}
+          className="border-border/40 flex w-full flex-col gap-0 border-l p-0 shadow-[-4px_0_24px_-6px_rgba(0,0,0,0.1)] sm:max-w-md"
         >
           {/* Header */}
           <SheetHeader className="border-b px-4 py-3">
