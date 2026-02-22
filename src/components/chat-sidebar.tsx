@@ -225,6 +225,8 @@ export function ChatSidebar() {
           side="right"
           showCloseButton={false}
           overlay={false}
+          onInteractOutside={(e) => e.preventDefault()}
+          onPointerDownOutside={(e) => e.preventDefault()}
           className="border-border/40 flex w-full flex-col gap-0 border-l p-0 shadow-[-4px_0_24px_-6px_rgba(0,0,0,0.1)] sm:max-w-md"
         >
           {/* Header */}
