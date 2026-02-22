@@ -150,10 +150,11 @@ See `docs/ARCHITECTURE.md` for full schema. Key design: `entity_id` on claims ta
 Server-side aggregation — never ship raw rows to the browser.
 
 - `GET /api/overview` — KPI summary, monthly aggregates
-- `GET /api/claims` — filtered aggregations for Explorer
+- `GET /api/claims` — filtered aggregations for Explorer (drugs, groups, manufacturers, days supply, MONY)
 - `GET /api/anomalies` — pre-computed anomaly breakdowns
-- `GET /api/drugs` — top drugs with counts and rates
+- `GET /api/filters` — filter dropdown options (drugs, manufacturers, groups)
 - `GET /api/entities` — list of onboarded entities
+- `POST /api/chat` — AI chat streaming endpoint (Claude Haiku)
 
 ## Timeline
 
