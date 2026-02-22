@@ -207,7 +207,7 @@ export function ChatSidebar() {
         aria-hidden={open}
         tabIndex={open ? -1 : 0}
         className={cn(
-          'fixed right-6 bottom-6 z-40 flex h-14 w-14 items-center justify-center rounded-full transition-all duration-300',
+          'fixed right-6 bottom-6 z-40 flex h-14 w-14 items-center justify-center rounded-full transition-all duration-300 focus-visible:ring-2 focus-visible:ring-teal-400 focus-visible:ring-offset-2 focus-visible:outline-none',
           'bg-gradient-to-br from-teal-500 to-teal-700 text-white shadow-[0_4px_14px_-3px_rgba(13,148,136,0.5)]',
           open
             ? 'pointer-events-none scale-75 opacity-0'
@@ -252,7 +252,7 @@ export function ChatSidebar() {
                 {hasMessages && (
                   <button
                     onClick={() => setMessages([])}
-                    className="text-muted-foreground hover:text-foreground rounded-md p-2 transition-colors"
+                    className="text-muted-foreground hover:text-foreground rounded-md p-2 transition-colors focus-visible:ring-2 focus-visible:ring-teal-300 focus-visible:outline-none"
                     aria-label="New conversation"
                     title="New conversation"
                   >
@@ -261,7 +261,7 @@ export function ChatSidebar() {
                 )}
                 <button
                   onClick={() => setOpen(false)}
-                  className="text-muted-foreground hover:text-foreground rounded-md p-2 transition-colors"
+                  className="text-muted-foreground hover:text-foreground rounded-md p-2 transition-colors focus-visible:ring-2 focus-visible:ring-teal-300 focus-visible:outline-none"
                   aria-label="Collapse chat"
                   title="Collapse"
                 >

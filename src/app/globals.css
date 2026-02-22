@@ -200,6 +200,16 @@
   animation-delay: 420ms;
 }
 
+/* Respect reduced-motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  .stagger-children > * {
+    animation: none !important;
+  }
+  .skeleton-shimmer {
+    animation: none !important;
+  }
+}
+
 /* ── Skeleton shimmer ────────────────────────────────────────────────── */
 
 @keyframes shimmer {

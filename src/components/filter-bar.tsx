@@ -269,6 +269,8 @@ export function FilterBar({ view }: FilterBarProps) {
       {/* Mobile toggle — hidden on md+ */}
       <button
         onClick={() => setMobileOpen((v) => !v)}
+        aria-expanded={mobileOpen}
+        aria-label="Toggle filter panel"
         className="flex w-full items-center justify-between px-4 py-2.5 md:hidden"
       >
         <span className="flex items-center gap-2 text-sm font-medium">

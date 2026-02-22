@@ -9,6 +9,7 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
+  Legend,
   ResponsiveContainer,
   ReferenceLine,
 } from 'recharts';
@@ -210,7 +211,7 @@ export const MonthlyAreaChart = memo(function MonthlyAreaChart({
         data={data}
         onClick={handleClick}
         className="cursor-pointer"
-        margin={{ top: 34, right: 10, left: 0, bottom: 0 }}
+        margin={{ top: 34, right: 10, left: 0, bottom: 24 }}
       >
         <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
         <XAxis
@@ -226,6 +227,15 @@ export const MonthlyAreaChart = memo(function MonthlyAreaChart({
           width={45}
         />
         <Tooltip content={<CustomTooltip />} />
+        <Legend
+          verticalAlign="bottom"
+          height={20}
+          formatter={(value: string) => (
+            <span style={{ color: '#64748b', fontSize: 12, textTransform: 'capitalize' }}>
+              {value}
+            </span>
+          )}
+        />
         {annotations.map((ann) => (
           <ReferenceLine
             key={ann.month}

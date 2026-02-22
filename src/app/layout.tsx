@@ -20,7 +20,15 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'SPS Health — Pharmacy A Claims Analysis',
+  metadataBase: new URL(
+    process.env.VERCEL_PROJECT_PRODUCTION_URL
+      ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+      : 'http://localhost:3000',
+  ),
+  title: {
+    default: 'SPS Health — Pharmacy A Claims Analysis',
+    template: '%s | SPS Health',
+  },
   description:
     'Interactive claims analytics dashboard for SPS Health RFP evaluation — Pharmacy A 2021 utilization data',
   icons: { icon: '/favicon.svg' },
