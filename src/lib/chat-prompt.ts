@@ -1,3 +1,11 @@
+export interface FilteredData {
+  totalClaims: number;
+  netClaims: number;
+  reversalRate: number;
+  uniqueDrugs: number;
+  topDrugs: { name: string; netClaims: number }[];
+}
+
 interface ChatContext {
   filters?: {
     state?: string;
@@ -11,6 +19,7 @@ interface ChatContext {
     includeFlaggedNdcs?: boolean;
   };
   pathname?: string;
+  filteredData?: FilteredData;
 }
 
 export function buildSystemPrompt(context?: ChatContext): string {
@@ -196,5 +205,19 @@ function filterLayer(context?: ChatContext): string {
     return '## Active Filters\nNo filters applied — showing all real claims data (Kryptonite excluded).';
   }
 
-  return `## Active Filters\nThe user is currently viewing: ${parts.join(', ')}. Tailor your responses to this filtered view when relevant.`;
+  const fd = context.filteredData;
+  const filterLine = `The user is currently viewing: ${parts.join(', ')}.`;
+
+  if (!fd) {
+    return `## Active Filters\n${filterLine} Tailor your responses to this filtered view when relevant.`;
+  }
+
+  const fmt = (n: number) => n.toLocaleString('en-US');
+  const drugList = fd.topDrugs.map((d) => `${d.name} (${fmt(d.netClaims)})`).join(', ');
+
+  return `## Active Filters
+${filterLine}
+Filtered view: ${fmt(fd.totalClaims)} total claims (${fmt(fd.netClaims)} net), ${fd.reversalRate}% reversal rate, ${fmt(fd.uniqueDrugs)} unique drugs.
+Top drugs: ${drugList || 'none'}.
+Tailor your responses to these numbers. When the user asks about "their data" or "what they're looking at", reference these filtered figures.`;
 }
