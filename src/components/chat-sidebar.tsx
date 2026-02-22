@@ -4,7 +4,7 @@ import { useState, useRef, useEffect, useMemo, type FormEvent } from 'react';
 import { DefaultChatTransport } from 'ai';
 import { useChat } from '@ai-sdk/react';
 import { usePathname } from 'next/navigation';
-import { MessageSquare, Send, X, Sparkles } from 'lucide-react';
+import { MessageSquare, Send, X, Sparkles, RotateCcw } from 'lucide-react';
 import { useFilters } from '@/contexts/filter-context';
 import DOMPurify from 'isomorphic-dompurify';
 import { cn } from '@/lib/utils';
@@ -35,8 +35,46 @@ const SUGGESTIONS: Record<string, string[]> = {
   ],
 };
 
+const FOLLOW_UPS: Record<string, string[]> = {
+  '/': [
+    'Break down claims by state',
+    'What does the drug mix tell us about this population?',
+    'Explain the cycle-fill pattern',
+    'How does November compare to normal months?',
+    'Tell me about the top manufacturers',
+  ],
+  '/explorer': [
+    'Why is Eliquis the only brand in the top 10?',
+    'What do group prefixes tell us about state mapping?',
+    'Compare the top 5 drugs by volume',
+    'Explain the MONY distribution',
+    'Which groups are affected by the KS batch reversal?',
+  ],
+  '/anomalies': [
+    'How confident are you in each anomaly?',
+    'What does semi-synthetic data mean for the analysis?',
+    'Walk me through the KS batch reversal timeline',
+    'Could the September spike be real or is it synthetic?',
+    'What COVID context explains these patterns?',
+  ],
+  '/process': [
+    'What bugs did spec-check catch?',
+    'How does writer/reviewer separation work?',
+    'Explain the context layer',
+    'Why not use Streamlit or static HTML?',
+    'How many tests cover this dashboard?',
+  ],
+};
+
 function getSuggestions(pathname: string): string[] {
   return SUGGESTIONS[pathname] || SUGGESTIONS['/'];
+}
+
+function getFollowUps(pathname: string, messageCount: number): string[] {
+  const pool = FOLLOW_UPS[pathname] || FOLLOW_UPS['/'];
+  // Rotate through the pool based on conversation length so follow-ups evolve
+  const offset = Math.floor(messageCount / 2) % pool.length;
+  return [pool[offset % pool.length], pool[(offset + 1) % pool.length]];
 }
 
 /** Extract plain text from a UIMessage's parts array. */
@@ -45,6 +83,52 @@ function getMessageText(message: { parts: Array<{ type: string; text?: string }>
     .filter((p): p is { type: 'text'; text: string } => p.type === 'text')
     .map((p) => p.text)
     .join('');
+}
+
+const MONY_SHORT: Record<string, string> = {
+  M: 'Brand Multi',
+  O: 'Generic Multi',
+  N: 'Brand Single',
+  Y: 'Generic Single',
+};
+
+function FilterContextBadge({
+  filters,
+}: {
+  filters: {
+    state?: string;
+    formulary?: string;
+    mony?: string;
+    drug?: string;
+    manufacturer?: string;
+    groupId?: string;
+  };
+}) {
+  const parts: string[] = [];
+  if (filters.state) parts.push(filters.state);
+  if (filters.formulary) parts.push(filters.formulary);
+  if (filters.mony) parts.push(MONY_SHORT[filters.mony] ?? filters.mony);
+  if (filters.drug) parts.push(filters.drug);
+  if (filters.manufacturer) parts.push(filters.manufacturer);
+  if (filters.groupId) parts.push(`Group ${filters.groupId}`);
+
+  if (parts.length === 0) return null;
+
+  return (
+    <div className="flex items-center gap-1.5 pt-1">
+      <span className="text-muted-foreground text-[10px] tracking-wider uppercase">Viewing</span>
+      <div className="flex flex-wrap gap-1">
+        {parts.map((part) => (
+          <span
+            key={part}
+            className="inline-flex rounded-full border border-teal-200 bg-teal-50 px-2 py-0.5 text-[10px] font-medium text-teal-700"
+          >
+            {part}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
 }
 
 export function ChatSidebar() {
@@ -58,7 +142,7 @@ export function ChatSidebar() {
   // Stable transport — dynamic filter data is sent per-request via sendMessage options
   const transport = useMemo(() => new DefaultChatTransport({ api: '/api/chat' }), []);
 
-  const { messages, sendMessage, status, error: chatError } = useChat({ transport });
+  const { messages, setMessages, sendMessage, status, error: chatError } = useChat({ transport });
 
   const isBusy = status === 'submitted' || status === 'streaming';
 
@@ -142,13 +226,27 @@ export function ChatSidebar() {
                   Powered by Claude
                 </Badge>
               </div>
-              <button
-                onClick={() => setOpen(false)}
-                className="text-muted-foreground hover:text-foreground rounded-sm p-1 transition-colors"
-              >
-                <X className="h-4 w-4" />
-              </button>
+              <div className="flex items-center gap-1">
+                {hasMessages && (
+                  <button
+                    onClick={() => setMessages([])}
+                    className="text-muted-foreground hover:text-foreground rounded-sm p-1 transition-colors"
+                    aria-label="New conversation"
+                    title="New conversation"
+                  >
+                    <RotateCcw className="h-3.5 w-3.5" />
+                  </button>
+                )}
+                <button
+                  onClick={() => setOpen(false)}
+                  className="text-muted-foreground hover:text-foreground rounded-sm p-1 transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
             </div>
+            {/* Filter context badge */}
+            <FilterContextBadge filters={filters} />
           </SheetHeader>
 
           {/* Messages Area */}
@@ -250,6 +348,26 @@ export function ChatSidebar() {
                                   </div>
                                 );
                               }
+                              // Numbered lists (1. 2. 3. etc.)
+                              const numberedMatch = line.trim().match(/^(\d+)\.\s+(.*)/);
+                              if (numberedMatch) {
+                                const numFormatted = numberedMatch[2].replace(
+                                  /\*\*(.*?)\*\*/g,
+                                  '<strong>$1</strong>',
+                                );
+                                return (
+                                  <div key={i} className="flex gap-1.5 py-0.5">
+                                    <span className="text-muted-foreground mt-0.5 w-4 shrink-0 text-right text-xs">
+                                      {numberedMatch[1]}.
+                                    </span>
+                                    <span
+                                      dangerouslySetInnerHTML={{
+                                        __html: DOMPurify.sanitize(numFormatted),
+                                      }}
+                                    />
+                                  </div>
+                                );
+                              }
                               return (
                                 <p
                                   key={i}
@@ -292,6 +410,23 @@ export function ChatSidebar() {
                     </button>
                   </div>
                 )}
+                {/* Follow-up suggestions — shown when AI is done responding */}
+                {!isBusy &&
+                  !chatError &&
+                  messages.length > 0 &&
+                  messages[messages.length - 1].role === 'assistant' && (
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {getFollowUps(pathname, messages.length).map((followUp) => (
+                        <button
+                          key={followUp}
+                          onClick={() => handleSend(followUp)}
+                          className="text-muted-foreground hover:text-foreground border-border/60 rounded-full border px-3 py-1.5 text-xs transition-all hover:border-teal-200 hover:bg-teal-50/50"
+                        >
+                          {followUp}
+                        </button>
+                      ))}
+                    </div>
+                  )}
                 <div ref={messagesEndRef} />
               </div>
             )}
