@@ -466,7 +466,7 @@ export function ChatSidebar() {
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Ask about claims, drugs, anomalies..."
                 disabled={isBusy}
-                className="bg-muted flex-1 rounded-lg border border-transparent px-3 py-2 text-sm transition-colors outline-none placeholder:text-xs focus:border-teal-300 focus:ring-1 focus:ring-teal-200/50 disabled:opacity-50"
+                className="bg-muted flex-1 rounded-lg border border-transparent px-3 py-2 text-base transition-colors outline-none placeholder:text-xs focus:border-teal-300 focus:ring-1 focus:ring-teal-200/50 disabled:opacity-50 sm:text-sm"
               />
               <Button
                 type="submit"
