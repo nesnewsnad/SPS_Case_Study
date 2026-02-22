@@ -42,7 +42,7 @@ describe('formatCsvContent', () => {
       ],
     });
     expect(result).toContain('KPI Summary');
-    expect(result).toContain('Metric,Value');
+    expect(result).toContain('"Metric","Value"');
     expect(result).toContain('"Total Claims","546,523"');
     expect(result).toContain('"Net Claims","428,886"');
   });

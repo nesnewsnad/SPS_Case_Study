@@ -30,7 +30,7 @@ export function formatCsvContent(options: CsvExportOptions): string {
     if (i > 0) lines.push('');
     const section = options.sections[i];
     lines.push(section.heading);
-    lines.push(section.headers.join(','));
+    lines.push(section.headers.map(escapeCell).join(','));
     for (const row of section.rows) {
       lines.push(row.map(escapeCell).join(','));
     }
@@ -40,7 +40,7 @@ export function formatCsvContent(options: CsvExportOptions): string {
 }
 
 export function downloadCsv(filename: string, content: string): void {
-  const blob = new Blob([content], { type: 'text/csv;charset=utf-8;' });
+  const blob = new Blob(['\uFEFF' + content], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;
