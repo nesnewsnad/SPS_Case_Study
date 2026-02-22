@@ -10,6 +10,7 @@ import { useFilters } from '@/contexts/filter-context';
 import { KpiCard } from '@/components/overview/kpi-card';
 import { InsightCards } from '@/components/overview/insight-cards';
 import { generateInsights } from '@/lib/generate-insights';
+import { Download } from 'lucide-react';
 import {
   formatNumber,
   formatPercent,
@@ -18,6 +19,8 @@ import {
   fillAllMonths,
   formatMonthFull,
 } from '@/lib/format';
+import { formatCsvContent, downloadCsv } from '@/lib/export-csv';
+import type { CsvSection } from '@/lib/export-csv';
 import type { OverviewResponse } from '@/lib/api-types';
 
 /** Build a contextual subtitle fragment from active filters. */
@@ -256,6 +259,63 @@ export default function OverviewPage() {
     [filters.state, setFilter, removeFilter],
   );
 
+  const handleExport = useCallback(() => {
+    if (!data) return;
+    const sections: CsvSection[] = [
+      {
+        heading: 'KPI Summary',
+        headers: ['Metric', 'Value'],
+        rows: [
+          ['Total Claims', formatNumber(data.kpis.totalClaims)],
+          ['Net Claims', formatNumber(data.kpis.netClaims)],
+          ['Reversal Rate', formatPercent(data.kpis.reversalRate)],
+          ['Unique Drugs', formatNumber(data.kpis.uniqueDrugs)],
+        ],
+      },
+      {
+        heading: 'Monthly Trend',
+        headers: ['Month', 'Incurred', 'Reversed'],
+        rows: data.monthly.map((m) => [m.month, String(m.incurred), String(m.reversed)]),
+      },
+      {
+        heading: 'Formulary Breakdown',
+        headers: ['Type', 'Net Claims', 'Reversal Rate'],
+        rows: data.formulary.map((f) => [
+          f.type,
+          formatNumber(f.netClaims),
+          formatPercent(f.reversalRate),
+        ]),
+      },
+      {
+        heading: 'Claims by State',
+        headers: ['State', 'Total Claims', 'Net Claims', 'Reversal Rate', 'Group Count'],
+        rows: data.allStates.map((s) => [
+          s.state,
+          formatNumber(s.totalClaims),
+          formatNumber(s.netClaims),
+          formatPercent(s.reversalRate),
+          String(s.groupCount),
+        ]),
+      },
+      {
+        heading: 'Adjudication',
+        headers: ['Metric', 'Value'],
+        rows: [
+          ['Adjudicated', formatNumber(data.adjudication.adjudicated)],
+          ['Not Adjudicated', formatNumber(data.adjudication.notAdjudicated)],
+          ['Rate', formatPercent(data.adjudication.rate)],
+        ],
+      },
+    ];
+    const content = formatCsvContent({
+      title: 'Executive Overview',
+      filters: ctx,
+      entity: 'Pharmacy A',
+      sections,
+    });
+    downloadCsv('sps-overview.csv', content);
+  }, [data, ctx]);
+
   // --- Error state ---
   if (error) {
     return (
@@ -327,12 +387,18 @@ export default function OverviewPage() {
       <FilterBar view="overview" />
       <div className="stagger-children space-y-6 p-6">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Executive Overview</h1>
-          <p className="text-muted-foreground text-sm">
-            {ctx ? `Pharmacy A — ${ctx}` : 'Pharmacy A — 2021 Claims Utilization Summary'}
-          </p>
-          <div className="mt-2 h-0.5 w-12 rounded-full bg-gradient-to-r from-teal-400 to-teal-600" />
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Executive Overview</h1>
+            <p className="text-muted-foreground text-sm">
+              {ctx ? `Pharmacy A — ${ctx}` : 'Pharmacy A — 2021 Claims Utilization Summary'}
+            </p>
+            <div className="mt-2 h-0.5 w-12 rounded-full bg-gradient-to-r from-teal-400 to-teal-600" />
+          </div>
+          <Button variant="outline" size="sm" onClick={handleExport} className="shrink-0 gap-1.5">
+            <Download className="h-4 w-4" />
+            Export CSV
+          </Button>
         </div>
 
         {/* KPI Row */}
