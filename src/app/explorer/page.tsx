@@ -311,7 +311,11 @@ export default function ExplorerPage() {
             </CardTitle>
           </CardHeader>
           <CardContent className="h-36">
-            <MiniTrend data={fillAllMonths(data.monthly)} onMonthClick={handleMonthClick} />
+            <MiniTrend
+              data={fillAllMonths(data.monthly)}
+              onMonthClick={handleMonthClick}
+              showFlaggedAnnotation={filters.includeFlaggedNdcs}
+            />
           </CardContent>
         </Card>
 

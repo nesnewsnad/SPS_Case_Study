@@ -13,6 +13,7 @@ const COLORS = {
 interface MiniTrendProps {
   data: MonthlyDataPoint[];
   onMonthClick?: (yearMonth: string) => void;
+  showFlaggedAnnotation?: boolean;
 }
 
 function CustomTooltip({
@@ -72,11 +73,22 @@ interface MiniAnnotation {
   color: string;
 }
 
-const MINI_ANNOTATIONS: MiniAnnotation[] = [
-  { month: '2021-05', label: 'Test Drug Excl.', color: '#94a3b8' },
+const ALWAYS_ANNOTATIONS: MiniAnnotation[] = [
   { month: '2021-09', label: '+41%', color: '#d97706' },
   { month: '2021-11', label: '\u221254%', color: '#64748b' },
 ];
+
+const FLAGGED_ANNOTATION: MiniAnnotation = {
+  month: '2021-05',
+  label: '99% Kryptonite',
+  color: '#dc2626',
+};
+
+const EXCLUDED_ANNOTATION: MiniAnnotation = {
+  month: '2021-05',
+  label: 'Test Drug Excl.',
+  color: '#94a3b8',
+};
 
 function MiniAnnotationLabel({
   viewBox,
@@ -100,7 +112,11 @@ function MiniAnnotationLabel({
   );
 }
 
-export const MiniTrend = memo(function MiniTrend({ data, onMonthClick }: MiniTrendProps) {
+export const MiniTrend = memo(function MiniTrend({
+  data,
+  onMonthClick,
+  showFlaggedAnnotation,
+}: MiniTrendProps) {
   const handleClick = useCallback(
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (state: any) => {
@@ -110,6 +126,10 @@ export const MiniTrend = memo(function MiniTrend({ data, onMonthClick }: MiniTre
     },
     [onMonthClick],
   );
+
+  const annotations = showFlaggedAnnotation
+    ? [...ALWAYS_ANNOTATIONS, FLAGGED_ANNOTATION]
+    : [...ALWAYS_ANNOTATIONS, EXCLUDED_ANNOTATION];
 
   return (
     <ResponsiveContainer width="100%" height="100%">
@@ -132,7 +152,7 @@ export const MiniTrend = memo(function MiniTrend({ data, onMonthClick }: MiniTre
           width={40}
         />
         <Tooltip content={<CustomTooltip />} />
-        {MINI_ANNOTATIONS.map((ann) => (
+        {annotations.map((ann) => (
           <ReferenceLine
             key={ann.month}
             x={ann.month}
