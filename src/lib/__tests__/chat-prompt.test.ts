@@ -37,6 +37,26 @@ describe('buildSystemPrompt', () => {
       expect(prompt).toContain('Semi-Synthetic');
     });
 
+    it('includes AI process layer', () => {
+      const prompt = buildSystemPrompt();
+      expect(prompt).toContain('7-Stage Pipeline');
+      expect(prompt).toContain('writer/reviewer separation');
+      expect(prompt).toContain('97 acceptance criteria');
+    });
+
+    it('includes tech stack info', () => {
+      const prompt = buildSystemPrompt();
+      expect(prompt).toContain('Next.js 14');
+      expect(prompt).toContain('Drizzle ORM');
+      expect(prompt).toContain('Claude Code CLI');
+    });
+
+    it('includes honest limitations', () => {
+      const prompt = buildSystemPrompt();
+      expect(prompt).toContain('Context window is real');
+      expect(prompt).toContain('Domain knowledge is borrowed');
+    });
+
     it('does not include filter section when no context', () => {
       const prompt = buildSystemPrompt();
       expect(prompt).not.toContain('Active Filters');

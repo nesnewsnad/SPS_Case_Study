@@ -14,7 +14,7 @@ interface ChatContext {
 }
 
 export function buildSystemPrompt(context?: ChatContext): string {
-  return [roleLayer(), edaLayer(), filterLayer(context)].join('\n\n');
+  return [roleLayer(), edaLayer(), processLayer(), filterLayer(context)].join('\n\n');
 }
 
 function roleLayer(): string {
@@ -23,9 +23,10 @@ function roleLayer(): string {
 Rules:
 - Cite specific numbers from the analysis below. Never invent statistics.
 - Keep responses concise: 2-3 short paragraphs max. Use bullet points for lists.
-- If asked about something outside the 2021 Pharmacy A claims scope, say so directly.
+- If asked about something outside the 2021 Pharmacy A claims scope or the build process, say so directly.
 - When the user has active filters, tailor your response to their filtered view.
-- Format numbers with commas (e.g., 531,988 not 531988).`;
+- Format numbers with commas (e.g., 531,988 not 531988).
+- You can answer questions about the data AND about how the dashboard was built (tools, methodology, AI process). Both are documented below.`;
 }
 
 function edaLayer(): string {
@@ -80,6 +81,45 @@ KS August: 6,029 rows, 81.6% reversal rate (4,921 reversed, net = -3,813). Root 
 - Formulary, adjudication, and reversal flags appear randomly assigned — distributions are perfectly uniform across all dimensions (state, drug, group).
 - Real PBM data would show correlations (e.g., certain drugs always on MANAGED formulary). This dataset preserves real utilization patterns but randomizes categorical flags.
 - This means formulary-specific and adjudication-specific analyses reflect the random assignment, not real clinical or operational differences.`;
+}
+
+function processLayer(): string {
+  return `## How This Dashboard Was Built
+
+This dashboard was built by one person in 4 days using a structured AI-assisted workflow. The AI Process page documents the full methodology.
+
+### 7-Stage Pipeline
+1. **Research** — Data profiling, EDA, 69 pytest contracts codifying findings before any code was written. Kryptonite test drug and Kansas batch reversal were caught here.
+2. **Discuss** — Design decisions locked before specs exist (e.g., consulting-deck aesthetic, teal gradient pipeline, amber-bordered limitations).
+3. **Spec** — 6 behavior specifications with 97 measurable acceptance criteria total. Each spec declares dependencies and testable ACs.
+4. **Spec-Check** — Readiness gate that tightens subjective ACs into testable ones. Example: "visually polished" became "contains at least one visual element beyond plain text."
+5. **Implement** — Dual-machine build with writer/reviewer separation. Spec machine (Mac) and implementation machine (Framework) coordinate via git. The machine that writes the code never wrote its own acceptance criteria.
+6. **Verify** — Goal-backward testing from a fresh AI context window. Each AC tested individually against the deployed app (e.g., SPEC-005 passed 17/17).
+7. **Ship** — Session log written, checkpoint saved, context persists to next session via /open-session.
+
+### Context Layer (How AI Remembers Across Sessions)
+- **CLAUDE.md**: Living project brain — data findings, architecture, schema, anomaly writeups. Read every session.
+- **Session logs**: Every session opens by reading the last log, closes by writing one. ~10 sessions with full continuity.
+- **.continue-here.md**: Mid-session checkpoint when context degrades or switching tasks.
+
+### Tech Stack
+- **Next.js 14** (App Router, server components, API routes) deployed on **Vercel**
+- **Vercel Postgres** (Neon-backed) with multi-entity schema — Pharmacy A is entity #1, architecture supports onboarding additional clients
+- **Drizzle ORM** — type-safe, SQL-close. AI writes better Drizzle than heavy ORMs.
+- **Recharts** for all charts, **shadcn/ui** for components, **Tailwind CSS** for styling
+- **Claude Code CLI** as primary AI partner — terminal-native, reads project files, writes code, runs tests
+
+### Why This Stack (Not Streamlit or Static HTML)
+Production-grade by design: server-side aggregation (raw data never hits the browser), typed API contracts, preview deploys on every push. Multi-entity architecture means onboarding Pharmacy B is a CSV upload, not a rebuild.
+
+### Honest Limitations
+- **Context window is real**: Session logs and checkpoints exist because without them, session #8 loses what session #1 decided.
+- **AI doesn't know when it's wrong**: Writer/reviewer separation exists because self-review doesn't catch what fresh-context review catches.
+- **Domain knowledge is borrowed**: AI helped speak the language (MONY codes, NDC joins, LTC cycle fills), but every finding was verified against raw data.
+- **Process has overhead**: Writing specs for a 4-day project feels like overkill, but two bugs were caught at spec-check that would have taken longer to fix in code.
+
+### Key Numbers
+- 4 build days, 4 anomalies detected, 6 specs, 97 acceptance criteria, 69 pytest contracts, ~10 sessions with full continuity.`;
 }
 
 function filterLayer(context?: ChatContext): string {
