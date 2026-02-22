@@ -15,7 +15,7 @@ The dashboard has four pages covering all four deliverables:
 
 I'd recommend starting with the **Anomalies page** — there's a deliberate surprise in the dataset that drove a lot of the analysis. The **AI Process page** documents the engineering discipline behind it, not just which tools I used.
 
-There's also an **"Ask the Data" button** in the bottom-right corner on every page. It's a context-aware AI chat that knows the findings and responds to whatever filters you have active.
+There's also an **"Ask the Data" button** in the bottom-right corner on every page. It's an agentic AI chat powered by Claude Sonnet 4.6 — it has tools to query the database live, so you can ask it anything about the data and get real numbers back, not canned responses. Try asking it to compare states or look up specific drugs. It's also filter-aware and responds to whatever filters you have active.
 
 The full codebase, specs, and session logs are on GitHub: **[github.com/nesnewsnad/SPS_Case_Study](https://github.com/nesnewsnad/SPS_Case_Study)**
 
