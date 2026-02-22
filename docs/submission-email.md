@@ -17,7 +17,7 @@ I'd recommend starting with the **Anomalies page** — there's a deliberate surp
 
 There's also an **"Ask the Data" button** in the bottom-right corner on every page. It's a context-aware AI chat that knows the findings and responds to whatever filters you have active.
 
-The full codebase, specs, and session logs are on GitHub if you'd like to see the development process — happy to share the link.
+The full codebase, specs, and session logs are on GitHub: **[github.com/nesnewsnad/SPS_Case_Study](https://github.com/nesnewsnad/SPS_Case_Study)**
 
 Thank you for the opportunity. I enjoyed the dataset.
 
