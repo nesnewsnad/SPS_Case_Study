@@ -1,9 +1,9 @@
 const stats = [
   { value: '4', label: 'Build Days' },
   { value: '4', label: 'Anomalies Detected' },
-  { value: '5', label: 'Specs Written' },
-  { value: '~65', label: 'Acceptance Criteria' },
-  { value: '~8', label: 'Sessions with Full Continuity' },
+  { value: '6', label: 'Specs Written' },
+  { value: '97', label: 'Acceptance Criteria' },
+  { value: '~10', label: 'Sessions with Full Continuity' },
 ];
 
 export function StatBar() {
