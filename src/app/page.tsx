@@ -274,12 +274,12 @@ export default function OverviewPage() {
       },
       {
         heading: 'Monthly Trend',
-        headers: ['Month', 'Incurred', 'Reversed'],
+        headers: ['Month (YYYY-MM)', 'Incurred Claims', 'Reversed Claims'],
         rows: data.monthly.map((m) => [m.month, String(m.incurred), String(m.reversed)]),
       },
       {
         heading: 'Formulary Breakdown',
-        headers: ['Type', 'Net Claims', 'Reversal Rate'],
+        headers: ['Formulary Type', 'Net Claims', 'Reversal Rate (%)'],
         rows: data.formulary.map((f) => [
           f.type,
           formatNumber(f.netClaims),
@@ -288,7 +288,7 @@ export default function OverviewPage() {
       },
       {
         heading: 'Claims by State',
-        headers: ['State', 'Total Claims', 'Net Claims', 'Reversal Rate', 'Group Count'],
+        headers: ['State', 'Total Claims', 'Net Claims', 'Reversal Rate (%)', 'Group Count'],
         rows: data.allStates.map((s) => [
           s.state,
           formatNumber(s.totalClaims),

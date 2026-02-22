@@ -277,7 +277,19 @@ export function ChatSidebar() {
                 )}
                 {chatError && (
                   <div className="rounded-lg border border-red-200 bg-red-50 px-3 py-2 text-sm text-red-700">
-                    Something went wrong. Try sending your message again.
+                    <p>Something went wrong. Try sending your message again.</p>
+                    <button
+                      onClick={() => {
+                        const lastUserMsg = [...messages].reverse().find((m) => m.role === 'user');
+                        if (lastUserMsg) {
+                          const text = getMessageText(lastUserMsg);
+                          if (text) handleSend(text);
+                        }
+                      }}
+                      className="mt-1.5 text-xs font-medium text-red-800 underline underline-offset-2 hover:text-red-900"
+                    >
+                      Retry last message
+                    </button>
                   </div>
                 )}
                 <div ref={messagesEndRef} />

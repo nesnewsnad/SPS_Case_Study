@@ -244,17 +244,17 @@ export default function ExplorerPage() {
       },
       {
         heading: 'Monthly Trend',
-        headers: ['Month', 'Incurred', 'Reversed'],
+        headers: ['Month (YYYY-MM)', 'Incurred Claims', 'Reversed Claims'],
         rows: data.monthly.map((m) => [m.month, String(m.incurred), String(m.reversed)]),
       },
       {
         heading: 'Top Drugs',
         headers: [
           'Drug Name',
-          'Label',
+          'Label Name',
           'NDC',
           'Net Claims',
-          'Reversal Rate',
+          'Reversal Rate (%)',
           'Formulary',
           'Top State',
         ],
@@ -270,12 +270,12 @@ export default function ExplorerPage() {
       },
       {
         heading: 'Days Supply Distribution',
-        headers: ['Bin', 'Count'],
+        headers: ['Days Supply Range', 'Claim Count'],
         rows: data.daysSupply.map((d) => [d.bin + ' days', formatNumber(d.count)]),
       },
       {
-        heading: 'MONY Breakdown',
-        headers: ['Type', 'Net Claims'],
+        heading: 'MONY Breakdown (Brand vs. Generic)',
+        headers: ['MONY Type', 'Net Claims'],
         rows: data.mony.map((m) => [m.type, formatNumber(m.netClaims)]),
       },
       {
