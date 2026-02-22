@@ -294,7 +294,7 @@ export async function GET(request: NextRequest) {
         },
         {
           title: 'September Claims by Formulary',
-          type: 'stacked-bar',
+          type: 'grouped-bar',
           data: (septByFormulary.rows as Record<string, unknown>[]).map((r) => ({
             formulary: String(r.formulary),
             september: Number(r.september),
