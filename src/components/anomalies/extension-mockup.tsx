@@ -3,219 +3,243 @@
 import { memo } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { Building2, DollarSign, HeartPulse, AlertTriangle, type LucideIcon } from 'lucide-react';
+import {
+  FolderInput,
+  BrainCircuit,
+  GitCompareArrows,
+  ArrowRight,
+  type LucideIcon,
+} from 'lucide-react';
 
-// ---------- Visual mock-up areas (structured, not empty boxes) ----------
+// ---------- Visual mock-up areas ----------
 
-function OnboardingMockup() {
+function IntakeMockup() {
   return (
-    <div className="border-muted-foreground/20 bg-muted/30 relative h-44 overflow-hidden rounded-lg border border-dashed p-4">
+    <div className="border-muted-foreground/20 bg-muted/30 relative h-48 overflow-hidden rounded-lg border border-dashed p-4">
       <div className="absolute inset-0 flex items-center justify-center">
         <Badge variant="outline" className="bg-background/80 text-xs backdrop-blur">
           Coming Soon
         </Badge>
       </div>
-      <div className="flex gap-4 opacity-40">
-        {/* Pharmacy A column */}
-        <div className="flex-1 space-y-2">
-          <div className="text-muted-foreground text-[10px] font-semibold">Pharmacy A</div>
-          <div className="h-3 w-3/4 rounded bg-teal-400/60" />
-          <div className="h-3 w-1/2 rounded bg-teal-400/40" />
-          <div className="h-3 w-5/6 rounded bg-teal-400/50" />
-          <div className="mt-3 space-y-1">
-            {[70, 45, 60, 55, 80, 40].map((w, i) => (
-              <div key={i} className="h-2 rounded bg-teal-300/30" style={{ width: `${w}%` }} />
-            ))}
-          </div>
-        </div>
-        {/* Pharmacy B column */}
-        <div className="flex-1 space-y-2">
-          <div className="text-muted-foreground text-[10px] font-semibold">Pharmacy B</div>
-          <div className="h-3 w-2/3 rounded bg-blue-400/60" />
-          <div className="h-3 w-3/5 rounded bg-blue-400/40" />
-          <div className="h-3 w-1/2 rounded bg-blue-400/50" />
-          <div className="mt-3 space-y-1">
-            {[55, 65, 40, 75, 50, 60].map((w, i) => (
-              <div key={i} className="h-2 rounded bg-blue-300/30" style={{ width: `${w}%` }} />
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function PricingMockup() {
-  return (
-    <div className="border-muted-foreground/20 bg-muted/30 relative h-44 overflow-hidden rounded-lg border border-dashed p-4">
-      <div className="absolute inset-0 flex items-center justify-center">
-        <Badge variant="outline" className="bg-background/80 text-xs backdrop-blur">
-          Coming Soon
-        </Badge>
-      </div>
-      {/* Volume bars with cost overlay line */}
-      <div className="flex h-28 items-end gap-1.5 pt-2 opacity-40">
-        {[40, 55, 35, 70, 50, 90, 45, 60, 85, 38, 20, 52].map((h, i) => (
-          <div key={i} className="relative flex-1">
-            <div className="rounded-t bg-teal-400/40" style={{ height: `${h}%` }} />
-            {/* Cost dot */}
-            <div
-              className="absolute left-1/2 h-1.5 w-1.5 -translate-x-1/2 rounded-full bg-amber-500/70"
-              style={{ bottom: `${Math.min(h + 10, 95)}%` }}
-            />
-          </div>
-        ))}
-      </div>
-      {/* SVG trend line */}
-      <svg className="absolute inset-x-4 top-6 h-28 opacity-30" preserveAspectRatio="none">
-        <polyline
-          points="0,60 30,50 60,65 90,35 120,45 150,20 180,40 210,30 240,15 270,50 300,70 330,38"
-          fill="none"
-          stroke="#d97706"
-          strokeWidth="2"
-          strokeDasharray="4 2"
-        />
-      </svg>
-    </div>
-  );
-}
-
-function DemographicsMockup() {
-  return (
-    <div className="border-muted-foreground/20 bg-muted/30 relative h-44 overflow-hidden rounded-lg border border-dashed p-4">
-      <div className="absolute inset-0 flex items-center justify-center">
-        <Badge variant="outline" className="bg-background/80 text-xs backdrop-blur">
-          Coming Soon
-        </Badge>
-      </div>
-      {/* Age/gender pyramid */}
-      <div className="flex flex-col gap-1 pt-1 opacity-40">
-        {[
-          { label: '85+', m: 25, f: 30 },
-          { label: '75-84', m: 45, f: 50 },
-          { label: '65-74', m: 60, f: 65 },
-          { label: '55-64', m: 35, f: 40 },
-          { label: '45-54', m: 20, f: 25 },
-          { label: '<45', m: 10, f: 15 },
-        ].map((row) => (
-          <div key={row.label} className="flex items-center gap-1">
-            <div className="flex flex-1 justify-end">
-              <div className="h-3 rounded-l bg-blue-400/50" style={{ width: `${row.m}%` }} />
-            </div>
-            <div className="text-muted-foreground w-8 text-center text-[9px]">{row.label}</div>
-            <div className="flex-1">
-              <div className="h-3 rounded-r bg-pink-400/50" style={{ width: `${row.f}%` }} />
+      <div className="flex h-full flex-col justify-between opacity-40">
+        {/* Dropbox folder → file list */}
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2">
+            <div className="h-4 w-4 rounded bg-blue-500/60" />
+            <div className="text-muted-foreground text-[10px] font-semibold tracking-wide">
+              /sps-intake/
             </div>
           </div>
-        ))}
+          {[
+            { name: 'pharmacy_b_claims.csv', size: '412K rows', status: 'valid' },
+            { name: 'pharmacy_b_drugs.csv', size: '198K rows', status: 'valid' },
+            { name: 'pharmacy_c_claims.csv', size: '—', status: 'pending' },
+          ].map((f) => (
+            <div key={f.name} className="flex items-center gap-2 pl-6">
+              <div
+                className={`h-1.5 w-1.5 rounded-full ${f.status === 'valid' ? 'bg-emerald-500' : 'bg-amber-400'}`}
+              />
+              <span className="text-muted-foreground font-mono text-[9px]">{f.name}</span>
+              <span className="text-muted-foreground/60 ml-auto text-[8px]">{f.size}</span>
+            </div>
+          ))}
+        </div>
+        {/* Processing pipeline indicator */}
+        <div className="flex items-center gap-1.5">
+          {['Detect Format', 'Validate Schema', 'Map Columns', 'Load to DB'].map((step, i) => (
+            <div key={step} className="flex items-center gap-1">
+              <div
+                className={`rounded px-1.5 py-0.5 text-[7px] font-semibold ${i < 3 ? 'bg-teal-100 text-teal-700' : 'bg-muted text-muted-foreground'}`}
+              >
+                {step}
+              </div>
+              {i < 3 && <ArrowRight className="text-muted-foreground/40 h-2.5 w-2.5" />}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
 }
 
-function AnomalyDetectionMockup() {
+function AnalysisMockup() {
   return (
-    <div className="border-muted-foreground/20 bg-muted/30 relative h-44 overflow-hidden rounded-lg border border-dashed p-4">
+    <div className="border-muted-foreground/20 bg-muted/30 relative h-48 overflow-hidden rounded-lg border border-dashed p-4">
       <div className="absolute inset-0 flex items-center justify-center">
         <Badge variant="outline" className="bg-background/80 text-xs backdrop-blur">
           Coming Soon
         </Badge>
       </div>
-      {/* Timeline sparkline with anomaly dots */}
-      <svg className="mt-2 h-24 w-full opacity-40" viewBox="0 0 300 80" preserveAspectRatio="none">
-        {/* Baseline band */}
-        <rect
-          x="0"
-          y="25"
-          width="300"
-          height="30"
-          fill="currentColor"
-          className="text-muted"
-          opacity="0.3"
-        />
-        {/* Trend line */}
-        <polyline
-          points="0,40 25,38 50,42 75,36 100,35 125,10 150,38 175,40 200,42 225,65 250,38 275,40 300,38"
-          fill="none"
-          stroke="#0d9488"
-          strokeWidth="2"
-        />
-        {/* Anomaly markers */}
-        <circle cx="125" cy="10" r="5" fill="#dc2626" opacity="0.8" />
-        <circle cx="225" cy="65" r="5" fill="#dc2626" opacity="0.8" />
-        {/* Labels */}
-        <text x="125" y="7" textAnchor="middle" fontSize="7" fill="#dc2626" fontWeight="bold">
-          SPIKE
-        </text>
-        <text x="225" y="78" textAnchor="middle" fontSize="7" fill="#dc2626" fontWeight="bold">
-          DIP
-        </text>
-      </svg>
-      {/* Alert badges */}
-      <div className="mt-1 flex gap-2 opacity-40">
-        <div className="rounded bg-red-100 px-1.5 py-0.5 text-[9px] text-red-700">
-          2 anomalies detected
+      <div className="flex h-full flex-col justify-between opacity-40">
+        {/* Analysis output stream */}
+        <div className="space-y-1.5 font-mono text-[9px]">
+          <div className="flex items-center gap-1.5">
+            <span className="text-teal-600">&#9679;</span>
+            <span className="text-muted-foreground">Statistical profiling complete</span>
+            <span className="text-muted-foreground/50 ml-auto">2.1s</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-teal-600">&#9679;</span>
+            <span className="text-muted-foreground">Drug reference matched — 99.2% coverage</span>
+            <span className="text-muted-foreground/50 ml-auto">0.8s</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-amber-500">&#9650;</span>
+            <span className="text-amber-700">Test NDC detected: NDC 55111-0462</span>
+            <span className="text-muted-foreground/50 ml-auto">1.4s</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-red-500">&#9679;</span>
+            <span className="text-red-700">Batch reversal: 22 groups, Aug-Sep</span>
+            <span className="text-muted-foreground/50 ml-auto">3.2s</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span className="text-teal-600">&#9679;</span>
+            <span className="text-muted-foreground">Narrative generation complete</span>
+            <span className="text-muted-foreground/50 ml-auto">4.7s</span>
+          </div>
         </div>
-        <div className="rounded bg-amber-100 px-1.5 py-0.5 text-[9px] text-amber-700">
-          1 data quality flag
+        {/* Results summary badges */}
+        <div className="flex gap-2">
+          <div className="rounded bg-teal-100 px-2 py-0.5 text-[9px] font-semibold text-teal-700">
+            4 anomalies flagged
+          </div>
+          <div className="rounded bg-emerald-100 px-2 py-0.5 text-[9px] font-semibold text-emerald-700">
+            Dashboard generated
+          </div>
+          <div className="rounded bg-blue-100 px-2 py-0.5 text-[9px] font-semibold text-blue-700">
+            12 insights written
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-// ---------- Mockup definitions ----------
+function ComparisonMockup() {
+  return (
+    <div className="border-muted-foreground/20 bg-muted/30 relative h-48 overflow-hidden rounded-lg border border-dashed p-4">
+      <div className="absolute inset-0 flex items-center justify-center">
+        <Badge variant="outline" className="bg-background/80 text-xs backdrop-blur">
+          Coming Soon
+        </Badge>
+      </div>
+      <div className="flex h-full flex-col opacity-40">
+        {/* KPI comparison rows */}
+        <div className="text-muted-foreground mb-2 flex items-center justify-between text-[10px] font-semibold">
+          <span>Cross-Client Benchmarks</span>
+          <span className="text-muted-foreground/60">3 clients loaded</span>
+        </div>
+        <div className="flex-1 space-y-2">
+          {[
+            { metric: 'Generic Rate', a: 84, b: 71, c: 89, unit: '%' },
+            { metric: 'Reversal Rate', a: 10, b: 14, c: 9, unit: '%' },
+            { metric: 'Avg Days Supply', a: 13, b: 22, c: 11, unit: 'd' },
+            { metric: 'Claims Volume', a: 75, b: 60, c: 45, unit: 'K' },
+          ].map((row) => (
+            <div key={row.metric} className="space-y-0.5">
+              <div className="text-muted-foreground flex items-center justify-between text-[8px]">
+                <span>{row.metric}</span>
+              </div>
+              <div className="flex items-center gap-1">
+                <div className="flex flex-1 items-center gap-0.5">
+                  <div className="h-2.5 rounded bg-teal-400/70" style={{ width: `${row.a}%` }} />
+                  <span className="text-[7px] font-semibold whitespace-nowrap text-teal-700">
+                    A: {row.a}
+                    {row.unit}
+                  </span>
+                </div>
+                <div className="flex flex-1 items-center gap-0.5">
+                  <div className="h-2.5 rounded bg-blue-400/70" style={{ width: `${row.b}%` }} />
+                  <span className="text-[7px] font-semibold whitespace-nowrap text-blue-700">
+                    B: {row.b}
+                    {row.unit}
+                  </span>
+                </div>
+                <div className="flex flex-1 items-center gap-0.5">
+                  <div className="h-2.5 rounded bg-violet-400/70" style={{ width: `${row.c}%` }} />
+                  <span className="text-[7px] font-semibold whitespace-nowrap text-violet-700">
+                    C: {row.c}
+                    {row.unit}
+                  </span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+        {/* Anomaly overlap */}
+        <div className="mt-2 flex gap-2">
+          <div className="rounded bg-amber-100 px-2 py-0.5 text-[8px] font-semibold text-amber-700">
+            Shared pattern: batch reversals (A, B)
+          </div>
+          <div className="rounded bg-teal-100 px-2 py-0.5 text-[8px] font-semibold text-teal-700">
+            C: cleanest book
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
 
-interface MockupDef {
+// ---------- Pipeline definitions ----------
+
+interface PipelineStageDef {
   icon: LucideIcon;
   title: string;
+  stage: string;
   visual: React.ComponentType;
   narrative: string;
-  dataNeeded: string[];
+  alreadyBuilt: string[];
 }
 
-const MOCKUPS: MockupDef[] = [
+const PIPELINE: PipelineStageDef[] = [
   {
-    icon: Building2,
-    title: 'Client Onboarding & Comparison',
-    visual: OnboardingMockup,
+    icon: FolderInput,
+    title: 'Drop It In',
+    stage: 'Stage 1: Intake',
+    visual: IntakeMockup,
     narrative:
-      'The multi-entity architecture is already in place \u2014 entity_id on every claims row supports onboarding additional pharmacy clients day one. Upload a CSV, auto-ingest, and immediately compare KPIs, overlay monthly trends, and benchmark reversal rates across clients. No schema changes required.',
-    dataNeeded: ['Additional client CSV exports in the same format'],
+      'A shared Dropbox folder becomes the intake point. Drop in a claims CSV and the system auto-detects the format — tilde-delimited, BOM-encoded, pipe-separated — validates the schema, maps columns to our canonical model, matches NDCs against the drug reference, and loads it into the multi-entity database. The same edge cases we handled manually for Pharmacy A (BOM headers, 30 unmatched NDCs, the Kryptonite test drug) become automated detection rules. A new client onboards in minutes, not weeks.',
+    alreadyBuilt: [
+      'Multi-entity schema (entity_id on every row)',
+      'CSV parsing with BOM/delimiter detection',
+      'NDC matching pipeline (99.5% coverage)',
+      'Drug reference table (247K NDCs)',
+    ],
   },
   {
-    icon: DollarSign,
-    title: 'Pricing & Reimbursement Overlay',
-    visual: PricingMockup,
+    icon: BrainCircuit,
+    title: 'Instant Analysis',
+    stage: 'Stage 2: Auto-EDA',
+    visual: AnalysisMockup,
     narrative:
-      'Layering cost data onto utilization reveals whether high-volume drugs are also high-cost, identifies pricing outliers, and enables AWP vs. reimbursement spread analysis. Combined with formulary tier data, this powers contract negotiation intelligence.',
-    dataNeeded: ['AWP/WAC pricing', 'Reimbursement amounts', 'Dispensing fees'],
+      'Claude runs the full analytical playbook against every new dataset: statistical profiling, distribution analysis, anomaly detection, baseline rate computation, and narrative generation. The four anomalies we surfaced for Pharmacy A — the Kryptonite easter egg, the Kansas batch reversal, the September spike, the November dip — each becomes a detection pattern. Test drugs flagged by fictional manufacturer names and impossible concentration. Batch reversals caught by group-level reversal-rate inversion. Volume anomalies identified by deviation from rolling baselines. The analysis that took days runs in seconds, and the output is a complete dashboard with written insights — not raw charts.',
+    alreadyBuilt: [
+      'EDA playbook documented (CLAUDE.md)',
+      'Anomaly detection patterns (4 types)',
+      'Narrative generation (insight templates)',
+      'Context-aware chat (Claude API integration)',
+    ],
   },
   {
-    icon: HeartPulse,
-    title: 'Patient Demographics & Utilization',
-    visual: DemographicsMockup,
+    icon: GitCompareArrows,
+    title: 'Compare & Compete',
+    stage: 'Stage 3: Cross-Client Intelligence',
+    visual: ComparisonMockup,
     narrative:
-      'Patient-level data (de-identified) unlocks utilization patterns: polypharmacy rates, medication adherence, therapy switching, and high-risk patient identification. For LTC populations, age and diagnosis stratification drives clinical intervention targeting.',
-    dataNeeded: ['De-identified patient IDs', 'Age, gender', 'Diagnosis codes (ICD-10)'],
-  },
-  {
-    icon: AlertTriangle,
-    title: 'Automated Anomaly Detection',
-    visual: AnomalyDetectionMockup,
-    narrative:
-      'A statistical engine that runs on every data ingestion: flags volume deviations >2\u03C3 from rolling baseline, detects batch reversal patterns automatically, identifies test/dummy records by distribution analysis, and alerts on new NDCs not in the drug reference. Every anomaly found in this analysis was detectable programmatically.',
-    dataNeeded: [
-      'Automated pipeline access',
-      'Historical baseline data',
-      'Configurable alert thresholds',
+      "Every new client makes the platform smarter. Overlay monthly trends across pharmacies, benchmark reversal rates, compare generic adoption, identify where one client's anomaly matches another's pattern. Pharmacy A's 84% generic rate becomes a benchmark — is Pharmacy B's 71% a red flag or a formulary difference? The Kansas batch reversal pattern, once detected in one client, becomes a known signature to watch for across all clients. This isn't just reporting. It's competitive intelligence that compounds with every RFP.",
+    alreadyBuilt: [
+      'Multi-entity API routes (all endpoints accept entityId)',
+      'Entity selector in sidebar navigation',
+      'Server-side aggregation (never ships raw rows)',
+      'Anomaly classification taxonomy',
     ],
   },
 ];
 
 // ---------- Component ----------
 
-function ExtensionMockupCard({ def }: { def: MockupDef }) {
+function PipelineStageCard({ def, index }: { def: PipelineStageDef; index: number }) {
   const Icon = def.icon;
   const Visual = def.visual;
 
@@ -226,7 +250,12 @@ function ExtensionMockupCard({ def }: { def: MockupDef }) {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-teal-50 text-teal-600">
             <Icon className="h-4.5 w-4.5" />
           </div>
-          <CardTitle className="text-base">{def.title}</CardTitle>
+          <div className="flex flex-col">
+            <span className="text-muted-foreground text-[10px] font-semibold tracking-wider uppercase">
+              {def.stage}
+            </span>
+            <CardTitle className="text-base">{def.title}</CardTitle>
+          </div>
           <Badge variant="outline" className="ml-auto text-[10px] tracking-wider uppercase">
             Future
           </Badge>
@@ -238,11 +267,11 @@ function ExtensionMockupCard({ def }: { def: MockupDef }) {
         <div className="bg-muted/40 mt-auto rounded-md px-3.5 py-2.5">
           <p className="text-muted-foreground mb-1.5 flex items-center gap-1.5 text-xs font-semibold tracking-wide uppercase">
             <span className="inline-block h-1.5 w-1.5 rounded-full bg-teal-500" />
-            Data Required
+            Already Built
           </p>
           <ul className="text-muted-foreground list-disc space-y-0.5 pl-4 text-xs">
-            {def.dataNeeded.map((d) => (
-              <li key={d}>{d}</li>
+            {def.alreadyBuilt.map((item) => (
+              <li key={item}>{item}</li>
             ))}
           </ul>
         </div>
@@ -257,15 +286,18 @@ export const ExtensionMockups = memo(function ExtensionMockups() {
       <div>
         <h2 className="flex items-center gap-2 text-xl font-semibold">
           <span className="inline-block h-1.5 w-1.5 rounded-full bg-teal-500" />
-          Dashboard Extensions
+          Platform Vision
         </h2>
-        <p className="text-muted-foreground text-sm">
-          Forward-looking features enabled by additional data sources
+        <p className="text-muted-foreground text-sm leading-relaxed">
+          This dashboard is Pharmacy A. The architecture is built for every pharmacy after it. One
+          folder, one pipeline, every RFP analyzed automatically — the same rigor we applied here,
+          running at scale.
         </p>
       </div>
-      <div className="grid gap-4 md:grid-cols-2">
-        {MOCKUPS.map((def) => (
-          <ExtensionMockupCard key={def.title} def={def} />
+      {/* Pipeline flow arrow between cards */}
+      <div className="grid gap-4 md:grid-cols-3">
+        {PIPELINE.map((def, i) => (
+          <PipelineStageCard key={def.title} def={def} index={i} />
         ))}
       </div>
     </div>

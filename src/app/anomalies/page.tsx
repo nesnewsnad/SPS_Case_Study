@@ -63,8 +63,8 @@ function MockupsSkeleton() {
   return (
     <div className="space-y-4">
       <Skeleton className="h-7 w-48" />
-      <div className="grid gap-4 md:grid-cols-2">
-        {Array.from({ length: 4 }).map((_, i) => (
+      <div className="grid gap-4 md:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, i) => (
           <Card key={i}>
             <CardHeader>
               <Skeleton className="h-5 w-48" />
@@ -262,7 +262,7 @@ export default function AnomaliesPage() {
       {/* Section 3: Dashboard Extension Mock-Ups */}
       <section className="space-y-4 border-t pt-6">
         <h2 className="text-muted-foreground text-xs font-semibold tracking-wider uppercase">
-          Forward-Looking Extensions
+          Platform Vision
         </h2>
         <ExtensionMockups />
       </section>
