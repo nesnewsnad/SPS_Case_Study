@@ -9,7 +9,16 @@ import { FilterBar } from '@/components/filter-bar';
 import { useFilters } from '@/contexts/filter-context';
 import { InsightCards } from '@/components/overview/insight-cards';
 import { generateInsights } from '@/lib/generate-insights';
-import { fillAllMonths, getLastDayOfMonth, formatMonthFull } from '@/lib/format';
+import { Download } from 'lucide-react';
+import {
+  fillAllMonths,
+  getLastDayOfMonth,
+  formatMonthFull,
+  formatNumber,
+  formatPercent,
+} from '@/lib/format';
+import { formatCsvContent, downloadCsv } from '@/lib/export-csv';
+import type { CsvSection } from '@/lib/export-csv';
 import type { ClaimsResponse } from '@/lib/api-types';
 
 /** Build a contextual subtitle fragment from active filters. */
@@ -220,6 +229,75 @@ export default function ExplorerPage() {
     [filters.manufacturer, setFilter, removeFilter],
   );
 
+  const handleExport = useCallback(() => {
+    if (!data) return;
+    const sections: CsvSection[] = [
+      {
+        heading: 'KPI Summary',
+        headers: ['Metric', 'Value'],
+        rows: [
+          ['Total Claims', formatNumber(data.kpis.totalClaims)],
+          ['Net Claims', formatNumber(data.kpis.netClaims)],
+          ['Reversal Rate', formatPercent(data.kpis.reversalRate)],
+          ['Unique Drugs', formatNumber(data.kpis.uniqueDrugs)],
+        ],
+      },
+      {
+        heading: 'Monthly Trend',
+        headers: ['Month', 'Incurred', 'Reversed'],
+        rows: data.monthly.map((m) => [m.month, String(m.incurred), String(m.reversed)]),
+      },
+      {
+        heading: 'Top Drugs',
+        headers: [
+          'Drug Name',
+          'Label',
+          'NDC',
+          'Net Claims',
+          'Reversal Rate',
+          'Formulary',
+          'Top State',
+        ],
+        rows: data.drugs.map((d) => [
+          d.drugName,
+          d.labelName ?? '',
+          d.ndc,
+          formatNumber(d.netClaims),
+          formatPercent(d.reversalRate),
+          d.formulary,
+          d.topState,
+        ]),
+      },
+      {
+        heading: 'Days Supply Distribution',
+        headers: ['Bin', 'Count'],
+        rows: data.daysSupply.map((d) => [d.bin + ' days', formatNumber(d.count)]),
+      },
+      {
+        heading: 'MONY Breakdown',
+        headers: ['Type', 'Net Claims'],
+        rows: data.mony.map((m) => [m.type, formatNumber(m.netClaims)]),
+      },
+      {
+        heading: 'Top Groups',
+        headers: ['Group ID', 'Net Claims'],
+        rows: data.topGroups.map((g) => [g.groupId, formatNumber(g.netClaims)]),
+      },
+      {
+        heading: 'Top Manufacturers',
+        headers: ['Manufacturer', 'Net Claims'],
+        rows: data.topManufacturers.map((m) => [m.manufacturer, formatNumber(m.netClaims)]),
+      },
+    ];
+    const content = formatCsvContent({
+      title: 'Claims Explorer',
+      filters: ctx,
+      entity: 'Pharmacy A',
+      sections,
+    });
+    downloadCsv('sps-explorer.csv', content);
+  }, [data, ctx]);
+
   // --- Error state ---
   if (error) {
     return (
@@ -290,14 +368,20 @@ export default function ExplorerPage() {
       <FilterBar view="explorer" />
       <div className="stagger-children space-y-6 p-6">
         {/* Header */}
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Claims Explorer</h1>
-          <p className="text-muted-foreground text-sm">
-            {ctx
-              ? `Pharmacy A — ${ctx}`
-              : 'Pharmacy A — Drug-Level Drill-Down & Distribution Analysis'}
-          </p>
-          <div className="mt-2 h-0.5 w-12 rounded-full bg-gradient-to-r from-teal-400 to-teal-600" />
+        <div className="flex items-start justify-between">
+          <div>
+            <h1 className="text-2xl font-bold tracking-tight">Claims Explorer</h1>
+            <p className="text-muted-foreground text-sm">
+              {ctx
+                ? `Pharmacy A — ${ctx}`
+                : 'Pharmacy A — Drug-Level Drill-Down & Distribution Analysis'}
+            </p>
+            <div className="mt-2 h-0.5 w-12 rounded-full bg-gradient-to-r from-teal-400 to-teal-600" />
+          </div>
+          <Button variant="outline" size="sm" onClick={handleExport} className="shrink-0 gap-1.5">
+            <Download className="h-4 w-4" />
+            Export CSV
+          </Button>
         </div>
 
         {/* Mini Monthly Trend */}
