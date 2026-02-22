@@ -55,6 +55,14 @@ const FLAGGED_ANNOTATION: Annotation = {
   position: 'top',
 };
 
+const EXCLUDED_ANNOTATION: Annotation = {
+  month: '2021-05',
+  title: 'Test Drug',
+  detail: 'Excluded',
+  color: '#94a3b8',
+  position: 'top',
+};
+
 // ── Custom annotation label ───────────────────────────────────────────
 
 function AnnotationLabel({
@@ -187,7 +195,7 @@ export const MonthlyAreaChart = memo(function MonthlyAreaChart({
 
   const annotations = showFlaggedAnnotation
     ? [...ALWAYS_ANNOTATIONS, FLAGGED_ANNOTATION]
-    : ALWAYS_ANNOTATIONS;
+    : [...ALWAYS_ANNOTATIONS, EXCLUDED_ANNOTATION];
 
   // Switch to bars when few months have data (e.g. single-month drill-down)
   const activeMonths = useMemo(

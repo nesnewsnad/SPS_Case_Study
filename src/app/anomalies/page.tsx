@@ -165,13 +165,14 @@ export default function AnomaliesPage() {
         <p className="text-muted-foreground text-sm leading-relaxed">
           Four anomalies and two structural patterns emerged from 596,000 claims rows. One was a
           planted test that any analytics vendor should catch. One was a traceable batch event
-          affecting 18 Kansas groups. Two align with the realities of LTC pharmacy in 2021 — a
-          Delta-wave recovery surge in September and a staffing-crisis contraction in November.
-          Underneath the anomalies, Pharmacy A&apos;s fundamentals are sound: a heavily generic drug
-          mix, uniform ~10% reversal rates across all states, and textbook LTC dispensing cycles.
-          The dataset does flag one analytical boundary — categorical flags (formulary,
-          adjudication) appear randomized, meaning formulary-tier optimization requires production
-          data to validate. Everything else here is actionable today.
+          affecting 18 Kansas groups. Two — a +41% September spike and a -54% November dip — are
+          consistent with LTC disruptions in 2021 (Delta wave, staffing crisis, CMS mandate) but
+          require client confirmation to separate operational causes from data artifacts. Underneath
+          the anomalies, Pharmacy A&apos;s fundamentals are sound: a heavily generic drug mix,
+          uniform ~10% reversal rates across all states, and textbook LTC dispensing cycles. The
+          dataset does flag one analytical boundary — categorical flags (formulary, adjudication)
+          appear randomized, meaning formulary-tier optimization requires production data to
+          validate. Everything else here is actionable today.
         </p>
         {data.panels.map((panel) => (
           <AnomalyPanel key={panel.id} panel={panel} />

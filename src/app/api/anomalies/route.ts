@@ -186,24 +186,27 @@ export async function GET(request: NextRequest) {
       ]),
     );
 
-    // Compute averages by state and formulary (excl Kryptonite, all months)
+    // Compute averages by state and formulary (excl Kryptonite + anomalous months May/Sep/Nov)
+    // Uses 9 normal months as baseline — same methodology as the headline % calculations
     const [avgByState, avgByFormulary] = await withRetry(() =>
       Promise.all([
         db.execute(sql`
         SELECT
           c.pharmacy_state AS state,
-          ROUND(COUNT(*)::numeric / 12, 0)::int AS average
+          ROUND(COUNT(*)::numeric / 9, 0)::int AS average
         FROM claims c
         WHERE c.entity_id = ${entityId} AND c.ndc != ${flaggedNdc}
+          AND TO_CHAR(c.date_filled, 'YYYY-MM') NOT IN ('2021-05', '2021-09', '2021-11')
         GROUP BY c.pharmacy_state
         ORDER BY c.pharmacy_state
       `),
         db.execute(sql`
         SELECT
           c.formulary AS formulary,
-          ROUND(COUNT(*)::numeric / 12, 0)::int AS average
+          ROUND(COUNT(*)::numeric / 9, 0)::int AS average
         FROM claims c
         WHERE c.entity_id = ${entityId} AND c.ndc != ${flaggedNdc}
+          AND TO_CHAR(c.date_filled, 'YYYY-MM') NOT IN ('2021-05', '2021-09', '2021-11')
         GROUP BY c.formulary
         ORDER BY c.formulary
       `),
