@@ -278,7 +278,7 @@ export async function POST(req: Request) {
     };
 
     const result = streamText({
-      model: anthropic('claude-sonnet-4-5-20241022'),
+      model: anthropic('claude-sonnet-4-5'),
       system: buildSystemPrompt(context),
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       messages: await convertToModelMessages(ensureParts(messages) as any),
