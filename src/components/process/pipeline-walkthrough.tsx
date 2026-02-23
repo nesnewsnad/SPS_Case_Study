@@ -41,15 +41,15 @@ September at ~1.4x normal volume. Classic batch reversal
     principle:
       'Lock design decisions before writing specs. Ambiguity in design becomes ambiguity in code.',
     moment:
-      'Before SPEC-005 was written, a discuss session locked 5 design decisions: consulting-deck aesthetic (not raw terminal output), teal gradient for the pipeline (reinforces directional flow), terminal/.md aesthetic for artifact evidence, full-scroll visibility (no accordions \u2014 the evaluator sees everything), and amber borders for honest limitations (confident self-awareness, not defensive). These decisions constrained the spec \u2014 the writer couldn\u2019t wander into arbitrary choices because the design space was already narrowed.',
+      'Before SPEC-005 was written, a discuss session locked 5 design decisions: full-width investigation cards (not tabs \u2014 the evaluator sees all four anomalies at once), API-driven narratives (pre-written server-side, not generated in the browser), three audience-specific follow-up tabs (client, internal, data requests), a 2\u00d72 grid of visual mock-ups for dashboard extensions (not empty placeholders), and no filters (anomalies are pre-computed findings, not explorable dimensions). These decisions constrained the spec \u2014 the writer couldn\u2019t wander into arbitrary choices because the design space was already narrowed.',
     artifact: 'code' as const,
-    artifactContent: `SPEC-006 Context \u2014 Locked Decisions
+    artifactContent: `SPEC-005 Context \u2014 Locked Decisions
 \u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501\u2501
-1. Pipeline: CSS cards, consulting-deck aesthetic
-2. Color: Teal gradient, light-to-dark left-to-right
-3. Artifacts: Monospace in card wrappers (.md aesthetic)
-4. Density: Full scroll, all visible, no accordions
-5. Limitations: Amber border = confident self-awareness`,
+1. Panels: 4 deep-dive cards, full-width, not tabbed
+2. Narratives: Pre-written by API, not generated client-side
+3. Follow-ups: 3 audience tabs (client, internal, data)
+4. Extensions: 2\u00d72 grid with visual mock-ups, not placeholders
+5. Filters: None \u2014 anomalies are pre-computed findings`,
     callout:
       'Design decisions locked in discuss sessions don\u2019t get relitigated during implementation. That\u2019s how you keep AI focused.',
   },
