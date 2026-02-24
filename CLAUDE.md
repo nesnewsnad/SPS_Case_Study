@@ -154,7 +154,7 @@ Server-side aggregation — never ship raw rows to the browser.
 - `GET /api/anomalies` — pre-computed anomaly breakdowns
 - `GET /api/filters` — filter dropdown options (drugs, manufacturers, groups)
 - `GET /api/entities` — list of onboarded entities
-- `POST /api/chat` — AI chat streaming endpoint (Claude Haiku)
+- `POST /api/chat` — Agentic chat streaming endpoint (Claude Sonnet 4.6, 3 DB query tools, multi-step reasoning)
 
 ## Timeline
 
