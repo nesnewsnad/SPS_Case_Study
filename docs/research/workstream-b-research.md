@@ -21,17 +21,6 @@ SPS Health (legal name: Summit Pharmacy Solutions, LLC) is a **PE-backed pharmac
 | **Trinity Healthcare Solutions** | Consulting: formulary optimization, data analytics, pharmacy network strategy |
 | **StatimRx**                     | On-demand pharmacy logistics, 70K+ retail pharmacy network, delivery platform |
 
-### Key Leadership (relevant to Workstream B)
-
-| Name            | Title                               | Relevance                                                      |
-| --------------- | ----------------------------------- | -------------------------------------------------------------- |
-| Neil Bansal     | CEO                                 | Wharton MBA, finance/growth strategy background                |
-| Trond Berg      | VP, Analytics & Commercial Strategy | Owns analytics function — likely stakeholder                   |
-| Tami Klumb      | VP, PBM Services                    | Owns PBM operations — likely stakeholder                       |
-| Christine Spath | Controller                          | Finance — CFO/VP Finance mentioned in scope as final approvers |
-| Laurel Wala     | General Counsel & CCO               | Compliance workflows                                           |
-| Andrea Talmage  | VP, Human Resources                 | HR workflows                                                   |
-
 ### Tech Stack
 
 - **Microsoft 365** (Teams, Outlook, SharePoint, Excel) — confirmed
@@ -58,17 +47,17 @@ SPS Health (legal name: Summit Pharmacy Solutions, LLC) is a **PE-backed pharmac
 
 **Confidence: HIGH** — synthesized from industry reports, job postings, vendor marketing, and trade publications.
 
-| Pain Point                        | Industry Prevalence | SPS Relevance                                |
-| --------------------------------- | ------------------- | -------------------------------------------- |
-| Excel-driven client reporting     | Universal           | HIGH — Trinity does analytics/reporting      |
-| Manual rebate reconciliation      | Universal           | HIGH — LithiaRx does rebate submission       |
-| State-by-state compliance filings | Growing rapidly     | HIGH — regulatory tsunami 2025-2028          |
-| Ad-hoc SQL reporting              | Very common         | MEDIUM — VP Analytics likely deals with this |
-| Manual prior authorization        | Universal in PBMs   | MEDIUM — depends on SPS service scope        |
-| Client onboarding paperwork       | Common              | MEDIUM — 75-90 day process industry-wide     |
-| Data format normalization         | Universal           | MEDIUM — multiple data sources               |
-| Invoice/billing reconciliation    | Universal           | HIGH — finance team                          |
-| Contract analysis/extraction      | Common              | MEDIUM — depends on contract volume          |
+| Pain Point                        | Industry Prevalence | SPS Relevance                                  |
+| --------------------------------- | ------------------- | ---------------------------------------------- |
+| Excel-driven client reporting     | Universal           | HIGH — Trinity does analytics/reporting        |
+| Manual rebate reconciliation      | Universal           | HIGH — LithiaRx does rebate submission         |
+| State-by-state compliance filings | Growing rapidly     | HIGH — regulatory tsunami 2025-2028            |
+| Ad-hoc SQL reporting              | Very common         | MEDIUM — analytics team likely deals with this |
+| Manual prior authorization        | Universal in PBMs   | MEDIUM — depends on SPS service scope          |
+| Client onboarding paperwork       | Common              | MEDIUM — 75-90 day process industry-wide       |
+| Data format normalization         | Universal           | MEDIUM — multiple data sources                 |
+| Invoice/billing reconciliation    | Universal           | HIGH — finance team                            |
+| Contract analysis/extraction      | Common              | MEDIUM — depends on contract volume            |
 
 ### The Regulatory Tsunami
 
@@ -87,7 +76,7 @@ For a ~100-person company, manual compliance is unsustainable.
 
 Based on company structure, services offered, industry norms, and job posting evidence.
 
-### Finance Department (Controller Christine Spath, reports to CFO)
+### Finance Department
 
 **F1. Rebate Reconciliation** [Confidence: HIGH]
 
@@ -109,7 +98,7 @@ Based on company structure, services offered, industry norms, and job posting ev
 - Tracking whether vendors honor negotiated pricing across thousands of transactions
 - **Pain**: Comparing contracted vs. actual pricing across purchase orders
 
-### Analytics & Commercial Strategy (VP Trond Berg)
+### Analytics & Commercial Strategy
 
 **A1. Client Reporting / Analytics Delivery** [Confidence: HIGH]
 
@@ -130,7 +119,7 @@ Based on company structure, services offered, industry norms, and job posting ev
 - Comparing actual rebate/pricing performance vs. contractual guarantees
 - **Pain**: Manual comparison of contract terms against claims data outcomes
 
-### PBM Services (VP Tami Klumb)
+### PBM Services
 
 **P1. Formulary Update Processing** [Confidence: HIGH]
 
@@ -150,7 +139,7 @@ Based on company structure, services offered, industry norms, and job posting ev
 - Batch reversals (like the KS August pattern in our case study) require investigation and reprocessing
 - **Pain**: Manual review of claim rejections, coordination with pharmacies for resubmission
 
-### Legal & Compliance (GC Laurel Wala)
+### Legal & Compliance
 
 **C1. State PBM Licensing & Registration** [Confidence: HIGH]
 
@@ -169,7 +158,7 @@ Based on company structure, services offered, industry norms, and job posting ev
 - Pharmacy network contracts, manufacturer agreements, client service agreements
 - **Pain**: Tracking expiration dates, renewal terms, obligation compliance
 
-### Client Services (EVP Theresa Hametz, EVP Matt Lewis)
+### Client Services
 
 **S1. Client Onboarding** [Confidence: HIGH]
 
@@ -195,7 +184,7 @@ Based on company structure, services offered, industry norms, and job posting ev
 - 70K+ retail pharmacy network requires credentialing and re-credentialing
 - **Pain**: Manual verification of licenses, capabilities, compliance documentation
 
-### Human Resources (VP Andrea Talmage)
+### Human Resources
 
 **H1. Employee Onboarding** [Confidence: LOW]
 
@@ -328,14 +317,14 @@ When you meet with department leaders, use this research to ask informed questio
 3. "What are the most common reasons onboarding takes longer than expected?"
 4. "How do pharmacy clients report issues to you? How do you track resolution?"
 
-### Questions for Analytics (VP Berg)
+### Questions for Analytics
 
 1. "What does a typical client reporting cycle look like? How much is automated vs. manual?"
 2. "What tools does your team use for analytics delivery — Power BI, Excel, custom dashboards?"
 3. "How do you handle different data formats when onboarding a new pharmacy's claims data?"
 4. "What takes the most analyst time that feels like it shouldn't?"
 
-### Questions for PBM Services (VP Klumb)
+### Questions for PBM Services
 
 1. "When the formulary changes quarterly, what's the update process? How many steps and handoffs?"
 2. "How do you handle claims that get rejected — what's the exception workflow?"

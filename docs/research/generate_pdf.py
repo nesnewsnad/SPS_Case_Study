@@ -166,22 +166,6 @@ def build_pdf():
     ))
     story.append(Spacer(1, 8))
 
-    # Leadership table
-    story.append(Paragraph("Key Leadership (relevant to Workstream B)", h2_style))
-    story.append(make_table(
-        ['Name', 'Title', 'Relevance'],
-        [
-            ['Neil Bansal', 'CEO', 'Wharton MBA, finance/growth strategy background'],
-            ['Trond Berg', 'VP, Analytics & Commercial Strategy', 'Owns analytics function \u2014 likely stakeholder'],
-            ['Tami Klumb', 'VP, PBM Services', 'Owns PBM operations \u2014 likely stakeholder'],
-            ['Christine Spath', 'Controller', 'Finance \u2014 CFO/VP Finance mentioned in scope as final approvers'],
-            ['Laurel Wala', 'General Counsel & CCO', 'Compliance workflows'],
-            ['Andrea Talmage', 'VP, Human Resources', 'HR workflows'],
-        ],
-        col_widths=[1.3*inch, 2.2*inch, 3.0*inch]
-    ))
-    story.append(Spacer(1, 8))
-
     # Tech Stack
     story.append(Paragraph("Tech Stack", h2_style))
     tech_items = [
@@ -219,7 +203,7 @@ def build_pdf():
             ['Excel-driven client reporting', 'Universal', 'HIGH \u2014 Trinity does analytics/reporting'],
             ['Manual rebate reconciliation', 'Universal', 'HIGH \u2014 LithiaRx does rebate submission'],
             ['State-by-state compliance filings', 'Growing rapidly', 'HIGH \u2014 regulatory tsunami 2025-2028'],
-            ['Ad-hoc SQL reporting', 'Very common', 'MEDIUM \u2014 VP Analytics likely deals with this'],
+            ['Ad-hoc SQL reporting', 'Very common', 'MEDIUM \u2014 analytics team likely deals with this'],
             ['Manual prior authorization', 'Universal in PBMs', 'MEDIUM \u2014 depends on SPS service scope'],
             ['Client onboarding paperwork', 'Common', 'MEDIUM \u2014 75-90 day process industry-wide'],
             ['Data format normalization', 'Universal', 'MEDIUM \u2014 multiple data sources'],
@@ -247,7 +231,7 @@ def build_pdf():
     story.append(Paragraph('Based on company structure, services offered, industry norms, and job posting evidence.', body_style))
 
     departments = [
-        ("Finance Department (Controller Christine Spath, reports to CFO)", [
+        ("Finance Department", [
             ("F1. Rebate Reconciliation", "HIGH", [
                 "LithiaRx submits rebates to manufacturers on behalf of pharmacy clients",
                 "Reconciliation = matching manufacturer payments back to the specific claims that generated them",
@@ -266,7 +250,7 @@ def build_pdf():
                 "<b>Pain</b>: Comparing contracted vs. actual pricing across purchase orders",
             ]),
         ]),
-        ("Analytics & Commercial Strategy (VP Trond Berg)", [
+        ("Analytics & Commercial Strategy", [
             ("A1. Client Reporting / Analytics Delivery", "HIGH", [
                 'Trinity provides "cutting edge analytics functionality" to clients',
                 "Industry norm: analysts write custom SQL, build Excel reports, manually curate dashboards",
@@ -284,7 +268,7 @@ def build_pdf():
                 "<b>Pain</b>: Manual comparison of contract terms against claims data outcomes",
             ]),
         ]),
-        ("PBM Services (VP Tami Klumb)", [
+        ("PBM Services", [
             ("P1. Formulary Update Processing", "HIGH", [
                 "Quarterly/annual formulary changes (drug additions, removals, tier changes)",
                 "Each change requires: clinical review documentation, client notification, system configuration update, compliance verification",
@@ -301,7 +285,7 @@ def build_pdf():
                 "<b>Pain</b>: Manual review of claim rejections, coordination with pharmacies for resubmission",
             ]),
         ]),
-        ("Legal & Compliance (GC Laurel Wala)", [
+        ("Legal & Compliance", [
             ("C1. State PBM Licensing & Registration", "HIGH", [
                 "PBMs must register/license in each state they operate",
                 "Different requirements, different forms, different deadlines, different renewal cycles",
@@ -317,7 +301,7 @@ def build_pdf():
                 "<b>Pain</b>: Tracking expiration dates, renewal terms, obligation compliance",
             ]),
         ]),
-        ("Client Services (EVP Theresa Hametz, EVP Matt Lewis)", [
+        ("Client Services", [
             ("S1. Client Onboarding", "HIGH", [
                 "New pharmacy client joining GPO/PSAO/LithiaRx network",
                 "Industry norm: 75-90 day process with credentialing, system setup, testing, go-live",
@@ -339,7 +323,7 @@ def build_pdf():
                 "<b>Pain</b>: Manual verification of licenses, capabilities, compliance documentation",
             ]),
         ]),
-        ("Human Resources (VP Andrea Talmage)", [
+        ("Human Resources", [
             ("H1. Employee Onboarding", "LOW", [
                 "Standard HR workflow, but at ~100 employees, volume may not justify automation",
                 "<b>Pain</b>: Paperwork, system access provisioning, training scheduling",
@@ -376,7 +360,7 @@ def build_pdf():
 
     story.append(Paragraph("Scoring Matrix", h2_style))
     story.append(make_table(
-        ['#', 'Workflow', 'Impact', 'Effort', 'Durability', 'Measurability', 'No-Code', 'Score'],
+        ['#', 'Workflow', 'Impact', 'Effort', 'Durable', 'Meas.', 'No-Code', 'Score'],
         [
             ['F1', 'Rebate Reconciliation', '5', '3', '4', '5', '3', '20'],
             ['A1', 'Client Reporting', '5', '4', '3', '5', '3', '20'],
@@ -393,7 +377,7 @@ def build_pdf():
             ['S2', 'Client Issue Ticketing', '3', '2', '4', '3', '5', '17'],
             ['L2', 'Network Credentialing', '3', '3', '4', '3', '4', '17'],
         ],
-        col_widths=[0.35*inch, 1.7*inch, 0.55*inch, 0.55*inch, 0.7*inch, 0.85*inch, 0.65*inch, 0.5*inch]
+        col_widths=[0.4*inch, 1.6*inch, 0.58*inch, 0.53*inch, 0.65*inch, 0.57*inch, 0.67*inch, 0.52*inch]
     ))
     story.append(Paragraph('<i>Scale: 1=low, 5=high. For Effort, 5=easy, 1=hard.</i>', ParagraphStyle('Note', parent=body_style, fontSize=8, textColor=DARK_GRAY, spaceBefore=4)))
 
@@ -489,13 +473,13 @@ def build_pdf():
             '"What are the most common reasons onboarding takes longer than expected?"',
             '"How do pharmacy clients report issues to you? How do you track resolution?"',
         ]),
-        ("Questions for Analytics (VP Berg)", [
+        ("Questions for Analytics", [
             '"What does a typical client reporting cycle look like? How much is automated vs. manual?"',
             '"What tools does your team use for analytics delivery \u2014 Power BI, Excel, custom dashboards?"',
             '"How do you handle different data formats when onboarding a new pharmacy\u2019s claims data?"',
             '"What takes the most analyst time that feels like it shouldn\u2019t?"',
         ]),
-        ("Questions for PBM Services (VP Klumb)", [
+        ("Questions for PBM Services", [
             '"When the formulary changes quarterly, what\u2019s the update process? How many steps and handoffs?"',
             '"How do you handle claims that get rejected \u2014 what\u2019s the exception workflow?"',
             '"Is Plenful currently automating any of your workflows? What\u2019s in scope vs. out of scope?"',
