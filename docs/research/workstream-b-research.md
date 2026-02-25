@@ -34,8 +34,11 @@ SPS Health (legal name: Summit Pharmacy Solutions, LLC) is a **PE-backed pharmac
 
 ### Tech Stack
 
+- **Microsoft 365** (Teams, Outlook, SharePoint, Excel) — confirmed
+- **SharePoint** — confirmed as document management / intranet platform
 - **Azure cloud** (data pipelines, microservices)
 - **.NET Core / ASP.NET Core** applications
+- **Power Platform** available (Power Automate, Power BI, Power Apps) — included with M365 licensing
 - **Plenful partnership** (Oct 2023) — AI workflow automation for pharmacy operations
 - **SoftWriters/FrameworkLTC integration** (Jul 2025) — delivery logistics API
 - **HIPAA/SOC2/GDPR compliance** framework
@@ -249,8 +252,8 @@ _(Scale: 1=low, 5=high. For Effort, 5=easy, 1=hard.)_
 - Highly structured data (deadlines, requirements, documents) → perfect for no-code tools
 - Non-technical staff can maintain a tracker/dashboard
 - Measurable: missed deadlines → 0, time spent tracking → reduced by X%
-- **Tool candidates**: Airtable, Notion, Monday.com, or Microsoft Lists (if they're in M365)
-- **Deliverable**: Centralized compliance dashboard with automated deadline reminders, document checklists per state, renewal workflow triggers
+- **Tool candidates**: SharePoint List + Power Automate (zero additional licensing — already in M365). SharePoint List stores state registrations, deadlines, document links, and status. Power Automate sends automated reminders at 90/60/30/7 days before expiration, escalates overdue items, and triggers renewal checklists.
+- **Deliverable**: Centralized compliance dashboard with automated deadline reminders, document checklists per state, renewal workflow triggers — all maintained in SharePoint by non-technical staff
 
 #### Candidate B: Client Onboarding Workflow
 
@@ -261,8 +264,8 @@ _(Scale: 1=low, 5=high. For Effort, 5=easy, 1=hard.)_
 - Currently likely tracked in spreadsheets/email
 - Non-technical staff are the primary users
 - Measurable: onboarding time, dropped tasks, client satisfaction
-- **Tool candidates**: Airtable, Monday.com, Asana, or Notion with automations
-- **Deliverable**: Automated onboarding pipeline with task dependencies, document collection forms, status dashboards, automated notifications at key milestones
+- **Tool candidates**: SharePoint onboarding site (built-in templates available since 2025) + Power Automate task flows. SharePoint provides the portal (checklists, document upload, status tracking), Power Automate drives the workflow (new client triggers task creation, notifies responsible parties, escalates stalled steps). Microsoft Forms for document collection.
+- **Deliverable**: Automated onboarding pipeline with task dependencies, document collection forms, status dashboards, automated notifications at key milestones — all within the SharePoint environment staff already use
 
 #### Candidate C: Rebate Reconciliation Assistant
 
@@ -286,7 +289,7 @@ _(Scale: 1=low, 5=high. For Effort, 5=easy, 1=hard.)_
 - Directly serves revenue-generating function
 - Analysts spend hours customizing reports → templates reduce to minutes
 - **But**: Requires understanding their current analytics stack (likely Power BI given Azure)
-- **Tool candidates**: Power BI templates, Notion databases, or enhanced version of what you built in the case study
+- **Tool candidates**: Power BI templates (likely already in use given Azure stack), SharePoint-embedded dashboards, or Excel/Power Query templates distributed via SharePoint document library
 - **Risk**: May be too intertwined with their custom data infrastructure
 
 #### Candidate E: Regulatory Reporting Pipeline
@@ -371,29 +374,55 @@ Use this 2x2 to plot workflows during/after discovery:
 
 ## 8. Tool Recommendations for No-Code/Low-Code Solutions
 
-| Tool               | Best For                                           | Pricing                 | Learning Curve | Durability |
-| ------------------ | -------------------------------------------------- | ----------------------- | -------------- | ---------- |
-| **Airtable**       | Structured data tracking, workflows, automations   | Free tier → $20/user/mo | Low            | High       |
-| **Monday.com**     | Project/process tracking, client-facing dashboards | $9-19/user/mo           | Low            | High       |
-| **Notion**         | Documentation + lightweight databases              | Free → $10/user/mo      | Low-Medium     | Medium     |
-| **Power Automate** | Microsoft ecosystem automations, email triggers    | Included with M365      | Medium         | High       |
-| **Power BI**       | Analytics dashboards, report templates             | Included with M365      | Medium         | High       |
-| **Zapier**         | Cross-tool automations, webhook triggers           | Free → $20/mo           | Low            | Medium     |
-| **Plenful**        | Pharmacy-specific workflow automation              | Enterprise pricing      | Medium         | High       |
+SPS Health is confirmed on Microsoft 365 with SharePoint. This makes the Power Platform the primary tooling layer — zero additional licensing cost, IT-supported, and staff already have accounts.
 
-**Recommendation**: If SPS is on Microsoft 365 (likely given Azure stack), **Power Automate + Power BI** is the most durable choice — zero additional licensing cost, IT-supported, enterprise-grade. For standalone project tracking, **Airtable** offers the best balance of power and simplicity.
+### Primary Tools (already licensed, zero additional cost)
+
+| Tool                 | Best For                                                       | Learning Curve | Durability |
+| -------------------- | -------------------------------------------------------------- | -------------- | ---------- |
+| **SharePoint Lists** | Structured data tracking (compliance, onboarding, contracts)   | Low            | High       |
+| **SharePoint Sites** | Portals, document libraries, team dashboards                   | Low            | High       |
+| **Power Automate**   | Workflow triggers, approval routing, notifications, scheduling | Medium         | High       |
+| **Power BI**         | Analytics dashboards, report templates, embedded visuals       | Medium         | High       |
+| **Microsoft Forms**  | Data collection, intake forms, surveys                         | Low            | High       |
+| **Power Apps**       | Custom lightweight apps on top of SharePoint data              | Medium-High    | High       |
+
+### SharePoint-Specific Automation Patterns
+
+These are proven, low-effort automations that map directly to SPS workflows:
+
+**Document Approval Workflows** — SharePoint + Power Automate routes contracts, policy changes, and compliance docs through multi-stage approvals. Auto-notifies approvers, tracks status, escalates on timeout. Directly relevant to formulary changes (P1), contract management (C3), and regulatory filings (C2).
+
+**Document Library Auto-Organization** — Files uploaded to SharePoint auto-tagged with metadata (content type, department, client, date). Power Automate moves files to correct folders, applies retention labels, notifies owners. Relevant for RFP responses, compliance docs, claims documentation.
+
+**SharePoint List as Lightweight Tracker** — Custom lists with views, filters, and conditional formatting act as mini-applications. No database needed. Power Automate sends reminders on due dates and escalates overdue items. Ideal for compliance tracking (C1), contract expiration (C3), and client onboarding milestones (S1).
+
+**Form-to-Workflow Pipelines** — Microsoft Forms embedded in SharePoint pages feed directly into Power Automate flows. Use cases: PTO requests, IT provisioning, expense pre-approvals, client intake forms. 15-minute setup, highly visible, good training exercise for Week 6.
+
+**Email-to-SharePoint Archiving** — Shared mailbox emails auto-saved to SharePoint document library with metadata. Builds audit trail without manual filing. Relevant for claims correspondence, vendor communications, client issue tracking (S2).
+
+**Knowledge Bot Document Source** — SharePoint document libraries serve as the canonical intake for the RAG pipeline (Automation #1 in strategy deck). Staff add/remove docs in SharePoint (familiar interface), the Python backend watches the library via Microsoft Graph API or Power Automate trigger. No new tool for document management.
+
+### Secondary Tools (if specific needs arise)
+
+| Tool        | Best For                              | Pricing            | When to Use                                |
+| ----------- | ------------------------------------- | ------------------ | ------------------------------------------ |
+| **Plenful** | Pharmacy-specific workflow automation | Enterprise pricing | If PA or pharmacy ops workflows are target |
+| **Zapier**  | Cross-tool automations outside M365   | Free → $20/mo      | Only if connecting non-Microsoft tools     |
+
+**Recommendation**: Build everything on **SharePoint + Power Automate + Power BI**. Zero additional licensing cost, staff already have accounts, IT already supports it. Third-party tools (Airtable, Monday, Notion) add adoption friction and recurring costs with no clear upside when Power Platform is available.
 
 ---
 
 ## 9. Open Questions (Verify in Discovery)
 
 1. **What does Plenful currently automate?** The Oct 2023 partnership may already cover some of these workflows. Don't duplicate.
-2. **Are they on Microsoft 365?** Determines whether Power Platform is available at no extra cost.
-3. **What's the current analytics stack?** Power BI vs. custom vs. Excel-only affects Candidate D.
+2. ~~**Are they on Microsoft 365?**~~ **ANSWERED**: Confirmed M365 with SharePoint. Power Platform available at no extra cost.
+3. **What's the current analytics stack?** Power BI vs. custom vs. Excel-only affects Candidate D. (Power BI is likely given M365 + Azure stack.)
 4. **Who are the CFO and VP Finance?** Not publicly listed — these are the final approvers per your scope doc.
 5. **How many states do they operate in?** Determines compliance tracker scope.
 6. **What's the client count?** Affects onboarding workflow volume and ROI calculation.
-7. **Is there an existing project management tool?** Jira, Asana, Monday, or just email/spreadsheets?
+7. **Is there an existing project management tool?** Jira, Asana, Monday, SharePoint-based tracking, or just email/spreadsheets?
 8. **What does "non-technical" mean here?** Comfortable with Excel? Or truly no-spreadsheet users?
 
 ---
@@ -405,10 +434,12 @@ Use this 2x2 to plot workflows during/after discovery:
 | SPS is a ~100-person PE-backed PBA platform        | HIGH       | LinkedIn, Crunchbase, press releases           |
 | They have LithiaRx, Trinity, StatimRx subsidiaries | HIGH       | Company website, press releases                |
 | Azure/.NET tech stack                              | HIGH       | Job postings                                   |
+| Microsoft 365 + SharePoint in use                  | HIGH       | Confirmed by SPS contact (2026-02-25)          |
+| Power Platform available (no extra licensing)      | HIGH       | Follows from confirmed M365 subscription       |
 | Plenful AI partnership exists                      | HIGH       | Press release Oct 2023                         |
 | Rebate reconciliation is manual/Excel-driven       | HIGH       | Industry-wide pattern, SPS offers this service |
 | Client reporting involves manual SQL/Excel work    | HIGH       | Job posting requirements, industry pattern     |
 | Compliance burden is growing rapidly               | HIGH       | Federal/state legislation verified             |
 | Client onboarding is a 75-90 day manual process    | MEDIUM     | Industry norm, not SPS-specific verification   |
-| They use Power BI for analytics                    | LOW        | Inferred from Azure stack, not confirmed       |
+| They use Power BI for analytics                    | MEDIUM     | Inferred from Azure stack + confirmed M365     |
 | HR/internal workflows are pain points              | LOW        | Small company, may not be high-volume enough   |
