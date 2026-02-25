@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rebate Reconciliation — SPS Health</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Instrument+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --navy: #1C2833;
+  --navy-90: #2C3E50;
+  --teal: #277884;
+  --teal-light: #34a0ae;
+  --coral: #FE4447;
+  --cream: #FAFBFC;
+  --warm-white: #F7F8F9;
+  --border: #E5E8EB;
+  --text-secondary: #6B7C8D;
+  --green: #27AE60;
+  --amber: #E67E22;
+  --red-soft: #E74C3C;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Instrument Sans', -apple-system, sans-serif;
+  color: var(--navy);
+  background: var(--cream);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Typography ── */
+h1, h2, h3, h4 { font-family: 'DM Serif Display', Georgia, serif; font-weight: 400; }
+h1 { font-size: clamp(2.2rem, 5vw, 3.4rem); line-height: 1.15; }
+h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); line-height: 1.2; }
+h3 { font-size: 1.25rem; }
+p { max-width: 640px; }
+
+.label {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--teal);
+}
+
+/* ── Layout ── */
+section {
+  padding: clamp(3rem, 8vw, 6rem) clamp(1.5rem, 5vw, 4rem);
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.full-bleed {
+  max-width: none;
+  background: var(--navy);
+  color: white;
+}
+
+.full-bleed .label { color: var(--teal-light); }
+
+/* ── Hero ── */
+.hero {
+  min-height: 85vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+}
+
+.hero h1 {
+  margin-bottom: 1.5rem;
+}
+
+.hero h1 em {
+  font-style: italic;
+  color: var(--teal);
+}
+
+.hero p {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin-bottom: 2rem;
+}
+
+.hero-meta {
+  display: flex;
+  gap: 2rem;
+  flex-wrap: wrap;
+  margin-top: 1rem;
+}
+
+.hero-meta span {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  padding-left: 1rem;
+  border-left: 2px solid var(--teal);
+}
+
+.scroll-cue {
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 40px;
+  background: linear-gradient(to bottom, var(--teal), transparent);
+  animation: pulse-down 2s infinite;
+}
+
+@keyframes pulse-down {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* ── Process Flow ── */
+.process-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 2rem;
+}
+
+.process-step {
+  background: white;
+  padding: 1.5rem;
+  display: grid;
+  grid-template-columns: 3rem 1fr;
+  gap: 1rem;
+  align-items: start;
+}
+
+.step-num {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--navy);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.step-num.pain { background: var(--coral); }
+
+.process-step h4 {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 0.35rem;
+}
+
+.process-step p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.pain-tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--coral);
+  background: #FEE8E8;
+  padding: 0.15rem 0.5rem;
+  border-radius: 3px;
+  margin-top: 0.4rem;
+}
+
+/* ── Pain Points ── */
+.pain-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.pain-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 1.5rem;
+}
+
+.pain-card .risk {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  margin-bottom: 0.5rem;
+}
+
+.pain-card .risk.high { color: var(--coral); }
+.pain-card .risk.med { color: var(--amber); }
+
+.pain-card h4 {
+  font-size: 1rem;
+  margin-bottom: 0.5rem;
+  color: white;
+}
+
+.pain-card p {
+  font-size: 0.85rem;
+  color: rgba(255,255,255,0.6);
+  line-height: 1.5;
+}
+
+/* ── Vision ── */
+.vision-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.vision-card {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 1.5rem;
+  position: relative;
+  transition: border-color 0.2s;
+}
+
+.vision-card:hover { border-color: var(--teal); }
+
+.vision-card .step-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--teal);
+  margin-bottom: 0.75rem;
+}
+
+.vision-card h4 {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.vision-card p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.vision-card .who {
+  margin-top: 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 0.25rem 0.6rem;
+  border-radius: 3px;
+  display: inline-block;
+}
+
+.who.ai { background: #EBF5FB; color: var(--teal); }
+.who.human { background: #FDEBD0; color: var(--amber); }
+.who.auto { background: #E8F8F0; color: var(--green); }
+
+/* ── Dashboard Mock ── */
+.dashboard-container {
+  margin-top: 2rem;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+}
+
+.dash-header {
+  background: var(--navy);
+  color: white;
+  padding: 1rem 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.dash-header .period {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.5);
+  font-weight: 400;
+}
+
+.dash-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1px;
+  background: var(--border);
+  border-bottom: 1px solid var(--border);
+}
+
+.kpi {
+  background: white;
+  padding: 1.25rem 1.5rem;
+  text-align: center;
+}
+
+.kpi .kpi-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: 1.6rem;
+  color: var(--navy);
+}
+
+.kpi .kpi-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-secondary);
+  margin-top: 0.25rem;
+}
+
+.kpi .kpi-trend {
+  font-size: 0.72rem;
+  font-weight: 600;
+  margin-top: 0.2rem;
+}
+
+.kpi .kpi-trend.up { color: var(--green); }
+.kpi .kpi-trend.down { color: var(--coral); }
+
+.dash-body {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 1px;
+  background: var(--border);
+}
+
+.dash-panel {
+  background: white;
+  padding: 1.25rem 1.5rem;
+}
+
+.dash-panel h5 {
+  font-family: 'Instrument Sans', sans-serif;
+  font-size: 0.7rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+/* Status bars */
+.status-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.6rem;
+  font-size: 0.8rem;
+}
+
+.status-bar .bar-label {
+  width: 130px;
+  flex-shrink: 0;
+  color: var(--text-secondary);
+}
+
+.status-bar .bar-track {
+  flex: 1;
+  height: 6px;
+  background: var(--warm-white);
+  border-radius: 3px;
+  margin: 0 0.75rem;
+  overflow: hidden;
+}
+
+.status-bar .bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1.5s ease;
+}
+
+.bar-fill.matched { background: var(--green); }
+.bar-fill.partial { background: var(--amber); }
+.bar-fill.awaiting { background: var(--teal); }
+.bar-fill.open { background: var(--coral); }
+
+.status-bar .bar-pct {
+  width: 2.5rem;
+  text-align: right;
+  font-weight: 600;
+  font-size: 0.75rem;
+}
+
+/* Discrepancy list */
+.disc-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.8rem;
+}
+
+.disc-row:last-child { border-bottom: none; }
+
+.disc-mfr { font-weight: 600; }
+.disc-amt { color: var(--coral); font-weight: 600; }
+.disc-age { color: var(--text-secondary); font-size: 0.75rem; }
+
+/* Insight card in dashboard */
+.insight-box {
+  background: #F0F9FF;
+  border-left: 3px solid var(--teal);
+  padding: 0.75rem 1rem;
+  margin-top: 1rem;
+  border-radius: 0 4px 4px 0;
+  font-size: 0.8rem;
+  color: var(--navy);
+  line-height: 1.5;
+}
+
+.insight-box strong { color: var(--teal); }
+
+/* ── ROI Section ── */
+.roi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.roi-card {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.roi-card .roi-value {
+  font-family: 'DM Serif Display', serif;
+  font-size: 2rem;
+  color: var(--teal-light);
+  margin-bottom: 0.25rem;
+}
+
+.roi-card .roi-label {
+  font-size: 0.8rem;
+  color: rgba(255,255,255,0.6);
+  margin-bottom: 0.75rem;
+}
+
+.roi-card .roi-detail {
+  font-size: 0.75rem;
+  color: rgba(255,255,255,0.4);
+}
+
+.roi-note {
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  color: rgba(255,255,255,0.7);
+  max-width: 600px;
+  font-style: italic;
+  line-height: 1.6;
+}
+
+.roi-note strong { color: white; font-style: normal; }
+
+/* ── Principles ── */
+.principles {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  margin-top: 2rem;
+}
+
+.principle {
+  position: relative;
+  padding-left: 1.25rem;
+  border-left: 2px solid var(--teal);
+}
+
+.principle h4 {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 0.4rem;
+}
+
+.principle p {
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+/* ── CTA ── */
+.cta-section {
+  text-align: center;
+  padding-top: 4rem;
+  padding-bottom: 5rem;
+}
+
+.cta-section h2 {
+  margin-bottom: 1rem;
+}
+
+.cta-section p {
+  margin: 0 auto 2rem;
+  color: var(--text-secondary);
+  font-size: 1rem;
+}
+
+.cta-steps {
+  display: flex;
+  justify-content: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+  margin-top: 2rem;
+}
+
+.cta-step {
+  text-align: center;
+}
+
+.cta-step .num {
+  width: 2.5rem;
+  height: 2.5rem;
+  background: var(--teal);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  margin: 0 auto 0.75rem;
+}
+
+.cta-step h4 {
+  font-family: 'Instrument Sans', sans-serif;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 0.25rem;
+}
+
+.cta-step p {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+/* ── Footer ── */
+footer {
+  text-align: center;
+  padding: 2rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  border-top: 1px solid var(--border);
+}
+
+/* ── Animations ── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .dash-kpis { grid-template-columns: repeat(2, 1fr); }
+  .dash-body { grid-template-columns: 1fr; }
+  .hero-meta { flex-direction: column; gap: 0.75rem; }
+  .process-step { grid-template-columns: 2.5rem 1fr; }
+}
+
+@media (max-width: 480px) {
+  .kpi .kpi-value { font-size: 1.2rem; }
+  .status-bar .bar-label { width: 100px; font-size: 0.72rem; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════ HERO ════ -->
+<section class="hero">
+  <p class="label">Workstream B &mdash; Workflow Automation</p>
+  <h1>Rebate Reconciliation<br><em>Reimagined</em></h1>
+  <p>A pre-discovery concept for automating the most time-consuming workflow in pharmacy benefit administration. Built on what we know about SPS Health's dual-adjudication environment.</p>
+  <div class="hero-meta">
+    <span>Dan Swensen</span>
+    <span>AI Implementation Intern</span>
+    <span>February 2026</span>
+  </div>
+  <div class="scroll-cue"></div>
+</section>
+
+<!-- ════ THE PROBLEM ════ -->
+<section>
+  <p class="label reveal">The Problem Today</p>
+  <h2 class="reveal" style="margin-bottom: 0.75rem;">Two systems. One spreadsheet. <br>A lot of manual matching.</h2>
+  <p class="reveal" style="margin-bottom: 0;">SPS runs both outsourced and homegrown adjudication. Every reconciliation cycle, the finance team manually normalizes data from two formats, matches payments against submissions, and investigates every discrepancy by hand.</p>
+
+  <div class="process-grid reveal">
+    <div class="process-step">
+      <div class="step-num">1</div>
+      <div>
+        <h4>Claims Adjudication</h4>
+        <p>Two systems produce claims data in two different formats. Manual normalization every cycle.</p>
+        <span class="pain-tag">Dual-system pain</span>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="step-num">2</div>
+      <div>
+        <h4>Rebate Submission</h4>
+        <p>Aggregate claims by manufacturer, format per each manufacturer's template, submit, and log what was sent.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="step-num" style="background:var(--text-secondary)">30-90d</div>
+      <div>
+        <h4>Manufacturer Processing</h4>
+        <p>Wait for manufacturer to process and send payment. Some send detailed remittances. Some send a lump sum with no breakdown.</p>
+      </div>
+    </div>
+    <div class="process-step">
+      <div class="step-num pain">3</div>
+      <div>
+        <h4>Reconciliation &mdash; "The Pain Zone"</h4>
+        <p>Manually match payment amounts to submission amounts. Investigate every discrepancy: short-pays, missing payments, rejected NDCs. Track resolution via email. Produce reports for client pass-through.</p>
+        <span class="pain-tag">Highest time &amp; error cost</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ PAIN POINTS ════ -->
+<section class="full-bleed">
+  <div style="max-width: 1100px; margin: 0 auto;">
+    <p class="label reveal">Where Dollars Leak</p>
+    <h2 class="reveal" style="margin-bottom: 0.5rem;">Five high-risk pain points</h2>
+    <p class="reveal" style="color: rgba(255,255,255,0.6);">Clustering around data normalization and payment matching &mdash; where hours burn and revenue leaks.</p>
+
+    <div class="pain-grid reveal">
+      <div class="pain-card">
+        <p class="risk high">High Risk</p>
+        <h4>Two systems, two formats</h4>
+        <p>Different schemas from outsourced and homegrown adjudication require manual normalization every single cycle.</p>
+      </div>
+      <div class="pain-card">
+        <p class="risk high">High Risk</p>
+        <h4>Lump-sum payments</h4>
+        <p>Some manufacturers send a single number with no line-item detail. Can't tie the payment back to specific claims.</p>
+      </div>
+      <div class="pain-card">
+        <p class="risk high">High Risk</p>
+        <h4>No discrepancy tracker</h4>
+        <p>Investigations live in email threads and tribal knowledge. When someone's out, context is lost.</p>
+      </div>
+      <div class="pain-card">
+        <p class="risk high">High Risk</p>
+        <h4>Client pass-through accuracy</h4>
+        <p>Revenue is at risk if rebates aren't attributed to the right pharmacy client. Manual report assembly is error-prone.</p>
+      </div>
+      <div class="pain-card">
+        <p class="risk med">Medium Risk</p>
+        <h4>No audit trail</h4>
+        <p>Reconciliation decisions aren't logged in a structured way. SOC2 and external audit prep is a scramble.</p>
+      </div>
+      <div class="pain-card">
+        <p class="risk med">Medium Risk</p>
+        <h4>Migration-period gaps</h4>
+        <p>As SPS transitions to homegrown-only, the same claim could appear in either system. Increases matching complexity.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ THE VISION ════ -->
+<section>
+  <p class="label reveal">The Vision</p>
+  <h2 class="reveal" style="margin-bottom: 0.5rem;">AI investigates. Humans decide.</h2>
+  <p class="reveal">Every AI output has a confirm, edit, or reject control. Nothing executes without human approval. The system earns trust through tracked accuracy over time.</p>
+
+  <div class="vision-steps reveal">
+    <div class="vision-card">
+      <p class="step-label">Step 1</p>
+      <h4>Unified Data Ingestion</h4>
+      <p>Claims from both adjudication systems normalized into one format, one place. Source-tagged so you always know where each claim came from.</p>
+      <span class="who auto">Automated</span>
+    </div>
+    <div class="vision-card">
+      <p class="step-label">Step 2</p>
+      <h4>Submission Tracking</h4>
+      <p>Every rebate submission logged with manufacturer, period, amount, and expected payment date. Auto-alerts if payment is overdue.</p>
+      <span class="who human">Human logs</span>
+    </div>
+    <div class="vision-card">
+      <p class="step-label">Step 3</p>
+      <h4>AI-Assisted Payment Matching</h4>
+      <p>Upload a remittance document. AI extracts structured data with source citations. Deterministic rules verify the math. You confirm with one click.</p>
+      <span class="who ai">AI + Human review</span>
+    </div>
+    <div class="vision-card">
+      <p class="step-label">Step 4</p>
+      <h4>Discrepancy Management</h4>
+      <p>Every variance gets a tracked record. AI identifies which NDCs account for the difference and proposes root cause. You approve or edit.</p>
+      <span class="who ai">AI + Human review</span>
+    </div>
+    <div class="vision-card">
+      <p class="step-label">Step 5</p>
+      <h4>Drafted Communications</h4>
+      <p>AI drafts follow-up emails with specific amounts, NDCs, and submission references. You review and send. No one writes these from scratch.</p>
+      <span class="who ai">AI drafts, Human sends</span>
+    </div>
+    <div class="vision-card">
+      <p class="step-label">Step 6</p>
+      <h4>Auto-Generated Reports</h4>
+      <p>Reconciliation summaries, client pass-through reports, aging dashboards, and full audit trail. Generated automatically each cycle.</p>
+      <span class="who auto">Automated</span>
+    </div>
+  </div>
+</section>
+
+<!-- ════ DASHBOARD MOCK ════ -->
+<section>
+  <p class="label reveal">What It Looks Like</p>
+  <h2 class="reveal" style="margin-bottom: 0.5rem;">The reconciliation cockpit</h2>
+  <p class="reveal">Everything at a glance. Click into any manufacturer for full history, AI investigation, and resolution tracking.</p>
+
+  <div class="dashboard-container reveal">
+    <div class="dash-header">
+      <span>Rebate Reconciliation</span>
+      <span class="period">Q4 2025 &bull; All Manufacturers</span>
+    </div>
+    <div class="dash-kpis">
+      <div class="kpi">
+        <div class="kpi-value">$2.41M</div>
+        <div class="kpi-label">Submitted</div>
+        <div class="kpi-trend up">+12% QoQ</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-value">$2.18M</div>
+        <div class="kpi-label">Received</div>
+        <div class="kpi-trend up">+8% QoQ</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-value">$234K</div>
+        <div class="kpi-label">Outstanding</div>
+        <div class="kpi-trend down">from $310K</div>
+      </div>
+      <div class="kpi">
+        <div class="kpi-value">90.3%</div>
+        <div class="kpi-label">Match Rate</div>
+        <div class="kpi-trend up">+2.1 pts</div>
+      </div>
+    </div>
+    <div class="dash-body">
+      <div class="dash-panel">
+        <h5>Submissions by Status</h5>
+        <div class="status-bar">
+          <span class="bar-label">Fully matched</span>
+          <div class="bar-track"><div class="bar-fill matched" style="width: 74%"></div></div>
+          <span class="bar-pct">74%</span>
+        </div>
+        <div class="status-bar">
+          <span class="bar-label">Under review</span>
+          <div class="bar-track"><div class="bar-fill partial" style="width: 14%"></div></div>
+          <span class="bar-pct">14%</span>
+        </div>
+        <div class="status-bar">
+          <span class="bar-label">Awaiting payment</span>
+          <div class="bar-track"><div class="bar-fill awaiting" style="width: 8%"></div></div>
+          <span class="bar-pct">8%</span>
+        </div>
+        <div class="status-bar">
+          <span class="bar-label">Discrepancy open</span>
+          <div class="bar-track"><div class="bar-fill open" style="width: 4%"></div></div>
+          <span class="bar-pct">4%</span>
+        </div>
+        <div class="insight-box">
+          <strong>Cross-manufacturer pattern detected:</strong> 3 manufacturers rejected the same 14 NDCs this quarter. Removing from future submissions prevents ~$12K/qtr in recurring discrepancies.
+        </div>
+      </div>
+      <div class="dash-panel">
+        <h5>Top Open Discrepancies</h5>
+        <div class="disc-row">
+          <span class="disc-mfr">Amneal</span>
+          <span class="disc-amt">-$5,764</span>
+          <span class="disc-age">Day 5</span>
+        </div>
+        <div class="disc-row">
+          <span class="disc-mfr">Zydus</span>
+          <span class="disc-amt">-$3,201</span>
+          <span class="disc-age">Day 18</span>
+        </div>
+        <div class="disc-row">
+          <span class="disc-mfr">Apotex</span>
+          <span class="disc-amt">-$8,440</span>
+          <span class="disc-age">Day 31</span>
+        </div>
+        <div class="disc-row">
+          <span class="disc-mfr">Mylan</span>
+          <span class="disc-amt" style="color:var(--amber)">+$1,200</span>
+          <span class="disc-age">Day 42</span>
+        </div>
+        <div class="disc-row">
+          <span class="disc-mfr">Teva</span>
+          <span class="disc-amt">MISSING</span>
+          <span class="disc-age" style="color:var(--coral); font-weight:600;">Day 67</span>
+        </div>
+        <div class="insight-box">
+          <strong>Payment timing trend:</strong> Average days-to-pay increased 47 &rarr; 58 days over 3 quarters. Two manufacturers driving the slowdown.
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ ROI ════ -->
+<section class="full-bleed">
+  <div style="max-width: 1100px; margin: 0 auto;">
+    <p class="label reveal">Projected Impact</p>
+    <h2 class="reveal" style="margin-bottom: 0.5rem;">Sized with industry benchmarks</h2>
+    <p class="reveal" style="color: rgba(255,255,255,0.6); margin-bottom: 0;">We'll calibrate with your actual numbers in discovery &mdash; these are conservative estimates from PBM industry data.</p>
+
+    <div class="roi-grid reveal">
+      <div class="roi-card">
+        <div class="roi-value">200-240</div>
+        <div class="roi-label">Hours saved per year</div>
+        <div class="roi-detail">From 80 hrs/cycle &rarr; 20-30 hrs/cycle</div>
+      </div>
+      <div class="roi-card">
+        <div class="roi-value">85-90%</div>
+        <div class="roi-label">Auto-match rate</div>
+        <div class="roi-detail">From 0% (all manual) &rarr; review exceptions only</div>
+      </div>
+      <div class="roi-card">
+        <div class="roi-value">$24-33K</div>
+        <div class="roi-label">Estimated annual value</div>
+        <div class="roi-detail">Labor + revenue recovery + audit prep</div>
+      </div>
+      <div class="roi-card">
+        <div class="roi-value">$0</div>
+        <div class="roi-label">Implementation cost</div>
+        <div class="roi-detail">Built on SharePoint + Power Platform (already licensed)</div>
+      </div>
+    </div>
+
+    <p class="roi-note reveal">"I've filled in industry benchmarks. I need your numbers to make it real." <strong>&mdash; The ROI template becomes a collaboration tool in our first discovery session.</strong></p>
+  </div>
+</section>
+
+<!-- ════ DESIGN PRINCIPLES ════ -->
+<section>
+  <p class="label reveal">Design Principles</p>
+  <h2 class="reveal" style="margin-bottom: 0.5rem;">How we'll build it</h2>
+  <p class="reveal">Three constraints that guide every decision.</p>
+
+  <div class="principles reveal">
+    <div class="principle">
+      <h4>AI is never the last line of defense</h4>
+      <p>AI reads documents and proposes matches. Deterministic rules verify the math. Humans make the final call. The system earns trust through tracked accuracy &mdash; never through promises.</p>
+    </div>
+    <div class="principle">
+      <h4>Survives after the internship</h4>
+      <p>Built on SharePoint + Power Automate + Power BI. No-code maintenance surface. Your team owns it. No developer needed to keep it running.</p>
+    </div>
+    <div class="principle">
+      <h4>Survives the system migration</h4>
+      <p>The data ingestion step normalizes from any source. When you move to homegrown-only, swap the input &mdash; not the tool. The automation gets simpler, not obsolete.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ════ CTA ════ -->
+<section class="cta-section">
+  <p class="label reveal">What's Next</p>
+  <h2 class="reveal">Ready for discovery</h2>
+  <p class="reveal">This is a concept &mdash; not a final spec. Every assumption adapts to what we learn in discovery sessions. Here's how the first three weeks look.</p>
+
+  <div class="cta-steps reveal">
+    <div class="cta-step">
+      <div class="num">1</div>
+      <h4>Week 1</h4>
+      <p>Discovery sessions with<br>finance and PBM teams</p>
+    </div>
+    <div class="cta-step">
+      <div class="num">2</div>
+      <h4>Week 2</h4>
+      <p>Validate assumptions,<br>size with real numbers</p>
+    </div>
+    <div class="cta-step">
+      <div class="num">3</div>
+      <h4>Week 3</h4>
+      <p>Approve scope,<br>begin building</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  SPS Health &mdash; AI Implementation Intern &mdash; Workstream B Concept &mdash; February 2026
+</footer>
+
+<script>
+// Scroll reveal
+const reveals = document.querySelectorAll('.reveal');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach((entry, i) => {
+    if (entry.isIntersecting) {
+      // Stagger siblings
+      const parent = entry.target.parentElement;
+      const siblings = parent.querySelectorAll('.reveal');
+      let delay = 0;
+      siblings.forEach(sib => {
+        if (sib === entry.target) {
+          setTimeout(() => sib.classList.add('visible'), delay);
+        }
+      });
+      entry.target.classList.add('visible');
+      observer.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+
+reveals.forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
