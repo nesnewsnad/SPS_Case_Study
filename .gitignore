@@ -30,3 +30,6 @@ next-env.d.ts
 
 # data (too large for git — seed from CSVs)
 # Case Study - Data/ is tracked since it's the source data
+
+# confidential documents
+AI_Implementation_Intern_Project_Scope.pdf
