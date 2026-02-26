@@ -1,5 +1,14 @@
 # TODO — SPS Health Case Study
 
+## Up Next
+
+- [ ] Set up Google Workspace MCP server in Claude Code (Gmail + Calendar)
+  - Create Google Cloud project, enable Gmail API + Calendar API
+  - OAuth consent screen (External, add self as test user)
+  - Create OAuth 2.0 Desktop App credentials (Client ID + Secret)
+  - `claude mcp add` with `uvx workspace-mcp --tools gmail calendar`
+  - Authenticate and test: read inbox, check calendar, draft a reply
+
 ## Completed
 
 - [x] Scaffold Next.js 14 + Tailwind + TypeScript
