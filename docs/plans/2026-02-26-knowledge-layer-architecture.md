@@ -144,12 +144,89 @@ The code is just plumbing. What actually persists is the knowledge layers:
 
 ## 6. Key Architectural Decisions
 
-| Decision                                      | Choice                                                 | Rationale                                                                                                                                                                                             |
-| --------------------------------------------- | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| RAG vs. agentic search                        | RAG (pipeline), architect for agentic escalation later | Early-maturity org needs predictability and explainability. Non-technical maintainers can't debug agent reasoning.                                                                                    |
-| Top-down vs. bottom-up knowledge construction | Bottom-up (workflow-driven)                            | Can't enumerate "everything SPS knows" in advance. Build through specific automations, let the core emerge. Supported by "Codified Context" paper (Feb 2026) and industry consensus.                  |
-| Context + intent as separate concerns         | Yes                                                    | Context without intent = correct but brittle. Intent without intent = confident but wrong. The intent layer (judgment schemas) is the differentiator between a search engine and a trusted colleague. |
-| Knowledge format                              | Machine-readable structured docs (CLAUDE.md pattern)   | Documentation as load-bearing infrastructure. The AI reads it on every invocation — not optional reference material.                                                                                  |
+| Decision                                      | Choice                                                               | Rationale                                                                                                                                                                                             |
+| --------------------------------------------- | -------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| RAG vs. agentic search                        | RAG (pipeline), architect for agentic escalation later               | Early-maturity org needs predictability and explainability. Non-technical maintainers can't debug agent reasoning.                                                                                    |
+| Top-down vs. bottom-up knowledge construction | Bottom-up (workflow-driven)                                          | Can't enumerate "everything SPS knows" in advance. Build through specific automations, let the core emerge. Supported by "Codified Context" paper (Feb 2026) and industry consensus.                  |
+| Context + intent as separate concerns         | Yes                                                                  | Context without intent = correct but brittle. Intent without intent = confident but wrong. The intent layer (judgment schemas) is the differentiator between a search engine and a trusted colleague. |
+| Knowledge format                              | Machine-readable structured docs (CLAUDE.md pattern)                 | Documentation as load-bearing infrastructure. The AI reads it on every invocation — not optional reference material.                                                                                  |
+| Agent-readability as design constraint        | Yes — all deposits must be agent-executable, not just human-readable | Informed by Nate's "4 Prompt Layers" framework (Feb 2026). Every document in the org is a specification an agent will eventually read and act on. Format rules per layer below.                       |
+
+---
+
+## 6a. Agent-Readability Formatting Rules
+
+Every knowledge deposit must be written so an agent can consume and act on it without human interpretation. This is a constraint on format, not content.
+
+**Ref**: Nate's "4 Prompt Layers" framework — prompt craft → context engineering → intent engineering → specification engineering. Our knowledge layers map to his stack: Core/Department = context engineering, Intent = intent engineering, Workflow = specification engineering. The insight: the higher up the stack, the more the format matters for autonomous agent execution.
+
+### Core Layer — structured key-value, not prose
+
+```
+# Bad (human-readable narrative)
+SPS Health is a pharmacy benefit manager that sits between health plans,
+pharmacies, and drug manufacturers.
+
+# Good (agent-readable structured fact)
+entity_type: PBM (Pharmacy Benefit Manager)
+position: intermediary between health plans, pharmacies, and drug manufacturers
+```
+
+Rule: every Core deposit is a **fact with a key**. If you can't name the key, it's not a Core fact — it's narrative that belongs elsewhere.
+
+### Department Layer — structured metadata, explicit authority
+
+```
+# Bad
+The 2026 benefits guide is the most current one.
+
+# Good
+document: 2026 Benefits Guide
+authority: PRIMARY (supersedes 2024 Benefits Guide)
+effective: 2026-01-01
+owner: Sarah (Benefits)
+scope: all employees
+```
+
+Rule: every Department deposit carries **authority, recency, ownership, and scope**. An agent must be able to resolve conflicts between two documents without asking a human.
+
+### Intent Layer — explicit trade-off hierarchies, not descriptions
+
+```
+# Bad
+They tend to be careful with high-dollar invoices from new vendors.
+
+# Good
+WHEN invoice > $10K AND vendor is new (< 90 days)
+PREFER escalate to manager OVER auto-approve
+BECAUSE fraud risk outweighs processing speed
+CONFIDENCE: STATED (Speaker: Lucas, 2026-03-01)
+```
+
+Rule: every Intent deposit is a **conditional rule with a trade-off**. "Prefer X over Y when Z because W." An agent must be able to apply the judgment without interpreting prose.
+
+### Workflow Layer — specs with acceptance criteria, not narrative SOPs
+
+```
+# Bad
+When an invoice comes in, we check the PO number, then route it
+to the right approver based on the amount.
+
+# Good
+process: invoice_routing
+trigger: new invoice received
+steps:
+  1. extract PO number from invoice
+  2. match PO to open purchase orders in [system]
+  3. route by amount:
+     - < $5K → auto-approve
+     - $5K-$25K → department manager
+     - > $25K → VP Finance
+done_when: invoice has approval status + GL code assigned
+failure_mode: no PO match → hold queue + notify AP clerk
+```
+
+Rule: every Workflow deposit is a **specification with trigger, steps, done-when, and failure mode**. An agent must be able to execute or evaluate the process without asking "what happens next?"
 
 ---
 
